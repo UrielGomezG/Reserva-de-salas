@@ -1,0 +1,96 @@
+/* Fuente base */
+.root {
+    -fx-font-family: "Inter", "Noto Sans", sans-serif;
+    -fx-background-color: #f8fafc;
+}
+
+/* --- Cabecera --- */
+.header-box {
+    -fx-padding: 12px 40px;
+    -fx-border-width: 0 0 1px 0;
+    -fx-border-color: #e7edf3;
+}
+
+.header-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0d141b;
+}
+
+/* --- Contenedor del Formulario --- */
+.form-container {
+    -fx-max-width: 480px;
+    -fx-padding: 20px 0;
+}
+.login-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0d141b;
+    -fx-padding: 20px 0 12px 0;
+}
+.field-container {
+    -fx-padding: 12px 16px;
+}
+.form-label {
+    -fx-font-size: 16px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #0d141b;
+    -fx-padding-bottom: 8px;
+}
+
+/* --- Campos de Texto (Registro) --- */
+.form-input-registro {
+    -fx-pref-height: 56px;
+    -fx-background-color: #e7edf3;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 15px;
+    -fx-font-size: 16px;
+    -fx-text-fill: #0d141b;
+}
+.form-input-registro .text {
+    -fx-fill: #4c739a;
+}
+.form-input-registro:focused {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #1380ec;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(19, 128, 236, 0.3), 5, 0, 0, 0);
+}
+
+
+/* --- Contenedor de Botones --- */
+.button-pane {
+    -fx-padding: 12px 16px 12px 16px;
+}
+
+/* --- Botón Principal (Login) --- */
+.login-button {
+    -fx-pref-height: 40px;
+    -fx-background-color: #1380ec;
+    -fx-text-fill: #f8fafc;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+.login-button:hover {
+    -fx-background-color: #0f6acb;
+}
+
+/* --- Botón estilo Enlace --- */
+.link-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #1380ec;
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-cursor: hand;
+    -fx-padding: 5px;
+    -fx-background-radius: 8px;
+}
+.link-button:hover {
+    -fx-background-color: #f0f6fc;
+    -fx-underline: true;
+}

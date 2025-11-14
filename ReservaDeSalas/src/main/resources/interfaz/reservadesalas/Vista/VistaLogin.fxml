@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+
+<VBox
+        xmlns="http://javafx.com/javafx/17"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="interfaz.reservadesalas.Controladores.ControladorLogin"
+        styleClass="root-container"
+        spacing="0">
+
+    <HBox styleClass="header-box" alignment="CENTER_LEFT" spacing="16">
+        <children>
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="Starsoft" styleClass="header-title" />
+            </HBox>
+        </children>
+    </HBox>
+
+    <VBox alignment="CENTER" VBox.vgrow="ALWAYS">
+        <VBox styleClass="form-container" alignment="TOP_CENTER" spacing="15">
+
+            <Label text="Iniciar sesión" styleClass="login-title" />
+
+            <VBox spacing="8" styleClass="field-container">
+                <Label text="Correo electrónico" styleClass="form-label" />
+                <TextField fx:id="campoEmail" promptText="usuario@ejemplo.com" styleClass="form-input" />
+            </VBox>
+
+            <VBox spacing="8" styleClass="field-container">
+                <Label text="Contraseña" styleClass="form-label" />
+                <PasswordField fx:id="campoContrasena" promptText="********" styleClass="form-input" />
+            </VBox>
+
+            <VBox styleClass="button-pane" spacing="10" alignment="CENTER">
+
+                <Button fx:id="botonLogin" text="Iniciar sesión" styleClass="login-button"
+                        maxWidth="Infinity"
+                        onAction="#alPulsarBotonLogin" />
+
+                <Button fx:id="botonRegistro" text="¿No tienes cuenta? Regístrate"
+                        styleClass="link-button" maxWidth="Infinity"
+                        onAction="#alPulsarBotonRegistro" />
+            </VBox>
+
+        </VBox>
+    </VBox>
+</VBox>
