@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import java.lang.String?>
+
+<VBox fx:controller="interfaz.reservadesalas.Controladores.ControladorPerfil"
+      prefHeight="768.0" prefWidth="1024.0" styleClass="background-container"
+      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+
+    <stylesheets>
+        <String fx:value="@/interfaz/reservadesalas/CSS/EstilosInicio.css" />
+    </stylesheets>
+
+    <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="40.0" styleClass="navbar">
+        <Label styleClass="logo-text" text="Starsoft" />
+        <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS" spacing="25.0">
+
+            <Label styleClass="nav-link" text="Mis Reservas" onMouseClicked="#cambiarAVistaInicio" />
+            <Label styleClass="nav-link" text="Calendario" onMouseClicked="#cambiarAVistaCalendario" />
+            <Label styleClass="nav-link" text="Reporte" onMouseClicked="#cambiarAVistaReporte" />
+            <Label styleClass="nav-link" onMouseClicked="#handleNotificacion">
+                <graphic>
+                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                        <image><Image url="@bell_icon.png" /></image>
+                    </ImageView>
+                </graphic>
+            </Label>
+
+            <HBox fx:id="navPerfil" alignment="CENTER" styleClass="avatar-container" onMouseClicked="#cambiarAVistaPerfil">
+                <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@user_placeholder.png" />
+                    </image>
+                    <clip>
+                        <Circle centerX="16.0" centerY="16.0" radius="16.0" />
+                    </clip>
+                </ImageView>
+            </HBox>
+            
+            </HBox>
+        <padding>
+            <Insets left="40.0" right="40.0" />
+        </padding>
+    </HBox>
+
+    <VBox alignment="TOP_CENTER" spacing="30.0" styleClass="main-content-wrapper" VBox.vgrow="ALWAYS">
+        <VBox prefWidth="500.0" alignment="TOP_CENTER" spacing="30.0" styleClass="content-area">
+
+            <Label styleClass="title" text="Mi Perfil" alignment="CENTER" />
+
+            <VBox alignment="TOP_CENTER" spacing="10.0">
+                <ImageView fitHeight="120.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true">
+                    <clip>
+                        <Circle centerX="60.0" centerY="60.0" radius="60.0" />
+                    </clip>
+                </ImageView>
+                <Label styleClass="user-name" text="Tony CZ" />
+                <Button styleClass="btn-secondary" text="Cambiar foto" onAction="#handleCambiarFoto" />
+            </VBox>
+
+            <GridPane hgap="20.0" vgap="25.0" alignment="CENTER">
+                
+                <Label text="Nombre" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <TextField fx:id="nameField" promptText="Tu Nombre Completo" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                <Label text="Correo Electrónico" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <TextField fx:id="emailField" promptText="ejemplo@starsoft.com" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                
+                <Label text="Matrícula" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <TextField fx:id="matriculaField" promptText="Tu Matrícula o ID" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                
+                <Label text="Contraseña" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                <TextField fx:id="passwordField" promptText="********" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                <Label text="Confirmar Contraseña" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                <TextField fx:id="confirmPasswordField" promptText="********" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                
+            </GridPane>
+
+            <HBox alignment="BOTTOM_RIGHT" prefWidth="500.0">
+                <Button styleClass="btn-primary" text="Guardar Cambios" onAction="#handleGuardarCambios" />
+            </HBox>
+            
+        </VBox>
+    </VBox>
+</VBox>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import java.lang.String?>
+<?import javafx.scene.layout.Region?>
+
+<VBox fx:controller="interfaz.reservadesalas.Controladores.ControladorPrincipal"
+      prefHeight="768.0" prefWidth="1024.0" styleClass="background-container"
+      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+
+    <stylesheets>
+        <String fx:value="@/interfaz/reservadesalas/CSS/EstilosInicio.css" />
+    </stylesheets>
+
+    <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="40.0" styleClass="navbar">
+        <Label styleClass="logo-text" text="Starsoft" />
+        <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS" spacing="25.0">
+            <Label styleClass="nav-link" text="Mis Reservas" onMouseClicked="#cambiarAVistaInicio" />
+            <Label styleClass="nav-link" text="Calendario" onMouseClicked="#cambiarAVistaCalendario" />
+            <Label styleClass="nav-link" text="Reporte" onMouseClicked="#cambiarAVistaReporte" />
+            <Region prefWidth="10.0" />
+            <Label styleClass="nav-link" onMouseClicked="#cambiarAVistaNotificaciones">
+                <graphic>
+                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                        <image><Image url="@bell_icon.png" /></image>
+                    </ImageView>
+                </graphic>
+            </Label>
+            <HBox fx:id="navPerfil" alignment="CENTER" styleClass="avatar-container" onMouseClicked="#cambiarAVistaPerfil">
+                <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                    <image><Image url="@user_placeholder.png" /></image>
+                    <clip><Circle centerX="16.0" centerY="16.0" radius="16.0" /></clip>
+                </ImageView>
+            </HBox>
+        </HBox>
+        <padding>
+            <Insets left="40.0" right="40.0" />
+        </padding>
+    </HBox>
+
+    <VBox alignment="TOP_CENTER" spacing="20.0" styleClass="main-content-wrapper" VBox.vgrow="ALWAYS">
+        <VBox prefWidth="600.0" alignment="TOP_LEFT" spacing="25.0" styleClass="content-area">
+
+            <StackPane prefHeight="180.0" styleClass="reservation-banner">
+                <ImageView fitHeight="180.0" preserveRatio="false" styleClass="banner-image">
+                    <image>
+                        <Image url="@room_placeholder.jpg" />
+                    </image>
+                </ImageView>
+                <VBox alignment="CENTER_LEFT" StackPane.alignment="BOTTOM_LEFT">
+                    <Label styleClass="reservation-title" text="Modificar Reserva" />
+                    <Label styleClass="reservation-subtitle" text="Por favor, completa los detalles de tu reserva para confirmar." />
+                    <padding><Insets bottom="20.0" left="20.0" /></padding>
+                </VBox>
+            </StackPane>
+
+            <VBox spacing="20.0" styleClass="form-vbox">
+                <VBox spacing="5.0">
+                    <Label text="Sala" styleClass="form-label" />
+                    <HBox styleClass="form-input-container">
+                        <TextField promptText="Selecciona una sala" text="Sala 1" styleClass="form-input" HBox.hgrow="ALWAYS" />
+                        <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true" styleClass="input-icon">
+                            <image><Image url="@menu_icon.png" /></image>
+                        </ImageView>
+                    </HBox>
+                </VBox>
+
+                <VBox spacing="5.0">
+                    <Label text="Fecha" styleClass="form-label" />
+                    <HBox styleClass="form-input-container">
+                        <TextField promptText="Selecciona una fecha" text="25 de Julio, 2024" styleClass="form-input" HBox.hgrow="ALWAYS" />
+                        <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true" styleClass="input-icon">
+                            <image><Image url="@calendar_icon.png" /></image>
+                        </ImageView>
+                    </HBox>
+                </VBox>
+
+                <VBox spacing="5.0">
+                    <Label text="Hora" styleClass="form-label" />
+                    <HBox styleClass="form-input-container">
+                        <TextField promptText="Selecciona una hora" text="9:00 AM - 10:00 AM" styleClass="form-input" HBox.hgrow="ALWAYS" />
+                        <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true" styleClass="input-icon">
+                            <image><Image url="@clock_icon.png" /></image>
+                        </ImageView>
+                    </HBox>
+                </VBox>
+                
+                <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="alert-warning-container">
+                    <Label styleClass="alert-warning-text" text="Conflicto de Horario: La sala ya está reservada de 10:00 a 11:00. Por favor, elige otro horario." />
+                </HBox>
+            </VBox>
+
+            <HBox alignment="CENTER_RIGHT" spacing="15.0">
+                <Button mnemonicParsing="false" text="Cancelar" styleClass="button-secondary" onMouseClicked="#cambiarAVistaInicio" />
+                <Button mnemonicParsing="false" text="Guardar Cambios" styleClass="button-primary" onAction="#handleGuardarCambios" />
+            </HBox>
+
+        </VBox>
+        <padding><Insets bottom="40.0" /></padding>
+    </VBox>
+</VBox>

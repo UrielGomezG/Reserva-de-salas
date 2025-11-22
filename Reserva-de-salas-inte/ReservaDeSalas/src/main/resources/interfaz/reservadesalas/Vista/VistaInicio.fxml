@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import java.lang.String?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.Separator?>
+
+<VBox fx:controller="interfaz.reservadesalas.Controladores.ControladorPrincipal"
+      prefHeight="768.0" prefWidth="1024.0" styleClass="background-container"
+      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+
+    <stylesheets>
+        <String fx:value="@/interfaz/reservadesalas/CSS/EstilosInicio.css" />
+    </stylesheets>
+
+    <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="40.0" styleClass="navbar">
+        <Label styleClass="logo-text" text="Starsoft" />
+        <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS" spacing="25.0">
+
+            <Label styleClass="nav-link nav-booking" text="Mis Reservas" onMouseClicked="#cambiarAVistaInicio" />
+            <Label styleClass="nav-link" text="Calendario" onMouseClicked="#cambiarAVistaCalendario" />
+            <Label styleClass="nav-link" text="Reporte" onMouseClicked="#cambiarAVistaReporte" />
+            <Label styleClass="nav-link" onMouseClicked="#handleNotificacion">
+                <graphic>
+                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                        <image><Image url="@bell_icon.png" /></image>
+                    </ImageView>
+                </graphic>
+            </Label>
+
+           <HBox fx:id="navPerfil" alignment="CENTER" styleClass="avatar-container" onMouseClicked="#cambiarAVistaPerfil">
+                <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@user_placeholder.png" />
+                    </image>
+                    <clip>
+                        <Circle centerX="16.0" centerY="16.0" radius="16.0" />
+                    </clip>
+                </ImageView>
+            </HBox>
+        </HBox>
+        <padding>
+            <Insets left="40.0" right="40.0" />
+        </padding>
+    </HBox>
+
+    <VBox alignment="TOP_CENTER" spacing="20.0" styleClass="main-content-wrapper" VBox.vgrow="ALWAYS">
+        <VBox prefWidth="800.0" alignment="TOP_LEFT" spacing="20.0" styleClass="content-area">
+
+            <Label styleClass="title" text="Mis Reservas" />
+
+            <VBox>
+                <HBox alignment="CENTER_LEFT" spacing="25.0" styleClass="tabs-container">
+                    <VBox fx:id="tabUpcomingContainer" alignment="CENTER_LEFT" spacing="5.0" onMouseClicked="#handleFilterUpcoming">
+                        <Label fx:id="tabUpcomingLabel" styleClass="tab-active" text="Próximas" />
+                        <Separator fx:id="tabUpcomingSeparator" prefWidth="50.0" styleClass="tabs-underline" />
+                    </VBox>
+                    
+                    <VBox fx:id="tabPastContainer" alignment="CENTER_LEFT" spacing="5.0" onMouseClicked="#handleFilterPast">
+                        <Label fx:id="tabPastLabel" styleClass="tab-inactive" text="Pasadas" />
+                        <Separator fx:id="tabPastSeparator" prefWidth="50.0" visible="false" styleClass="tabs-underline" />
+                    </VBox>
+
+                    <VBox fx:id="tabAllContainer" alignment="CENTER_LEFT" spacing="5.0" onMouseClicked="#handleFilterAll">
+                        <Label fx:id="tabAllLabel" styleClass="tab-inactive" text="Todas" />
+                        <Separator fx:id="tabAllSeparator" prefWidth="50.0" visible="false" styleClass="tabs-underline" />
+                    </VBox>
+                </HBox>
+                <Separator prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: -fx-light-grey;" />
+            </VBox>
+
+            <VBox fx:id="bookingsListContainer" spacing="25.0" styleClass="bookings-list">
+
+                <HBox styleClass="booking-card" spacing="40.0">
+                    <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                        <Label styleClass="location" text="Sala de Juntas" />
+                        <Label styleClass="event-name" text="Reunión de Equipo" />
+                        <Label styleClass="event-time" text="15 de julio de 2024 · 10:00 AM - 11:00 AM" />
+                        <HBox alignment="BOTTOM_LEFT" spacing="10.0" VBox.vgrow="ALWAYS">
+                            <Button styleClass="btn-edit" text="Editar" onAction="#handleEditAction" />
+                            <Button styleClass="btn-cancel" text="Cancelar" onAction="#handleCancelAction" />
+                        </HBox>
+                    </VBox>
+                    <ImageView fitHeight="150.0" fitWidth="220.0" pickOnBounds="true" preserveRatio="false" styleClass="card-image">
+                        <image>
+                            <Image url="@meeting_room_1.png" />
+                        </image>
+                    </ImageView>
+                </HBox>
+
+                <HBox styleClass="booking-card" spacing="40.0">
+                    <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                        <Label styleClass="location" text="Laboratorio de Cómputo" />
+                        <Label styleClass="event-name" text="Taller de Programación" />
+                        <Label styleClass="event-time" text="20 de julio de 2024 · 2:00 PM - 4:00 PM" />
+                        <HBox alignment="BOTTOM_LEFT" spacing="10.0" VBox.vgrow="ALWAYS">
+                            <Button styleClass="btn-edit" text="Editar" onAction="#handleEditAction" />
+                            <Button styleClass="btn-cancel" text="Cancelar" onAction="#handleCancelAction" />
+                        </HBox>
+                    </VBox>
+                    <ImageView fitHeight="150.0" fitWidth="220.0" pickOnBounds="true" preserveRatio="false" styleClass="card-image">
+                        <image>
+                            <Image url="@computer_lab.png" />
+                        </image>
+                    </ImageView>
+                </HBox>
+
+                <HBox styleClass="booking-card" spacing="40.0">
+                    <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                        <Label styleClass="location" text="Sala de Juntas" />
+                        <Label styleClass="event-name" text="Presentación de Proyecto" />
+                        <Label styleClass="event-time" text="25 de julio de 2024 · 9:00 AM - 10:00 AM" />
+                        <HBox alignment="BOTTOM_LEFT" spacing="10.0" VBox.vgrow="ALWAYS">
+                            <Button styleClass="btn-edit" text="Editar" onAction="#handleEditAction" />
+                            <Button styleClass="btn-cancel" text="Cancelar" onAction="#handleCancelAction" />
+                        </HBox>
+                    </VBox>
+                    <ImageView fitHeight="150.0" fitWidth="220.0" pickOnBounds="true" preserveRatio="false" styleClass="card-image">
+                        <image>
+                            <Image url="@meeting_room_2.png" />
+                        </image>
+                    </ImageView>
+                </HBox>
+                
+            </VBox>
+        </VBox>
+    </VBox>
+</VBox>

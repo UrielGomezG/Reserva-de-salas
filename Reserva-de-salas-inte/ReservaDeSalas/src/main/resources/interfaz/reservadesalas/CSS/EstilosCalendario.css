@@ -1,0 +1,222 @@
+.root {
+    -fx-font-family: "Segoe UI", sans-serif; 
+    -fx-font-size: 14px;
+    -fx-base: #f4f7f6;
+    -fx-background: #f4f7f6;
+    -fx-white: #ffffff;
+    -fx-dark-grey: #6c757d;
+    -fx-medium-grey: #adb5bd;
+    -fx-light-grey: #e9ecef;
+    -fx-blue-primary: #007bff;
+    -fx-blue-dark: #0056b3;
+    -fx-green-available: #28a745; 
+    -fx-red-reserved: #dc3545;   
+    -fx-text-color: #343a40; 
+    -fx-calendar-day-active: #007bff; 
+}
+
+.background-container {
+    -fx-background-color: -fx-background;
+}
+
+.navbar {
+    -fx-background-color: -fx-white;
+    -fx-padding: 0 40px; 
+    -fx-spacing: 40px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 2); 
+}
+
+.logo-text { -fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: -fx-text-color; }
+.nav-link { -fx-font-size: 16px; -fx-text-fill: -fx-dark-grey; }
+.nav-link:hover { -fx-text-fill: -fx-blue-primary; -fx-cursor: hand; }
+.nav-booking { -fx-font-weight: bold; -fx-text-fill: -fx-blue-primary; }
+.avatar-container { -fx-background-color: -fx-light-grey; -fx-background-radius: 50%; -fx-padding: 2px; }
+
+.main-content-wrapper { -fx-padding: 40px; -fx-alignment: TOP_CENTER; }
+
+.content-area-calendar {
+    -fx-pref-width: 900px;
+    -fx-background-color: -fx-white;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 15, 0, 0, 4);
+    -fx-padding: 30px;
+}
+
+.title {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text-color;
+    -fx-padding-bottom: 10px;
+}
+
+.subtitle {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text-color;
+    -fx-padding-top: 20px;
+    -fx-padding-bottom: 10px;
+}
+
+.separator {
+    -fx-pref-height: 1px;
+    -fx-background-color: -fx-light-grey;
+    -fx-opacity: 0.5;
+    -fx-padding-top: 10px;
+}
+
+.calendar-view {
+    -fx-alignment: CENTER;
+    -fx-spacing: 40px;
+}
+
+.month-container {
+    -fx-pref-width: 400px; 
+}
+
+.month-header {
+    -fx-alignment: CENTER;
+    -fx-spacing: 15px;
+    -fx-padding-bottom: 10px;
+}
+
+.month-label {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text-color;
+}
+
+.nav-arrow {
+    -fx-font-size: 20px;
+    -fx-text-fill: -fx-dark-grey;
+    -fx-padding: 5px;
+    -fx-cursor: hand;
+}
+
+.nav-arrow:hover {
+    -fx-text-fill: -fx-blue-primary;
+}
+
+.day-names-grid {
+    -fx-alignment: CENTER;
+    -fx-hgap: 5px;
+    -fx-vgap: 5px;
+    -fx-padding: 0 10px;
+}
+
+.day-name {
+    -fx-font-size: 14px;
+    -fx-text-fill: -fx-medium-grey;
+    -fx-alignment: CENTER;
+}
+
+.calendar-grid {
+    -fx-alignment: TOP_CENTER;
+    -fx-hgap: 5px;
+    -fx-vgap: 5px;
+    -fx-padding: 0 10px;
+}
+
+.day-number {
+    -fx-font-size: 14px;
+    -fx-text-fill: -fx-text-color;
+    -fx-alignment: CENTER;
+    -fx-min-width: 35px;
+    -fx-min-height: 35px;
+    -fx-background-color: transparent;
+    -fx-background-radius: 50%;
+    -fx-cursor: hand;
+}
+
+.day-number:hover {
+    -fx-background-color: -fx-light-grey;
+}
+
+.day-active {
+    -fx-background-color: -fx-calendar-day-active;
+    -fx-text-fill: -fx-white;
+    -fx-font-weight: bold;
+}
+
+.day-active:hover {
+    -fx-background-color: -fx-blue-dark;
+}
+
+.btn-primary-calendar {
+    -fx-background-color: -fx-blue-primary;
+    -fx-text-fill: -fx-white;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 20px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+    -fx-font-size: 16px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);
+    -fx-translate-y: 50px;
+}
+
+.btn-primary-calendar:hover {
+    -fx-background-color: -fx-blue-dark;
+}
+
+.availability-table {
+    -fx-background-color: -fx-white;
+    -fx-spacing: 1px;
+}
+
+.table-header {
+    -fx-padding: 10px 15px;
+    -fx-background-color: -fx-light-grey; 
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text-color;
+}
+
+.header-label-sala {
+    -fx-pref-width: 250px; 
+    -fx-min-width: 250px;
+}
+.header-label {
+    -fx-pref-width: 200px;
+    -fx-min-width: 200px;
+}
+.header-label-estado {
+    -fx-pref-width: 150px;
+    -fx-min-width: 150px;
+}
+
+.table-row {
+    -fx-padding: 12px 15px;
+    -fx-background-color: -fx-white;
+    -fx-border-color: -fx-light-grey;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.row-label-sala {
+    -fx-pref-width: 250px; 
+    -fx-min-width: 250px;
+    -fx-font-weight: bold;
+}
+.row-label-horario {
+    -fx-pref-width: 200px;
+    -fx-min-width: 200px;
+    -fx-text-fill: -fx-blue-primary;
+    -fx-font-weight: bold;
+}
+.row-label-estado {
+    -fx-pref-width: 150px;
+    -fx-min-width: 150px;
+    -fx-alignment: CENTER;
+    -fx-background-radius: 10px;
+    -fx-padding: 3px 10px;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.status-available {
+    -fx-background-color: #d4edda;
+    -fx-text-fill: -fx-green-available;
+}
+
+.status-reserved {
+    -fx-background-color: #f8d7da;
+    -fx-text-fill: -fx-red-reserved;
+}

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import java.lang.String?>
+<?import javafx.scene.layout.Region?>
+
+
+<VBox fx:controller="interfaz.reservadesalas.Controladores.ControladorReporte"
+      prefHeight="768.0" prefWidth="1024.0" styleClass="background-container"
+      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+
+    <stylesheets>
+        <String fx:value="@/interfaz/reservadesalas/CSS/EstilosInicio.css" />
+    </stylesheets>
+
+    <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="40.0" styleClass="navbar">
+        <Label styleClass="logo-text" text="Starsoft" />
+        <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS" spacing="25.0">
+
+            <Label styleClass="nav-link" text="Mis Reservas" onMouseClicked="#cambiarAVistaInicio" />
+            <Label styleClass="nav-link" text="Calendario" onMouseClicked="#cambiarAVistaCalendario" />
+            <Label styleClass="nav-link nav-booking" text="Reporte" onMouseClicked="#cambiarAVistaReporte" />
+            <Label styleClass="nav-link" onMouseClicked="#handleNotificacion">
+                <graphic>
+                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                        <image><Image url="@bell_icon.png" /></image>
+                    </ImageView>
+                </graphic>
+            </Label>
+
+            <HBox fx:id="navPerfil" alignment="CENTER" styleClass="avatar-container" onMouseClicked="#cambiarAVistaPerfil">
+                <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@user_placeholder.png" />
+                    </image>
+                    <clip>
+                        <Circle centerX="16.0" centerY="16.0" radius="16.0" />
+                    </clip>
+                </ImageView>
+            </HBox>
+
+
+        </HBox>
+        <padding>
+            <Insets left="40.0" right="40.0" />
+        </padding>
+    </HBox>
+
+
+    <VBox alignment="TOP_CENTER" spacing="20.0" styleClass="main-content-wrapper" VBox.vgrow="ALWAYS">
+        <VBox prefWidth="800.0" alignment="TOP_LEFT" spacing="30.0" styleClass="content-area">
+
+            <Label styleClass="title" text="Reporte" />
+
+            <VBox spacing="10.0">
+                <HBox spacing="20.0">
+                    <VBox styleClass="input-container" prefWidth="380.0">
+                        <Label text="Selecciona la sala" styleClass="input-label" />
+                        <HBox alignment="CENTER_LEFT" styleClass="input-field" onMouseClicked="#handleSelectSala">
+                            <Label text="Sala de Conferencias A" styleClass="input-text" HBox.hgrow="ALWAYS" />
+                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                <image><Image url="@list_icon.png" /></image>
+                            </ImageView>
+                        </HBox>
+                    </VBox>
+                    <VBox styleClass="input-container" prefWidth="380.0">
+                        <Label text="Selecciona fecha" styleClass="input-label" />
+                        <HBox alignment="CENTER_LEFT" styleClass="input-field" onMouseClicked="#handleSelectFecha">
+                            <Label text="Hoy" styleClass="input-text" HBox.hgrow="ALWAYS" />
+                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                <image><Image url="@calendar_icon.png" /></image>
+                            </ImageView>
+                        </HBox>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <VBox spacing="15.0">
+                <Label styleClass="subtitle" text="Selecciona el tipo de incidente" />
+                <GridPane hgap="15.0" vgap="15.0">
+                    <VBox styleClass="incident-card" alignment="CENTER" GridPane.columnIndex="0" GridPane.rowIndex="0" onMouseClicked="#handleSelectIncidente">
+                        <ImageView fitHeight="32.0" fitWidth="32.0"><image><Image url="@broken_furniture_icon.png" /></image></ImageView>
+                        <Label text="Mueble Roto" styleClass="incident-text" />
+                    </VBox>
+                    <VBox styleClass="incident-card" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0" onMouseClicked="#handleSelectIncidente">
+                        <ImageView fitHeight="32.0" fitWidth="32.0"><image><Image url="@wifi_error_icon.png" /></image></ImageView>
+                        <Label text="Mal conexión wifi" styleClass="incident-text" />
+                    </VBox>
+                    <VBox styleClass="incident-card" alignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="0" onMouseClicked="#handleSelectIncidente">
+                        <ImageView fitHeight="32.0" fitWidth="32.0"><image><Image url="@electronic_error_icon.png" /></image></ImageView>
+                        <Label text="Electrónico Roto" styleClass="incident-text" />
+                    </VBox>
+                    <VBox styleClass="incident-card" alignment="CENTER" GridPane.columnIndex="3" GridPane.rowIndex="0" onMouseClicked="#handleSelectIncidente">
+                        <ImageView fitHeight="32.0" fitWidth="32.0"><image><Image url="@other_icon.png" /></image></ImageView>
+                        <Label text="Otro" styleClass="incident-text" />
+                    </VBox>
+                    <VBox styleClass="incident-card" alignment="CENTER" GridPane.columnIndex="0" GridPane.rowIndex="1" onMouseClicked="#handleSelectIncidente">
+                        <ImageView fitHeight="32.0" fitWidth="32.0"><image><Image url="@light_error_icon.png" /></image></ImageView>
+                        <Label text="Problema de la Luz" styleClass="incident-text" />
+                    </VBox>
+                    <VBox styleClass="incident-card" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1" onMouseClicked="#handleSelectIncidente">
+                        <ImageView fitHeight="32.0" fitWidth="32.0"><image><Image url="@cleaning_icon.png" /></image></ImageView>
+                        <Label text="Sucio" styleClass="incident-text" />
+                    </VBox>
+                </GridPane>
+            </VBox>
+
+            <VBox spacing="15.0" VBox.vgrow="ALWAYS">
+                <TextArea fx:id="descriptionTextArea" prefHeight="150.0" promptText="Describe el problema en detalle..." styleClass="incident-textarea" VBox.vgrow="ALWAYS" />
+                <HBox alignment="BOTTOM_RIGHT" VBox.vgrow="ALWAYS">
+                    <Button mnemonicParsing="false" text="Entregar Reporte" styleClass="btn-primary" onAction="#handleEntregarReporte" />
+                </HBox>
+            </VBox>
+
+        </VBox>
+    </VBox>
+</VBox>
