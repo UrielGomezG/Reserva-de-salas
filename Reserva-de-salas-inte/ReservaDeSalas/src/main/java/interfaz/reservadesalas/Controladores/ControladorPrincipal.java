@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.YearMonth;
 
+import interfaz.reservadesalas.Servicio.ReservaService;
+import interfaz.reservadesalas.Servicio.UsuarioService;
+import interfaz.reservadesalas.util.ResourceManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,6 +16,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -29,27 +33,31 @@ public class ControladorPrincipal
     @FXML private Label tabAll;
 
     @FXML private VBox tabUpcomingContainer;
-    @FXML private Label tabUpcomingLabel;
-    @FXML private Separator tabUpcomingSeparator;
+    @FXML protected Label tabUpcomingLabel;
+    @FXML protected Separator tabUpcomingSeparator;
 
     @FXML private VBox tabPastContainer;
-    @FXML private Label tabPastLabel;
-    @FXML private Separator tabPastSeparator;
+    @FXML protected Label tabPastLabel;
+    @FXML protected Separator tabPastSeparator;
 
     @FXML private VBox tabAllContainer;
-    @FXML private Label tabAllLabel;
-    @FXML private Separator tabAllSeparator;
+    @FXML protected Label tabAllLabel;
+    @FXML protected Separator tabAllSeparator;
     
-    @FXML private VBox bookingsListContainer; 
+    @FXML protected VBox bookingsListContainer; 
     
-    @FXML private GridPane gridCalendario;
-    @FXML private Label labelMesActual;
+    @FXML protected GridPane gridCalendario;
+    @FXML protected Label labelMesActual;
     @FXML private Node navPerfil;
     
-    private YearMonth mesActual = YearMonth.now();
+    protected YearMonth mesActual = YearMonth.now();
+    protected ReservaService reservaService;
+    protected UsuarioService usuarioService;
 
     @FXML
     public void initialize() {
+        reservaService = ReservaService.getInstancia();
+        usuarioService = UsuarioService.getInstancia();
         System.out.println("Controlador Principal inicializado.");
         
         if (gridCalendario != null) {
@@ -58,7 +66,9 @@ public class ControladorPrincipal
         
         if (bookingsListContainer != null) {
             loadBookings("upcoming");
-            activateTab(tabUpcomingLabel, tabUpcomingSeparator);
+            if (tabUpcomingLabel != null && tabUpcomingSeparator != null) {
+                activateTab(tabUpcomingLabel, tabUpcomingSeparator);
+            }
         }
         
         if (navPerfil != null) {
@@ -69,23 +79,24 @@ public class ControladorPrincipal
         }
     }
 
-    private void resetTabs() {
-        tabUpcomingLabel.getStyleClass().setAll("tab-inactive");
-        tabPastLabel.getStyleClass().setAll("tab-inactive");
-        tabAllLabel.getStyleClass().setAll("tab-inactive");
+    protected void resetTabs() {
+        if (tabUpcomingLabel != null) tabUpcomingLabel.getStyleClass().setAll("tab-inactive");
+        if (tabPastLabel != null) tabPastLabel.getStyleClass().setAll("tab-inactive");
+        if (tabAllLabel != null) tabAllLabel.getStyleClass().setAll("tab-inactive");
         
-        tabUpcomingSeparator.setVisible(false);
-        tabPastSeparator.setVisible(false);
-        tabAllSeparator.setVisible(false);
+        if (tabUpcomingSeparator != null) tabUpcomingSeparator.setVisible(false);
+        if (tabPastSeparator != null) tabPastSeparator.setVisible(false);
+        if (tabAllSeparator != null) tabAllSeparator.setVisible(false);
     }
 
-    private void activateTab(Label label, Separator separator) {
+    protected void activateTab(Label label, Separator separator) {
+        if (label == null || separator == null) return;
         resetTabs();
         label.getStyleClass().setAll("tab-active");
         separator.setVisible(true);
     }
 
-    private void loadBookings(String filter) {
+    protected void loadBookings(String filter) {
         if (bookingsListContainer == null) {
             return;
         }
@@ -96,19 +107,18 @@ public class ControladorPrincipal
             String fxmlFile = "";
             switch (filter) {
                 case "past":
-                    fxmlFile = "/interfaz/reservadesalas/Vista/BookingsPast.fxml";
+                    fxmlFile = "BookingsPast.fxml";
                     break;
                 case "all":
-                    fxmlFile = "/interfaz/reservadesalas/Vista/BookingsAll.fxml"; 
+                    fxmlFile = "BookingsAll.fxml"; 
                     break;
                 case "upcoming":
                 default:
-                    fxmlFile = "/interfaz/reservadesalas/Vista/BookingsUpcoming.fxml"; 
+                    fxmlFile = "BookingsUpcoming.fxml"; 
                     break;
             }
 
-            System.out.println("DEBUG: cargar bookings partial -> " + fxmlFile);
-            java.net.URL resource = getClass().getResource(fxmlFile);
+            java.net.URL resource = ResourceManager.getViewResource(fxmlFile);
             if (resource == null) {
                 String msg = "Recurso parcial no encontrado: " + fxmlFile;
                 System.err.println("ERROR: " + msg);
@@ -159,7 +169,9 @@ public class ControladorPrincipal
         loadBookings("all");
     }
 
-    private void generarCalendario() {
+    protected void generarCalendario() {
+        if (gridCalendario == null) return;
+        
         gridCalendario.getChildren().clear();
         
         LocalDate primerDia = mesActual.atDay(1);
@@ -176,11 +188,12 @@ public class ControladorPrincipal
         for (int dia = 1; dia <= diasDelMes; dia++) {
             Label labelDia = new Label(String.valueOf(dia));
             labelDia.getStyleClass().addAll("day-number");
-            labelDia.setStyle("-fx-alignment: center;");
+            labelDia.setStyle("-fx-alignment: center; -fx-cursor: hand;");
             
             final int diaFinal = dia;
             labelDia.setOnMouseClicked(e -> {
                 System.out.println("Día " + diaFinal + " clickeado");
+                handleDayClick(e);
             });
             
             gridCalendario.add(labelDia, columna, fila);
@@ -215,89 +228,79 @@ public class ControladorPrincipal
     @FXML
     private void cambiarAVistaCalendario(MouseEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/interfaz/reservadesalas/Vista/VistaCalendario.fxml"));
+            FXMLLoader loader = new FXMLLoader(ResourceManager.getViewResource("VistaCalendario.fxml"));
             Parent root = loader.load();
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = stage.getScene();
             scene.setRoot(root);
-            String css = getClass().getResource("/interfaz/reservadesalas/CSS/EstilosCalendario.css").toExternalForm();
-            scene.getStylesheets().clear();
-            scene.getStylesheets().add(css);
+            String css = ResourceManager.getStyleExternalForm("EstilosCalendario.css");
+            if (css != null) {
+                scene.getStylesheets().clear();
+                scene.getStylesheets().add(css);
+            }
             root.applyCss();
             stage.setTitle("Starsoft - Calendario de Reservas");
             stage.show();
 
-            System.out.println("Navegación exitosa: Vista Calendario cargada.");
-
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("Error al cargar la vista del calendario. VERIFICA LA RUTA: " + e.getMessage());
+            System.err.println("Error al cargar la vista del calendario: " + e.getMessage());
         }
     }
 
     @FXML
     private void cambiarAVistaPerfil(MouseEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/interfaz/reservadesalas/Vista/VistaPerfil.fxml"));
+            FXMLLoader loader = new FXMLLoader(ResourceManager.getViewResource("VistaPerfil.fxml"));
             Parent root = loader.load();
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = stage.getScene();
             scene.setRoot(root);
-            String css = getClass().getResource("/interfaz/reservadesalas/CSS/EstilosInicio.css").toExternalForm();
-            scene.getStylesheets().clear();
-            scene.getStylesheets().add(css);
+            String css = ResourceManager.getStyleExternalForm("EstilosInicio.css");
+            if (css != null) {
+                scene.getStylesheets().clear();
+                scene.getStylesheets().add(css);
+            }
             root.applyCss();
             stage.setTitle("Starsoft - Perfil");
             stage.show();
 
-            System.out.println("Navegación exitosa: Vista Perfil cargada.");
-
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("Error al cargar la vista del perfil. VERIFICA LA RUTA: " + e.getMessage());
+            System.err.println("Error al cargar la vista del perfil: " + e.getMessage());
         }
     }
 
     @FXML
     private void cambiarAVistaReporte(MouseEvent event) {
         try {
-            String path = "/interfaz/reservadesalas/Vista/VistaReporte.fxml";
-            System.out.println("DEBUG: cargar VistaReporte FXML -> " + path);
-            java.net.URL res = getClass().getResource(path);
-            System.out.println("DEBUG: resourceUrl = " + res);
-            if (res == null) throw new IOException("Recurso no encontrado: " + path);
-            FXMLLoader loader = new FXMLLoader(res);
+            FXMLLoader loader = new FXMLLoader(ResourceManager.getViewResource("VistaReporte.fxml"));
             Parent root = loader.load();
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = stage.getScene();
             scene.setRoot(root);
-            String css = getClass().getResource("/interfaz/reservadesalas/CSS/EstilosInicio.css").toExternalForm();
-            scene.getStylesheets().clear();
-            scene.getStylesheets().add(css);
+            String css = ResourceManager.getStyleExternalForm("EstilosInicio.css");
+            if (css != null) {
+                scene.getStylesheets().clear();
+                scene.getStylesheets().add(css);
+            }
             root.applyCss();
             stage.setTitle("Starsoft - Reporte");
             stage.show();
 
-            System.out.println("Navegación exitosa: Vista Reporte cargada.");
-
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("Error al cargar la vista de reporte. VERIFICA LA RUTA: " + e.getMessage());
+            System.err.println("Error al cargar la vista de reporte: " + e.getMessage());
         }
     }
 
     @FXML
     private void cambiarAVistaNotificaciones(MouseEvent event) {
         try {
-            String path = "/interfaz/reservadesalas/Vista/VistaNotificaciones.fxml";
-            System.out.println("DEBUG: cargar VistaNotificaciones FXML -> " + path);
-            java.net.URL res = getClass().getResource(path);
-            System.out.println("DEBUG: resourceUrl = " + res);
-            if (res == null) throw new IOException("Recurso no encontrado: " + path);
-            FXMLLoader loader = new FXMLLoader(res);
+            FXMLLoader loader = new FXMLLoader(ResourceManager.getViewResource("VistaNotificaciones.fxml"));
             Parent root = loader.load();
 
             Stage owner = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -307,11 +310,9 @@ public class ControladorPrincipal
             dialog.initStyle(StageStyle.UTILITY);
 
             Scene scene = new Scene(root);
-            try {
-                String css = getClass().getResource("/interfaz/reservadesalas/CSS/EstilosInicio.css").toExternalForm();
+            String css = ResourceManager.getStyleExternalForm("EstilosInicio.css");
+            if (css != null) {
                 scene.getStylesheets().add(css);
-            } catch (Exception ex) {
-                System.err.println("Advertencia: no se pudo cargar CSS para el diálogo de notificaciones: " + ex.getMessage());
             }
 
             dialog.setScene(scene);
@@ -320,11 +321,9 @@ public class ControladorPrincipal
             dialog.sizeToScene();
             dialog.showAndWait();
 
-            System.out.println("Navegación exitosa: Diálogo de Notificaciones mostrado.");
-
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("Error al cargar la vista de notificaciones. VERIFICA LA RUTA: " + e.getMessage());
+            System.err.println("Error al cargar la vista de notificaciones: " + e.getMessage());
         }
     }
 
@@ -340,9 +339,9 @@ public class ControladorPrincipal
                 if (child instanceof Button) {
                     Button b = (Button) child;
                     if (b.getStyleClass().contains("btn-edit")) {
-                        b.setOnAction(e -> handleEditAction(new ActionEvent(b, e.getTarget())));
+                        b.setOnAction(e -> handleEditAction(e));
                     } else if (b.getStyleClass().contains("btn-cancel")) {
-                        b.setOnAction(e -> handleCancelAction(new ActionEvent(b, e.getTarget())));
+                        b.setOnAction(e -> handleCancelAction(e));
                     }
                 }
                 attachHandlersToPartial(child);
@@ -353,33 +352,29 @@ public class ControladorPrincipal
     @FXML
     private void cambiarAVistaInicio(MouseEvent event) {
         try {
-            String path = "/interfaz/reservadesalas/Vista/VistaInicio.fxml";
-            System.out.println("DEBUG: cargar VistaInicio FXML -> " + path);
-            java.net.URL res = getClass().getResource(path);
-            System.out.println("DEBUG: resourceUrl = " + res);
-            FXMLLoader loader = new FXMLLoader(res);
+            FXMLLoader loader = new FXMLLoader(ResourceManager.getViewResource("VistaInicio.fxml"));
             Parent root = loader.load();
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = stage.getScene();
             scene.setRoot(root);
-            String css = getClass().getResource("/interfaz/reservadesalas/CSS/EstilosInicio.css").toExternalForm();
-            scene.getStylesheets().clear();
-            scene.getStylesheets().add(css);
+            String css = ResourceManager.getStyleExternalForm("EstilosInicio.css");
+            if (css != null) {
+                scene.getStylesheets().clear();
+                scene.getStylesheets().add(css);
+            }
             root.applyCss();
             stage.setTitle("Starsoft - Mis Reservas");
             stage.show();
 
-            System.out.println("Navegación exitosa: Vista Inicio cargada.");
-
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("Error al cargar la vista de inicio. VERIFICA LA RUTA: " + e.getMessage());
+            System.err.println("Error al cargar la vista de inicio: " + e.getMessage());
         }
     }
 
     @FXML
-    private void handleNuevaReserva(ActionEvent event) {
+    protected void handleNuevaReserva(ActionEvent event) {
         System.out.println("Calendario: Abrir formulario Nueva Reserva");
         
         final String path = "/interfaz/reservadesalas/Vista/VistaNuevaReserva.fxml";
@@ -408,74 +403,172 @@ public class ControladorPrincipal
     }
 
     @FXML
+    private TextField campoSala;
+    @FXML
+    private TextField campoFecha;
+    @FXML
+    private TextField campoHoraInicio;
+    @FXML
+    private TextField campoHoraFin;
+    @FXML
+    private TextField campoMotivo;
+    @FXML
+    private javafx.scene.layout.HBox alertaConflicto;
+    @FXML
+    private Label labelAlerta;
+
+    @FXML
     private void handleConfirmarReserva(ActionEvent event) {
-        System.out.println("Nueva Reserva: Confirmar Reserva (botón clicado)");
+        if (usuarioService.getUsuarioActual() == null) {
+            mostrarAlertaError("Debe iniciar sesión para crear una reserva.");
+            return;
+        }
+
+        if (campoSala == null || campoFecha == null || campoHoraInicio == null || 
+            campoHoraFin == null || campoMotivo == null) {
+            System.err.println("Error: Campos del formulario no encontrados.");
+            return;
+        }
+
+        String salaNombre = campoSala.getText().trim();
+        String fechaStr = campoFecha.getText().trim();
+        String horaInicioStr = campoHoraInicio.getText().trim();
+        String horaFinStr = campoHoraFin.getText().trim();
+        String motivo = campoMotivo.getText().trim();
+
+        if (salaNombre.isEmpty() || fechaStr.isEmpty() || horaInicioStr.isEmpty() || 
+            horaFinStr.isEmpty() || motivo.isEmpty()) {
+            mostrarAlertaError("Por favor, complete todos los campos.");
+            return;
+        }
 
         try {
-            String path = "/interfaz/reservadesalas/Vista/VistaInicio.fxml";
-            java.net.URL res = getClass().getResource(path);
-            if (res == null) throw new IOException("Recurso no encontrado: " + path);
-            FXMLLoader loader = new FXMLLoader(res);
+            interfaz.reservadesalas.Servicio.SalaService salaService = interfaz.reservadesalas.Servicio.SalaService.getInstancia();
+            java.util.Optional<interfaz.reservadesalas.Modelo.Sala> salaOpt = salaService.getTodasLasSalas().stream()
+                    .filter(s -> s.getNombre().equalsIgnoreCase(salaNombre) || s.getId().equalsIgnoreCase(salaNombre))
+                    .findFirst();
+
+            if (!salaOpt.isPresent()) {
+                mostrarAlertaError("Sala no encontrada. Por favor, verifique el nombre.");
+                return;
+            }
+
+            interfaz.reservadesalas.Modelo.Sala sala = salaOpt.get();
+            java.time.LocalDate fecha = java.time.LocalDate.parse(fechaStr);
+            java.time.LocalTime horaInicio = java.time.LocalTime.parse(horaInicioStr);
+            java.time.LocalTime horaFin = java.time.LocalTime.parse(horaFinStr);
+
+            if (horaFin.isBefore(horaInicio) || horaFin.equals(horaInicio)) {
+                mostrarAlertaError("La hora de fin debe ser posterior a la hora de inicio.");
+                return;
+            }
+
+            boolean exito = reservaService.crearReserva(
+                usuarioService.getUsuarioActual(),
+                sala,
+                fecha,
+                horaInicio,
+                horaFin,
+                motivo
+            );
+
+            if (exito) {
+                mostrarAlertaInfo("Reserva creada exitosamente.");
+                cambiarAVistaInicioDesdeEvento(event);
+            } else {
+                mostrarAlertaError("No se pudo crear la reserva. Puede haber un conflicto de horario.");
+            }
+
+        } catch (java.time.format.DateTimeParseException e) {
+            mostrarAlertaError("Formato de fecha u hora inválido. Use YYYY-MM-DD para fecha y HH:MM para hora.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarAlertaError("Error al crear la reserva: " + e.getMessage());
+        }
+    }
+
+    private void cambiarAVistaInicioDesdeEvento(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(ResourceManager.getViewResource("VistaInicio.fxml"));
             Parent root = loader.load();
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = stage.getScene();
             scene.setRoot(root);
-            String css = getClass().getResource("/interfaz/reservadesalas/CSS/EstilosInicio.css").toExternalForm();
-            scene.getStylesheets().clear();
-            scene.getStylesheets().add(css);
+            String css = ResourceManager.getStyleExternalForm("EstilosInicio.css");
+            if (css != null) {
+                scene.getStylesheets().clear();
+                scene.getStylesheets().add(css);
+            }
             root.applyCss();
             stage.setTitle("Starsoft - Mis Reservas");
             stage.show();
-
-            System.out.println("Navegación: retorno a Vista Inicio tras confirmar reserva.");
-
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("Error al confirmar reserva / volver a Inicio: " + e.getMessage());
+            System.err.println("Error al volver a Inicio: " + e.getMessage());
         }
     }
 
-    @FXML
-    private void handleEditAction(ActionEvent event) {
-        System.out.println("Acción: Editar Reserva (Botón Clickeado). Navegando a Modificar Reserva.");
-        
-        final String path = "/interfaz/reservadesalas/Vista/VistaModificarReserva.fxml";
+    protected void mostrarAlertaError(String mensaje) {
+        javafx.scene.control.Alert alerta = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
+        alerta.setTitle("Error");
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
+    }
 
+    protected void mostrarAlertaInfo(String mensaje) {
+        javafx.scene.control.Alert alerta = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+        alerta.setTitle("Éxito");
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
+    }
+
+    @FXML
+    protected void handleEditAction(ActionEvent event) {
         try {
-            System.out.println("DEBUG: Intentando cargar FXML de Modificar Reserva -> " + path);
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
+            FXMLLoader loader = new FXMLLoader(ResourceManager.getViewResource("VistaModificarReserva.fxml"));
             Parent root = loader.load();
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = stage.getScene();
-            String css = getClass().getResource("/interfaz/reservadesalas/CSS/EstilosInicio.css").toExternalForm();
-            scene.getStylesheets().setAll(css);
+            String css = ResourceManager.getStyleExternalForm("EstilosInicio.css");
+            if (css != null) {
+                scene.getStylesheets().setAll(css);
+            }
             scene.setRoot(root);
             stage.setTitle("Starsoft - Modificar Reserva");
             stage.show();
 
-            System.out.println("Navegación exitosa: Vista Modificar Reserva cargada.");
-
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("¡ERROR AL CARGAR VISTA MODIFICAR RESERVA! VERIFICA RUTA: " + e.getMessage());
+            System.err.println("Error al cargar la vista de modificar reserva: " + e.getMessage());
         }
     }
     
     @FXML
-    private void handleGuardarCambios(ActionEvent event) {
-        System.out.println("Acción: Guardar Cambios en Reserva");
+    protected void handleGuardarCambios(ActionEvent event) {
         handleConfirmarReserva(event);
     }
 
     @FXML
-    private void handleCancelAction(ActionEvent event) {
-        System.out.println("Acción: Cancelar Reserva (Botón Clickeado)");
-        try {
-            handleConfirmarReserva(event);
-        } catch (Exception ex) {
-            System.err.println("Error al procesar cancelar: " + ex.getMessage());
+    protected void handleCancelAction(ActionEvent event) {
+        Button sourceButton = (Button) event.getSource();
+        String reservaId = (String) sourceButton.getUserData();
+        
+        if (reservaId != null && usuarioService.getUsuarioActual() != null) {
+            boolean cancelado = reservaService.cancelarReserva(reservaId);
+            if (cancelado) {
+                mostrarAlertaInfo("Reserva cancelada exitosamente.");
+                if (bookingsListContainer != null) {
+                    String filtroActual = tabUpcomingLabel != null && tabUpcomingLabel.getStyleClass().contains("tab-active") ? "upcoming" :
+                                         tabPastLabel != null && tabPastLabel.getStyleClass().contains("tab-active") ? "past" : "all";
+                    loadBookings(filtroActual);
+                }
+            } else {
+                mostrarAlertaError("No se pudo cancelar la reserva.");
+            }
         }
     }
     

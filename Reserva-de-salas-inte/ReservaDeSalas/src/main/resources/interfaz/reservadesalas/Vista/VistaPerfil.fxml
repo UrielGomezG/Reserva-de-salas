@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -16,9 +17,6 @@
       prefHeight="768.0" prefWidth="1024.0" styleClass="background-container"
       xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
 
-    <stylesheets>
-        <String fx:value="@/interfaz/reservadesalas/CSS/EstilosInicio.css" />
-    </stylesheets>
 
     <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="40.0" styleClass="navbar">
         <Label styleClass="logo-text" text="Starsoft" />
@@ -79,10 +77,10 @@
                 <TextField fx:id="matriculaField" promptText="Tu Matrícula o ID" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                 
                 <Label text="Contraseña" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                <TextField fx:id="passwordField" promptText="********" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                <PasswordField fx:id="passwordField" promptText="********" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
                 <Label text="Confirmar Contraseña" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-                <TextField fx:id="confirmPasswordField" promptText="********" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <PasswordField fx:id="confirmPasswordField" promptText="********" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                 
             </GridPane>
 

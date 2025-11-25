@@ -1,8 +1,7 @@
 package interfaz.reservadesalas.Lanzador;
 
 import java.io.IOException;
-import java.net.URL;
-
+import interfaz.reservadesalas.util.ResourceManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,27 +11,22 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     @Override
-    public void start(Stage escenarioPrincipal) throws IOException {
+    public void start(Stage primaryStage) throws IOException {
+        FXMLLoader loader = new FXMLLoader(ResourceManager.getViewResource("VistaLogin.fxml"));
+        Parent root = loader.load();
         
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/interfaz/reservadesalas/Vista/VistaLogin.fxml"));
-        Parent raiz = loader.load();
-        
-        URL cssUrl = getClass().getResource("/interfaz/reservadesalas/CSS/EstilosLogin.css");
-        if (cssUrl == null) {
-            cssUrl = Thread.currentThread().getContextClassLoader().getResource("interfaz/reservadesalas/CSS/EstilosLogin.css");
-        }
-        String css = (cssUrl != null) ? cssUrl.toExternalForm() : null;
-        
-        Scene escena = new Scene(raiz, 800, 600);
-        if (css != null) {
-            escena.getStylesheets().add(css);
+        Scene scene = new Scene(root, 800, 600);
+        // Cargar CSS usando ResourceManager
+        String css = ResourceManager.getStyleExternalForm("EstilosLogin.css");
+        if (css != null && !scene.getStylesheets().contains(css)) {
+            scene.getStylesheets().add(css);
         }
         
-        escenarioPrincipal.setTitle("Starsoft - Iniciar Sesión");
-        escenarioPrincipal.setScene(escena);
-        escenarioPrincipal.setMinHeight(500);
-        escenarioPrincipal.setMinWidth(700);
-        escenarioPrincipal.show();
+        primaryStage.setTitle("Starsoft - Sistema de Reservas");
+        primaryStage.setScene(scene);
+        primaryStage.setMinHeight(500);
+        primaryStage.setMinWidth(700);
+        primaryStage.show();
     }
 
     public static void main(String[] args) {

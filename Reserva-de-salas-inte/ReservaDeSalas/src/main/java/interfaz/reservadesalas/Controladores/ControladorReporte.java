@@ -16,6 +16,7 @@ public class ControladorReporte extends ControladorPrincipal {
 
     @FXML
     public void initialize() {
+        super.initialize();
         System.out.println("Controlador Reporte inicializado. Listo para recibir incidentes.");
     }
 
@@ -31,26 +32,71 @@ public class ControladorReporte extends ControladorPrincipal {
 
     @FXML
     private void handleSelectIncidente(MouseEvent event) {
-        VBox card = (VBox) event.getSource();
-        Label incidentLabel = (Label) card.getChildren().get(1);
-        String nuevoTipo = incidentLabel.getText();
-        VBox parentVBox = (VBox) card.getParent().getParent(); 
-        GridPane incidentGrid = (GridPane) parentVBox.getChildren().get(1);
-        
-        for (javafx.scene.Node node : incidentGrid.getChildren()) {
-            if (node instanceof VBox) {
-                node.getStyleClass().remove("incident-card-selected");
+        try {
+            VBox card = (VBox) event.getSource();
+            if (card == null || card.getChildren().size() < 2) {
+                System.err.println("Error: Estructura de tarjeta de incidente inválida.");
+                return;
             }
+            
+            javafx.scene.Node labelNode = card.getChildren().get(1);
+            if (!(labelNode instanceof Label)) {
+                System.err.println("Error: No se encontró el label del incidente.");
+                return;
+            }
+            
+            Label incidentLabel = (Label) labelNode;
+            String nuevoTipo = incidentLabel.getText();
+            
+            javafx.scene.Node parent = card.getParent();
+            if (parent == null) {
+                System.err.println("Error: No se encontró el padre de la tarjeta.");
+                return;
+            }
+            
+            javafx.scene.Node grandParent = parent.getParent();
+            if (!(grandParent instanceof VBox)) {
+                System.err.println("Error: Estructura de contenedor inválida.");
+                return;
+            }
+            
+            VBox parentVBox = (VBox) grandParent;
+            if (parentVBox.getChildren().size() < 2) {
+                System.err.println("Error: Estructura de contenedor incompleta.");
+                return;
+            }
+            
+            javafx.scene.Node gridNode = parentVBox.getChildren().get(1);
+            if (!(gridNode instanceof GridPane)) {
+                System.err.println("Error: No se encontró el grid de incidentes.");
+                return;
+            }
+            
+            GridPane incidentGrid = (GridPane) gridNode;
+            
+            for (javafx.scene.Node node : incidentGrid.getChildren()) {
+                if (node instanceof VBox) {
+                    node.getStyleClass().remove("incident-card-selected");
+                }
+            }
+            
+            card.getStyleClass().add("incident-card-selected");
+            
+            tipoIncidenteSeleccionado = nuevoTipo;
+            System.out.println("Incidente seleccionado: " + tipoIncidenteSeleccionado);
+        } catch (Exception e) {
+            System.err.println("Error al seleccionar incidente: " + e.getMessage());
+            e.printStackTrace();
         }
-        
-        card.getStyleClass().add("incident-card-selected");
-        
-        tipoIncidenteSeleccionado = nuevoTipo;
-        System.out.println("Incidente seleccionado: " + tipoIncidenteSeleccionado);
     }
 
     @FXML
     private void handleEntregarReporte(ActionEvent event) {
+        if (descriptionTextArea == null) {
+            System.err.println("ERROR: El área de texto no está inicializada.");
+            return;
+        }
+        
         String descripcion = descriptionTextArea.getText();
         
         if (tipoIncidenteSeleccionado.isEmpty() || descripcion.trim().isEmpty()) {
@@ -66,12 +112,35 @@ public class ControladorReporte extends ControladorPrincipal {
         descriptionTextArea.clear();
         tipoIncidenteSeleccionado = "";
         
-        VBox parentVBox = (VBox) descriptionTextArea.getParent().getParent(); 
-        GridPane incidentGrid = (GridPane) parentVBox.getChildren().get(1);
-        for (javafx.scene.Node node : incidentGrid.getChildren()) {
-            if (node instanceof VBox) {
-                node.getStyleClass().remove("incident-card-selected");
+        try {
+            javafx.scene.Node parent = descriptionTextArea.getParent();
+            if (parent == null) {
+                return;
             }
+            
+            javafx.scene.Node grandParent = parent.getParent();
+            if (!(grandParent instanceof VBox)) {
+                return;
+            }
+            
+            VBox parentVBox = (VBox) grandParent;
+            if (parentVBox.getChildren().size() < 2) {
+                return;
+            }
+            
+            javafx.scene.Node gridNode = parentVBox.getChildren().get(1);
+            if (!(gridNode instanceof GridPane)) {
+                return;
+            }
+            
+            GridPane incidentGrid = (GridPane) gridNode;
+            for (javafx.scene.Node node : incidentGrid.getChildren()) {
+                if (node instanceof VBox) {
+                    node.getStyleClass().remove("incident-card-selected");
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error al limpiar selección de incidentes: " + e.getMessage());
         }
     }
     

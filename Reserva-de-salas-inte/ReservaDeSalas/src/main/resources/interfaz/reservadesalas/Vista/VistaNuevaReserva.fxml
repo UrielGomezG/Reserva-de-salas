@@ -17,9 +17,6 @@
       prefHeight="768.0" prefWidth="1024.0" styleClass="background-container"
       xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
 
-    <stylesheets>
-        <String fx:value="@/interfaz/reservadesalas/CSS/EstilosInicio.css" />
-    </stylesheets>
 
     <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="40.0" styleClass="navbar">
         <Label styleClass="logo-text" text="Starsoft" />
@@ -69,7 +66,7 @@
                 <VBox spacing="5.0">
                     <Label text="Sala" styleClass="form-label" />
                     <HBox styleClass="form-input-container">
-                        <TextField promptText="Selecciona una sala" styleClass="form-input" HBox.hgrow="ALWAYS" />
+                        <TextField fx:id="campoSala" promptText="Selecciona una sala" styleClass="form-input" HBox.hgrow="ALWAYS" />
                         <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true" styleClass="input-icon">
                             <image><Image url="@menu_icon.png" /></image>
                         </ImageView>
@@ -79,7 +76,7 @@
                 <VBox spacing="5.0">
                     <Label text="Fecha" styleClass="form-label" />
                     <HBox styleClass="form-input-container">
-                        <TextField promptText="Selecciona una fecha" styleClass="form-input" HBox.hgrow="ALWAYS" />
+                        <TextField fx:id="campoFecha" promptText="YYYY-MM-DD (ej: 2024-12-25)" styleClass="form-input" HBox.hgrow="ALWAYS" />
                         <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true" styleClass="input-icon">
                             <image><Image url="@calendar_icon.png" /></image>
                         </ImageView>
@@ -87,9 +84,9 @@
                 </VBox>
 
                 <VBox spacing="5.0">
-                    <Label text="Hora" styleClass="form-label" />
+                    <Label text="Hora Inicio" styleClass="form-label" />
                     <HBox styleClass="form-input-container">
-                        <TextField promptText="Selecciona una hora" styleClass="form-input" HBox.hgrow="ALWAYS" />
+                        <TextField fx:id="campoHoraInicio" promptText="HH:MM (ej: 10:00)" styleClass="form-input" HBox.hgrow="ALWAYS" />
                         <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true" styleClass="input-icon">
                             <image><Image url="@clock_icon.png" /></image>
                         </ImageView>
@@ -97,11 +94,11 @@
                 </VBox>
 
                 <VBox spacing="5.0">
-                    <Label text="Cantidad de personas" styleClass="form-label" />
+                    <Label text="Hora Fin" styleClass="form-label" />
                     <HBox styleClass="form-input-container">
-                        <TextField promptText="Indica la cantidad" styleClass="form-input" HBox.hgrow="ALWAYS" />
+                        <TextField fx:id="campoHoraFin" promptText="HH:MM (ej: 11:00)" styleClass="form-input" HBox.hgrow="ALWAYS" />
                         <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true" styleClass="input-icon">
-                            <image><Image url="@up_arrow_icon.png" /></image>
+                            <image><Image url="@clock_icon.png" /></image>
                         </ImageView>
                     </HBox>
                 </VBox>
@@ -109,15 +106,15 @@
                 <VBox spacing="5.0">
                     <Label text="Motivo" styleClass="form-label" />
                     <HBox styleClass="form-input-container">
-                        <TextField promptText="Describe el motivo" styleClass="form-input" HBox.hgrow="ALWAYS" />
+                        <TextField fx:id="campoMotivo" promptText="Describe el motivo" styleClass="form-input" HBox.hgrow="ALWAYS" />
                         <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true" styleClass="input-icon">
                             <image><Image url="@note_icon.png" /></image>
                         </ImageView>
                     </HBox>
                 </VBox>
                 
-                <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="alert-warning-container">
-                    <Label styleClass="alert-warning-text" text="Conflicto de Horario: La sala ya está reservada de 10:00 a 11:00. Por favor, elige otro horario." />
+                <HBox fx:id="alertaConflicto" alignment="CENTER_LEFT" spacing="10.0" styleClass="alert-warning-container" visible="false" managed="false">
+                    <Label fx:id="labelAlerta" styleClass="alert-warning-text" text="" />
                 </HBox>
             </VBox>
 

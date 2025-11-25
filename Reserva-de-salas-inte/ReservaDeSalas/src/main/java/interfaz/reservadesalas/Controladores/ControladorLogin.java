@@ -1,12 +1,14 @@
 package interfaz.reservadesalas.Controladores;
 
 import java.io.IOException;
-import java.net.URL;
-
+import interfaz.reservadesalas.Servicio.UsuarioService;
+import interfaz.reservadesalas.util.ResourceManager;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -19,73 +21,84 @@ public class ControladorLogin {
     @FXML private Button botonLogin;
     @FXML private Button botonRegistro;
 
+    private UsuarioService usuarioService;
+
     @FXML
     public void initialize() {
+        usuarioService = UsuarioService.getInstancia();
         System.out.println("Controlador de Login inicializado.");
     }
 
     @FXML
     protected void alPulsarBotonLogin() {
         
-        String email = campoEmail.getText();
+        String email = campoEmail.getText().trim();
         String password = campoContrasena.getText();
 
         if (email.isEmpty() || password.isEmpty()) {
-            System.out.println("Error: Email o contraseña están vacíos.");
-        } else {
-            boolean loginExitoso = true; 
-            
-            if (loginExitoso) {
-                System.out.println("Login exitoso. Navegando a la pantalla de Inicio.");
-                try {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/interfaz/reservadesalas/Vista/VistaInicio.fxml"));
-                    Parent raizInicio = loader.load(); 
-
-                    Scene escenaActual = botonLogin.getScene();
-                    
-                    Scene escenaInicio = new Scene(raizInicio, escenaActual.getWidth(), escenaActual.getHeight());
-
-                    URL cssUrl = getClass().getResource("/interfaz/reservadesalas/CSS/EstilosInicio.css");
-                    if (cssUrl != null) {
-                        escenaInicio.getStylesheets().add(cssUrl.toExternalForm());
-                    } else {
-                        System.out.println("Advertencia: No se pudo encontrar 'EstilosInicio.css'.");
-                    }
-
-                    Stage escenario = (Stage) escenaActual.getWindow();
-                    escenario.setScene(escenaInicio);
-                    escenario.setTitle("Starsoft - Mis Reservas");
-
-                } catch (IOException e) {
-                    System.err.println("Error al cargar la vista de inicio (VistaInicio.fxml): " + e.getMessage());
-                    e.printStackTrace();
-                }
-            } else {
-                 System.out.println("Error de credenciales. Intente de nuevo.");
-            }
+            mostrarAlerta(AlertType.WARNING, "Campos vacíos", "Por favor, complete todos los campos.");
+            return;
         }
+
+        if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            mostrarAlerta(AlertType.WARNING, "Email inválido", "Por favor, ingrese un email válido.");
+            return;
+        }
+
+        boolean loginExitoso = usuarioService.iniciarSesion(email, password);
+        
+        if (loginExitoso) {
+            try {
+                FXMLLoader loader = new FXMLLoader(ResourceManager.getViewResource("VistaInicio.fxml"));
+                Parent raizInicio = loader.load(); 
+
+                Scene escenaActual = botonLogin.getScene();
+                Scene escenaInicio = new Scene(raizInicio, escenaActual.getWidth(), escenaActual.getHeight());
+
+                String css = ResourceManager.getStyleExternalForm("EstilosInicio.css");
+                if (css != null) {
+                    escenaInicio.getStylesheets().add(css);
+                }
+
+                Stage escenario = (Stage) escenaActual.getWindow();
+                escenario.setScene(escenaInicio);
+                escenario.setTitle("Starsoft - Mis Reservas");
+
+            } catch (IOException e) {
+                System.err.println("Error al cargar la vista de inicio: " + e.getMessage());
+                e.printStackTrace();
+            }
+        } else {
+            mostrarAlerta(AlertType.ERROR, "Error de autenticación", "Email o contraseña incorrectos. Intente de nuevo.");
+            campoContrasena.clear();
+        }
+    }
+
+    private void mostrarAlerta(AlertType tipo, String titulo, String mensaje) {
+        Alert alerta = new Alert(tipo);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
     }
     
     @FXML
     protected void alPulsarBotonRegistro() {
-        System.out.println("Navegando a la pantalla de Registro...");
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/interfaz/reservadesalas/Vista/VistaRegistro.fxml"));
+            FXMLLoader loader = new FXMLLoader(ResourceManager.getViewResource("VistaRegistro.fxml"));
             Parent raizRegistro = loader.load();
 
             Scene escenaActual = botonRegistro.getScene();
             Scene escenaRegistro = new Scene(raizRegistro, escenaActual.getWidth(), escenaActual.getHeight());
 
-            URL cssUrl = getClass().getResource("/interfaz/reservadesalas/CSS/EstilosRegistro.css");
-            if (cssUrl != null) {
-                escenaRegistro.getStylesheets().add(cssUrl.toExternalForm());
-            } else {
-                System.out.println("Advertencia: No se pudo encontrar 'EstilosRegistro.css'");
+            String css = ResourceManager.getStyleExternalForm("EstilosRegistro.css");
+            if (css != null) {
+                escenaRegistro.getStylesheets().add(css);
             }
 
             Stage escenario = (Stage) escenaActual.getWindow();
             escenario.setScene(escenaRegistro);
-            escenario.setTitle("RoomReserve - Crear Cuenta");
+            escenario.setTitle("Starsoft - Crear Cuenta");
 
         } catch (IOException e) {
             System.err.println("Error al cargar la vista de registro: " + e.getMessage());

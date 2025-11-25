@@ -15,9 +15,6 @@
       prefHeight="768.0" prefWidth="1024.0" styleClass="background-container"
       xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
 
-    <stylesheets>
-        <String fx:value="@/interfaz/reservadesalas/CSS/EstilosInicio.css" />
-    </stylesheets>
 
     <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="40.0" styleClass="navbar">
         <Label styleClass="logo-text" text="Starsoft" />

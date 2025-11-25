@@ -14,43 +14,48 @@ public class ControladorReservas extends ControladorPrincipal{
 
     @FXML
     public void initialize() {
+        super.initialize();
         System.out.println("Controlador de Reservas (VistaInicio) inicializado.");
     }
 
     @FXML
     private void handleFilterUpcoming(MouseEvent event) {
         System.out.println("Filtro: Mostrando reservas futuras (Upcoming).");
-        updateTabStyle((Label) event.getSource());
+        if (tabUpcomingLabel != null && tabUpcomingSeparator != null) {
+            activateTab(tabUpcomingLabel, tabUpcomingSeparator);
+        }
+        loadBookings("upcoming");
     }
 
     @FXML
     private void handleFilterPast(MouseEvent event) {
         System.out.println("Filtro: Mostrando reservas pasadas (Past).");
-        updateTabStyle((Label) event.getSource());
+        if (tabPastLabel != null && tabPastSeparator != null) {
+            activateTab(tabPastLabel, tabPastSeparator);
+        }
+        loadBookings("past");
     }
 
     @FXML
     private void handleFilterAll(MouseEvent event) {
         System.out.println("Filtro: Mostrando todas las reservas (All).");
-        updateTabStyle((Label) event.getSource());
-    }
-
-    private void updateTabStyle(Label activeTab) {
-        tabUpcoming.getStyleClass().setAll("tab-inactive");
-        tabPast.getStyleClass().setAll("tab-inactive");
-        tabAll.getStyleClass().setAll("tab-inactive");
-        activeTab.getStyleClass().setAll("tab-active");
+        if (tabAllLabel != null && tabAllSeparator != null) {
+            activateTab(tabAllLabel, tabAllSeparator);
+        }
+        loadBookings("all");
     }
 
     @FXML
-    private void handleEditAction(ActionEvent event) {
+    protected void handleEditAction(ActionEvent event) {
         Button sourceButton = (Button) event.getSource();
         System.out.println("Acción: Editar reserva. Botón presionado: " + sourceButton.getText());
+        super.handleEditAction(event);
     }
 
     @FXML
-    private void handleCancelAction(ActionEvent event) {
+    protected void handleCancelAction(ActionEvent event) {
         Button sourceButton = (Button) event.getSource();
         System.out.println("Acción: Cancelar reserva. Botón presionado: " + sourceButton.getText());
+        super.handleCancelAction(event);
     }
 }
