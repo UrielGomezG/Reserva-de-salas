@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ScrollPane?>
+
+<VBox xmlns="http://javafx.com/javafx/21" 
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="interfaz.sara.Controladores.Usuario.ControladorCrearReserva"
+      styleClass="background-container" 
+      VBox.vgrow="ALWAYS" 
+      HBox.hgrow="ALWAYS"
+      spacing="0">
+
+    <!-- Componente Navbar Compartido -->
+    <fx:include fx:id="navbarInclude" 
+                source="../BarraDeNavegacion/ComponenteNavbarUsuario.fxml" 
+                VBox.vgrow="NEVER"/>
+
+    <!-- Contenedor principal del contenido -->
+    <VBox alignment="TOP_CENTER" 
+          spacing="0.0" 
+          styleClass="main-content-wrapper" 
+          VBox.vgrow="ALWAYS">
+        
+        <!-- Banner superior -->
+        <StackPane prefHeight="160.0" 
+                   styleClass="new-reservation-banner" 
+                   VBox.vgrow="NEVER">
+            
+            <VBox alignment="CENTER_LEFT" 
+                  spacing="8.0" 
+                  StackPane.alignment="CENTER_LEFT">
+                <padding>
+                    <Insets left="60.0"/>
+                </padding>
+                
+                <Label styleClass="new-reservation-title" 
+                       text="Nueva Reserva" />
+                
+                <Label styleClass="new-reservation-subtitle" 
+                       text="Completa los detalles para crear tu reserva" />
+            </VBox>
+        </StackPane>
+
+        <!-- Contenedor principal del formulario -->
+        <ScrollPane fitToWidth="true" 
+                   styleClass="scroll-pane-custom" 
+                   VBox.vgrow="ALWAYS">
+            
+            <VBox alignment="TOP_CENTER" 
+                  spacing="0.0">
+                
+                <VBox prefWidth="650.0" 
+                      alignment="TOP_LEFT" 
+                      spacing="0.0" 
+                      styleClass="new-reservation-form-container">
+                    
+                    <padding>
+                        <Insets top="40.0" bottom="40.0"/>
+                    </padding>
+
+                    <!-- Tarjeta del formulario -->
+                    <VBox styleClass="new-reservation-form-card" 
+                          spacing="0.0">
+                        
+                        <VBox spacing="30.0" 
+                              styleClass="form-content-wrapper">
+                            
+                            <!-- Sección: Información de la Sala -->
+                            <VBox spacing="12.0">
+                                <Label styleClass="form-section-title" 
+                                       text="Información de la Sala" />
+                                
+                                <VBox spacing="8.0">
+                                    <Label text="Sala" 
+                                           styleClass="form-label-new" />
+                                    <HBox styleClass="form-input-container-new">
+                                        <ComboBox fx:id="comboSala" 
+                                                  promptText="Selecciona una sala" 
+                                                  styleClass="form-input-new" 
+                                                  HBox.hgrow="ALWAYS"
+                                                  onAction="#manejarCambioSala"/>
+                                    </HBox>
+                                </VBox>
+                            </VBox>
+
+                            <!-- Sección: Fecha y Hora -->
+                            <VBox spacing="12.0">
+                                <Label styleClass="form-section-title" 
+                                       text="Fecha y Hora" />
+                                
+                                <HBox spacing="20.0">
+                                    <!-- Campo de Fecha -->
+                                    <VBox spacing="8.0" 
+                                          HBox.hgrow="ALWAYS">
+                                        <Label text="Fecha" 
+                                               styleClass="form-label-new" />
+                                        <DatePicker fx:id="datePickerFecha" 
+                                                    styleClass="form-date-picker" 
+                                                    HBox.hgrow="ALWAYS"
+                                                    onAction="#manejarCambioFecha"/>
+                                    </VBox>
+                                    
+                                    <!-- Campo de Hora Inicio -->
+                                    <VBox spacing="8.0" 
+                                          HBox.hgrow="ALWAYS" 
+                                          fx:id="contenedorHoraInicio">
+                                        <Label text="Hora Inicio" 
+                                               styleClass="form-label-new" />
+                                        <HBox styleClass="form-input-container-new">
+                                            <ComboBox fx:id="comboHoraInicio" 
+                                                      promptText="Selecciona hora" 
+                                                      styleClass="form-input-new" 
+                                                      HBox.hgrow="ALWAYS"
+                                                      onAction="#manejarCambioHoraInicio"/>
+                                        </HBox>
+                                    </VBox>
+                                    
+                                    <!-- Campo de Hora Fin -->
+                                    <VBox spacing="8.0" 
+                                          HBox.hgrow="ALWAYS" 
+                                          fx:id="contenedorHoraFin">
+                                        <Label text="Hora Fin" 
+                                               styleClass="form-label-new" />
+                                        <HBox styleClass="form-input-container-new">
+                                            <ComboBox fx:id="comboHoraFin" 
+                                                      promptText="Selecciona hora" 
+                                                      styleClass="form-input-new" 
+                                                      HBox.hgrow="ALWAYS"
+                                                      onAction="#manejarCambioHoraFin"/>
+                                        </HBox>
+                                    </VBox>
+                                </HBox>
+                                
+                                <!-- Mensaje cuando no hay disponibilidad -->
+                                <VBox fx:id="mensajeSinDisponibilidad" 
+                                      spacing="8.0" 
+                                      visible="false" 
+                                      managed="false">
+                                    <Label styleClass="alert-warning-text-new" 
+                                           text="No hay horarios disponibles para la fecha y sala seleccionadas." 
+                                           wrapText="true" />
+                                </VBox>
+                            </VBox>
+
+                            <!-- Sección: Detalles Adicionales -->
+                            <VBox spacing="12.0">
+                                <Label styleClass="form-section-title" 
+                                       text="Detalles Adicionales" />
+                                
+                                <VBox spacing="8.0">
+                                    <Label text="Motivo de la Reserva" 
+                                           styleClass="form-label-new" />
+                                    <HBox styleClass="form-input-container-new">
+                                        <TextField fx:id="campoMotivo" 
+                                                   promptText="Describe el motivo de tu reserva..." 
+                                                   styleClass="form-input-new" 
+                                                   HBox.hgrow="ALWAYS" />
+                                    </HBox>
+                                </VBox>
+                                
+                                <VBox spacing="8.0">
+                                    <Label text="Cantidad de Personas" 
+                                           styleClass="form-label-new" />
+                                    <HBox styleClass="form-input-container-new">
+                                        <TextField fx:id="campoCantidadPersonas" 
+                                                   promptText="Número de personas" 
+                                                   styleClass="form-input-new" 
+                                                   HBox.hgrow="ALWAYS" />
+                                    </HBox>
+                                </VBox>
+                            </VBox>
+                            
+                            <!-- Mensaje de error/confirmación -->
+                            <Label fx:id="mensajeError" 
+                                   styleClass="alert-warning-text-new"
+                                   visible="false"
+                                   managed="false"
+                                   wrapText="true"/>
+
+                        </VBox>
+                    </VBox>
+
+                    <!-- Botones de acción -->
+                    <HBox alignment="CENTER_RIGHT" 
+                          spacing="15.0" 
+                          styleClass="form-actions-container">
+                        <Button text="Cancelar" 
+                                styleClass="button-secondary-new" 
+                                onAction="#manejarCancelar" />
+                        <Button text="Confirmar Reserva" 
+                                styleClass="button-primary-new" 
+                                onAction="#manejarConfirmarReserva" />
+                    </HBox>
+
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </VBox>
+</VBox>
+

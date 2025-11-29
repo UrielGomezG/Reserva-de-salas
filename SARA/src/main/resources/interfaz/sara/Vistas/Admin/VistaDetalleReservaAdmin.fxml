@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="interfaz.sara.Controladores.Admin.ControladorDetalleReservaAdmin"
+      styleClass="root-container-admin" spacing="0">
+    
+    <!-- Componente Sidebar Compartido -->
+    <fx:include fx:id="sidebarInclude" source="ComponenteSidebarAdmin.fxml" HBox.hgrow="NEVER"/>
+    
+    <ScrollPane fitToWidth="true" styleClass="scroll-pane-custom-admin" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+        <VBox styleClass="contenido-principal-admin" alignment="TOP_CENTER">
+            <VBox styleClass="contenido-ancho-maximo-admin" spacing="24" VBox.vgrow="ALWAYS">
+                <padding><Insets top="20" right="40" bottom="20" left="40"/></padding>
+                
+                <HBox alignment="CENTER_LEFT" spacing="20">
+                    <Button text="← Volver" styleClass="boton-volver-admin" onAction="#manejarVolver"/>
+                    <Label text="Detalle de Reserva" styleClass="titulo-pagina-admin" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                </HBox>
+                
+                <Region minHeight="24"/>
+                
+                <!-- Tarjeta de información principal -->
+                <VBox styleClass="tarjeta-perfil-admin" spacing="24">
+                    <HBox alignment="CENTER_LEFT" spacing="16">
+                        <VBox spacing="4">
+                            <Label text="Sala:" styleClass="texto-etiqueta-admin"/>
+                            <Label fx:id="lblNombreSala" text="Cargando..." styleClass="texto-valor-admin"/>
+                        </VBox>
+                        <Region minWidth="32"/>
+                        <VBox spacing="4">
+                            <Label text="Estado:" styleClass="texto-etiqueta-admin"/>
+                            <Label fx:id="lblEstado" text="Cargando..." styleClass="texto-valor-admin"/>
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <VBox spacing="4" alignment="CENTER_RIGHT">
+                            <Label fx:id="lblEstadoBadge" text="Cargando..." styleClass="tarjeta-reserva-estado-pending"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+                
+                <!-- Grid de detalles -->
+                <GridPane styleClass="grid-detalles-admin" hgap="24" vgap="0">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="NEVER" minWidth="150"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                    </columnConstraints>
+                    
+                    <VBox styleClass="fila-detalle-admin" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2">
+                        <Label text="Solicitado por" styleClass="texto-etiqueta-admin"/>
+                        <Label fx:id="lblSolicitadoPor" text="..." styleClass="texto-valor-admin"/>
+                    </VBox>
+                    
+                    <VBox styleClass="fila-detalle-admin" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
+                        <Label text="Fecha de Inicio" styleClass="texto-etiqueta-admin"/>
+                        <Label fx:id="lblFechaInicio" text="..." styleClass="texto-valor-admin"/>
+                    </VBox>
+                    
+                    <VBox styleClass="fila-detalle-admin" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2">
+                        <Label text="Fecha de Fin" styleClass="texto-etiqueta-admin"/>
+                        <Label fx:id="lblFechaFin" text="..." styleClass="texto-valor-admin"/>
+                    </VBox>
+                    
+                    <VBox styleClass="fila-detalle-admin" GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="2">
+                        <Label text="Cantidad de Personas" styleClass="texto-etiqueta-admin"/>
+                        <Label fx:id="lblCantidadPersonas" text="..." styleClass="texto-valor-admin"/>
+                    </VBox>
+                    
+                    <VBox styleClass="fila-detalle-admin" GridPane.columnIndex="0" GridPane.rowIndex="4" GridPane.columnSpan="2">
+                        <Label text="Motivo" styleClass="texto-etiqueta-admin"/>
+                        <Label fx:id="lblMotivo" text="..." styleClass="texto-valor-admin" wrapText="true"/>
+                    </VBox>
+                    
+                    <VBox fx:id="contenedorCancelacion" styleClass="fila-detalle-admin" GridPane.columnIndex="0" GridPane.rowIndex="5" GridPane.columnSpan="2" visible="false" managed="false">
+                        <Label text="Motivo de Cancelación" styleClass="texto-etiqueta-admin"/>
+                        <Label fx:id="lblMotivoCancelacion" text="..." styleClass="texto-valor-admin" wrapText="true"/>
+                    </VBox>
+                </GridPane>
+                
+                <!-- Contenedor de botones de acción -->
+                <VBox styleClass="contenedor-botones-admin" spacing="16" visible="true">
+                    <Label fx:id="lblMensajeEstado" styleClass="mensaje-estado-admin" visible="false" managed="false"/>
+                    
+                    <HBox spacing="16" alignment="CENTER_LEFT">
+                        <Button fx:id="btnAutorizar" text="Autorizar Reserva" styleClass="boton-accion-primario-admin" onAction="#manejarAutorizar" visible="true"/>
+                        <Button fx:id="btnCancelar" text="Cancelar Reserva" styleClass="boton-accion-secundario-admin" onAction="#manejarCancelar" visible="true"/>
+                    </HBox>
+                    
+                    <VBox fx:id="contenedorCancelacionAdmin" spacing="8" visible="false" managed="false">
+                        <Label text="Motivo de cancelación (opcional):" styleClass="texto-seccion-admin"/>
+                        <TextArea fx:id="campoMotivoCancelacion" styleClass="input-field-admin" prefRowCount="3" wrapText="true" promptText="Ingrese el motivo de cancelación..."/>
+                        <Button text="Confirmar Cancelación" styleClass="boton-accion-secundario-admin" onAction="#manejarConfirmarCancelacion"/>
+                        <Button text="Cancelar" styleClass="boton-volver-admin" onAction="#manejarCancelarCancelacion"/>
+                    </VBox>
+                </VBox>
+            </VBox>
+        </VBox>
+    </ScrollPane>
+</HBox>
+

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" 
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="interfaz.sara.Controladores.Usuario.ControladorNuevaReserva"
+      styleClass="background-container" 
+      VBox.vgrow="ALWAYS" 
+      HBox.hgrow="ALWAYS"
+      spacing="0">
+
+    <!-- Componente Navbar Compartido -->
+    <fx:include fx:id="navbarInclude" 
+                source="../BarraDeNavegacion/ComponenteNavbarUsuario.fxml" 
+                VBox.vgrow="NEVER"/>
+
+    <!-- Contenedor principal del contenido -->
+    <VBox alignment="TOP_CENTER" 
+          spacing="0.0" 
+          styleClass="main-content-wrapper" 
+          VBox.vgrow="ALWAYS">
+        
+        <ScrollPane fitToWidth="true" 
+                   styleClass="scroll-pane-custom" 
+                   VBox.vgrow="ALWAYS">
+            
+            <!-- Área de contenido que ocupa todo el espacio disponible -->
+            <VBox VBox.vgrow="ALWAYS"
+                  HBox.hgrow="ALWAYS"
+                  alignment="TOP_CENTER" 
+                  spacing="20.0" 
+                  styleClass="content-area-calendar">
+                
+                <padding>
+                    <Insets top="20.0" right="20.0" bottom="40.0" left="20.0"/>
+                </padding>
+
+                <!-- Título de la página -->
+                <Label styleClass="title" text="Calendario de Reservas" />
+
+                <!-- Contenedor del calendario y botón -->
+                <HBox alignment="TOP_CENTER" 
+                      spacing="20.0" 
+                      styleClass="calendar-view"
+                      HBox.hgrow="ALWAYS">
+                    
+                    <!-- Contenedor del calendario mensual -->
+                    <VBox alignment="TOP_CENTER" 
+                          spacing="15.0" 
+                          styleClass="month-container">
+                        
+                        <!-- Encabezado del mes con navegación -->
+                        <HBox alignment="CENTER" 
+                              spacing="10.0" 
+                              styleClass="month-header">
+                            <Label styleClass="nav-arrow" 
+                                   text="&lt;" 
+                                   onMouseClicked="#manejarMesAnterior"/>
+                            <Label fx:id="labelMesActual" 
+                                   styleClass="month-label" 
+                                   text="Enero 2024" />
+                            <Label styleClass="nav-arrow" 
+                                   text="&gt;" 
+                                   onMouseClicked="#manejarMesSiguiente"/>
+                        </HBox>
+
+                        <!-- Grid con nombres de días de la semana -->
+                        <GridPane styleClass="day-names-grid">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            </columnConstraints>
+                            <Label styleClass="day-name" text="D" GridPane.columnIndex="0" />
+                            <Label styleClass="day-name" text="L" GridPane.columnIndex="1" />
+                            <Label styleClass="day-name" text="M" GridPane.columnIndex="2" />
+                            <Label styleClass="day-name" text="M" GridPane.columnIndex="3" />
+                            <Label styleClass="day-name" text="J" GridPane.columnIndex="4" />
+                            <Label styleClass="day-name" text="V" GridPane.columnIndex="5" />
+                            <Label styleClass="day-name" text="S" GridPane.columnIndex="6" />
+                        </GridPane>
+
+                        <!-- Grid del calendario con los días del mes -->
+                        <GridPane fx:id="gridCalendario" 
+                                  styleClass="calendar-grid">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="NEVER" minWidth="60.0" prefWidth="60.0" maxWidth="60.0" />
+                                <ColumnConstraints hgrow="NEVER" minWidth="60.0" prefWidth="60.0" maxWidth="60.0" />
+                                <ColumnConstraints hgrow="NEVER" minWidth="60.0" prefWidth="60.0" maxWidth="60.0" />
+                                <ColumnConstraints hgrow="NEVER" minWidth="60.0" prefWidth="60.0" maxWidth="60.0" />
+                                <ColumnConstraints hgrow="NEVER" minWidth="60.0" prefWidth="60.0" maxWidth="60.0" />
+                                <ColumnConstraints hgrow="NEVER" minWidth="60.0" prefWidth="60.0" maxWidth="60.0" />
+                                <ColumnConstraints hgrow="NEVER" minWidth="60.0" prefWidth="60.0" maxWidth="60.0" />
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints minHeight="60.0" prefHeight="60.0" vgrow="NEVER" />
+                                <RowConstraints minHeight="60.0" prefHeight="60.0" vgrow="NEVER" />
+                                <RowConstraints minHeight="60.0" prefHeight="60.0" vgrow="NEVER" />
+                                <RowConstraints minHeight="60.0" prefHeight="60.0" vgrow="NEVER" />
+                                <RowConstraints minHeight="60.0" prefHeight="60.0" vgrow="NEVER" />
+                                <RowConstraints minHeight="60.0" prefHeight="60.0" vgrow="NEVER" />
+                            </rowConstraints>
+                        </GridPane>
+                    </VBox>
+
+                    <!-- Botón para crear nueva reserva -->
+                    <VBox alignment="BOTTOM_RIGHT" 
+                          HBox.hgrow="ALWAYS">
+                        <Button styleClass="btn-primary-calendar" 
+                                text="+ Nueva Reserva" 
+                                onAction="#manejarNuevaReserva"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Separador -->
+                <VBox styleClass="separator" />
+
+                <!-- Encabezado de disponibilidad de salas -->
+                <HBox alignment="CENTER_LEFT" 
+                      spacing="10.0">
+                    <Label styleClass="subtitle" 
+                           text="Disponibilidad de Salas" />
+                    <Label fx:id="labelFechaSeleccionada" 
+                           styleClass="subtitle-fecha" 
+                           text="Seleccione una fecha" />
+                </HBox>
+
+                <!-- Contenedor para mostrar la disponibilidad de salas -->
+                <VBox fx:id="contenedorDisponibilidad" 
+                      styleClass="availability-table" 
+                      spacing="15.0"
+                      VBox.vgrow="ALWAYS">
+                    <!-- Las salas y sus horarios se cargarán dinámicamente aquí -->
+                </VBox>
+                
+            </VBox>
+            
+        </ScrollPane>
+    </VBox>
+</VBox>
+

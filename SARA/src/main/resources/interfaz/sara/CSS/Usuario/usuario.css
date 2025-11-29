@@ -1,0 +1,1100 @@
+/* ============================================
+   Estilos para las Vistas de Usuario - SARA
+   ============================================ */
+
+/* Contenedor principal */
+.background-container {
+    -fx-background-color: #f5f5f5;
+    -fx-font-family: "Segoe UI", "Arial", sans-serif;
+}
+
+/* Contenedor principal del contenido */
+.main-content-wrapper {
+    -fx-background-color: #f5f5f5;
+    -fx-pref-width: 100%;
+    -fx-pref-height: 100%;
+}
+
+/* ScrollPane personalizado */
+.scroll-pane-custom {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-pref-width: 100%;
+    -fx-pref-height: 100%;
+}
+
+.scroll-pane-custom > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane-custom > .content {
+    -fx-pref-width: 100%;
+}
+
+/* Área de contenido */
+.content-area {
+    -fx-background-color: #ffffff;
+    -fx-padding: 20px;
+    -fx-spacing: 20px;
+    -fx-pref-width: 100%;
+    -fx-pref-height: 100%;
+}
+
+/* Título de página */
+.title {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e293b;
+}
+
+/* Contenedor de pestañas */
+.tabs-container {
+    -fx-padding: 0 0 10px 0;
+}
+
+/* Pestañas activas */
+.tab-active {
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #3b82f6;
+    -fx-cursor: hand;
+}
+
+/* Pestañas inactivas */
+.tab-inactive {
+    -fx-font-size: 16px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #64748b;
+    -fx-cursor: hand;
+}
+
+.tab-inactive:hover {
+    -fx-text-fill: #3b82f6;
+}
+
+/* Separador de pestañas */
+.tabs-underline {
+    -fx-background-color: #3b82f6;
+    -fx-pref-height: 2px;
+}
+
+/* Separador general */
+.separator-tabs {
+    -fx-background-color: #e2e8f0;
+    -fx-pref-height: 1px;
+}
+
+/* Lista de reservas */
+.bookings-list {
+    -fx-spacing: 20px;
+    -fx-padding: 10px 0;
+    -fx-pref-width: 100%;
+    -fx-pref-height: 100%;
+}
+
+/* Mensaje cuando no hay reservas */
+.empty-message {
+    -fx-font-size: 16px;
+    -fx-text-fill: #94a3b8;
+    -fx-padding: 40px;
+}
+
+/* ============================================
+   Estilos para las Tarjetas de Reservas
+   ============================================ */
+
+.booking-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 8px;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 5, 0, 0, 1);
+}
+
+.booking-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 8, 0, 0, 2);
+    -fx-border-color: #cbd5e0;
+}
+
+.booking-room-name {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e293b;
+}
+
+.booking-date {
+    -fx-font-size: 14px;
+    -fx-text-fill: #475569;
+}
+
+.booking-info {
+    -fx-font-size: 14px;
+    -fx-text-fill: #64748b;
+}
+
+.booking-status-pending {
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #f59e0b;
+    -fx-background-color: #fef3c7;
+    -fx-background-radius: 12px;
+    -fx-padding: 4px 12px;
+}
+
+.booking-status-confirmed {
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #10b981;
+    -fx-background-color: #d1fae5;
+    -fx-background-radius: 12px;
+    -fx-padding: 4px 12px;
+}
+
+.booking-status-cancelled {
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #ef4444;
+    -fx-background-color: #fee2e2;
+    -fx-background-radius: 12px;
+    -fx-padding: 4px 12px;
+}
+
+.booking-status-completed {
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #6b7280;
+    -fx-background-color: #f3f4f6;
+    -fx-background-radius: 12px;
+    -fx-padding: 4px 12px;
+}
+
+.booking-status-unknown {
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #64748b;
+    -fx-background-color: #f1f5f9;
+    -fx-background-radius: 12px;
+    -fx-padding: 4px 12px;
+}
+
+.booking-cancellation {
+    -fx-font-size: 13px;
+    -fx-text-fill: #dc2626;
+    -fx-font-style: italic;
+    -fx-padding: 8px 0 0 0;
+}
+
+/* ============================================
+   Estilos para el Navbar
+   ============================================ */
+
+.navbar-container {
+    -fx-background-color: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 2);
+}
+
+.navbar-content {
+    -fx-background-color: #ffffff;
+}
+
+.navbar-logo {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #3b82f6;
+}
+
+.navbar-separator {
+    -fx-background-color: #e2e8f0;
+    -fx-pref-width: 1px;
+    -fx-pref-height: 30px;
+}
+
+.navbar-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #64748b;
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+
+.navbar-button:hover {
+    -fx-text-fill: #3b82f6;
+    -fx-background-color: #eff6ff;
+}
+
+.navbar-button-active {
+    -fx-background-color: transparent;
+    -fx-text-fill: #3b82f6;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+    -fx-background-color: #eff6ff;
+}
+
+.navbar-button-logout {
+    -fx-background-color: #ef4444;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-padding: 8px 20px;
+    -fx-cursor: hand;
+    -fx-background-radius: 6px;
+}
+
+.navbar-button-logout:hover {
+    -fx-background-color: #dc2626;
+}
+
+.navbar-button-profile {
+    -fx-background-color: transparent;
+    -fx-padding: 4px 8px;
+    -fx-background-radius: 50%;
+    -fx-cursor: hand;
+}
+
+.navbar-button-profile:hover {
+    -fx-background-color: #eff6ff;
+}
+
+.navbar-button-profile.active {
+    -fx-background-color: #dbeafe;
+}
+
+/* ImageView de foto de perfil en el navbar */
+#perfilImageView {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0, 0, 1);
+}
+
+/* Hacer que la imagen de perfil sea circular usando clip */
+#perfilImageView {
+    -fx-clip: circle;
+}
+
+/* ============================================
+   Estilos para la Vista de Nueva Reserva
+   ============================================ */
+
+/* Área de contenido del calendario */
+.content-area-calendar {
+    -fx-background-color: #ffffff;
+    -fx-padding: 20px;
+    -fx-spacing: 20px;
+    -fx-pref-width: 100%;
+    -fx-pref-height: 100%;
+}
+
+/* Vista del calendario */
+.calendar-view {
+    -fx-pref-width: 100%;
+}
+
+/* Contenedor del mes */
+.month-container {
+    -fx-min-width: 600px;
+    -fx-pref-width: 600px;
+}
+
+/* Encabezado del mes */
+.month-header {
+    -fx-padding: 10px 0;
+}
+
+.month-label {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e293b;
+    -fx-min-width: 150px;
+    -fx-alignment: center;
+}
+
+.nav-arrow {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #3b82f6;
+    -fx-cursor: hand;
+    -fx-min-width: 30px;
+    -fx-alignment: center;
+}
+
+.nav-arrow:hover {
+    -fx-text-fill: #2563eb;
+    -fx-background-color: #eff6ff;
+    -fx-background-radius: 4px;
+}
+
+/* Grid de nombres de días */
+.day-names-grid {
+    -fx-padding: 5px 0;
+}
+
+.day-name {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #64748b;
+    -fx-alignment: center;
+}
+
+/* Grid del calendario */
+.calendar-grid {
+    -fx-padding: 15px;
+    -fx-hgap: 10px;
+    -fx-vgap: 10px;
+}
+
+.calendar-day {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-font-size: 14px;
+    -fx-text-fill: #1e293b;
+    -fx-cursor: hand;
+    -fx-min-width: 60px;
+    -fx-min-height: 60px;
+    -fx-pref-width: 60px;
+    -fx-pref-height: 60px;
+    -fx-max-width: 60px;
+    -fx-max-height: 60px;
+    -fx-alignment: center;
+    -fx-padding: 5px;
+}
+
+.calendar-day:hover {
+    -fx-background-color: #eff6ff;
+    -fx-border-color: #3b82f6;
+}
+
+.calendar-day-today {
+    -fx-background-color: #dbeafe;
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 2px;
+    -fx-font-weight: bold;
+}
+
+.calendar-day-selected {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #2563eb;
+    -fx-font-weight: bold;
+}
+
+/* Botón primario del calendario */
+.btn-primary-calendar {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+    -fx-padding: 12px 24px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.btn-primary-calendar:hover {
+    -fx-background-color: #2563eb;
+}
+
+.btn-primary-calendar:pressed {
+    -fx-background-color: #1d4ed8;
+}
+
+/* Separador */
+.separator {
+    -fx-pref-height: 1px;
+    -fx-background-color: #e2e8f0;
+    -fx-pref-width: 100%;
+}
+
+/* Subtítulo */
+.subtitle {
+    -fx-font-size: 20px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #1e293b;
+}
+
+.subtitle-fecha {
+    -fx-font-size: 14px;
+    -fx-text-fill: #64748b;
+}
+
+/* Tabla de disponibilidad */
+.availability-table {
+    -fx-pref-width: 100%;
+}
+
+/* Tarjeta de disponibilidad de sala */
+.room-availability-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 8px;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 5, 0, 0, 1);
+}
+
+.room-name {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e293b;
+}
+
+.room-type {
+    -fx-font-size: 14px;
+    -fx-text-fill: #64748b;
+    -fx-padding: 2px 8px;
+    -fx-background-color: #f1f5f9;
+    -fx-background-radius: 4px;
+}
+
+.room-capacity {
+    -fx-font-size: 14px;
+    -fx-text-fill: #64748b;
+}
+
+/* Contenedor de bloques de horarios */
+.time-slots-container {
+    -fx-padding: 10px 0;
+}
+
+/* Bloque de horario disponible */
+.time-slot-available {
+    -fx-background-color: #10b981;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+
+.time-slot-available:hover {
+    -fx-background-color: #059669;
+    -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.4), 5, 0, 0, 2);
+}
+
+/* Bloque de horario ocupado */
+.time-slot-occupied {
+    -fx-background-color: #ef4444;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-background-radius: 6px;
+    -fx-opacity: 0.7;
+    -fx-cursor: default;
+}
+
+/* ============================================
+   Estilos para el Formulario de Crear Reserva
+   ============================================ */
+
+/* Banner superior */
+.new-reservation-banner {
+    -fx-background-color: linear-gradient(to right, #3b82f6 0%, #2563eb 100%);
+}
+
+.new-reservation-title {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+}
+
+.new-reservation-subtitle {
+    -fx-font-size: 16px;
+    -fx-text-fill: #e0e7ff;
+}
+
+/* Contenedor del formulario */
+.new-reservation-form-container {
+    -fx-padding: 0 20px;
+}
+
+/* Tarjeta del formulario */
+.new-reservation-form-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 12px;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 12px;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 10, 0, 0, 2);
+}
+
+.form-content-wrapper {
+    -fx-padding: 30px;
+}
+
+/* Títulos de sección */
+.form-section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #1e293b;
+}
+
+/* Etiquetas de campos */
+.form-label-new {
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #334155;
+}
+
+/* Contenedor de inputs */
+.form-input-container-new {
+    -fx-spacing: 0;
+}
+
+/* Campos de entrada */
+.form-input-new {
+    -fx-background-color: #f7fafc;
+    -fx-background-radius: 8px;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-padding: 12px 15px;
+    -fx-font-size: 14px;
+    -fx-text-fill: #1e293b;
+    -fx-pref-height: 45px;
+}
+
+.form-input-new:focused {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 2px;
+}
+
+.form-input-new:hover {
+    -fx-border-color: #cbd5e0;
+}
+
+/* DatePicker */
+.form-date-picker {
+    -fx-pref-height: 45px;
+}
+
+.form-date-picker .text-field {
+    -fx-background-color: #f7fafc;
+    -fx-background-radius: 8px;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-padding: 12px 15px;
+    -fx-font-size: 14px;
+}
+
+.form-date-picker .text-field:focused {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 2px;
+}
+
+/* ComboBox */
+.form-input-new .combo-box-base {
+    -fx-background-color: #f7fafc;
+    -fx-background-radius: 8px;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 8px;
+}
+
+.form-input-new .combo-box-base:focused {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #3b82f6;
+}
+
+/* Contenedor de acciones */
+.form-actions-container {
+    -fx-padding: 20px 0 0 0;
+}
+
+/* Botón primario */
+.button-primary-new {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+    -fx-padding: 12px 30px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.button-primary-new:hover {
+    -fx-background-color: #2563eb;
+}
+
+.button-primary-new:pressed {
+    -fx-background-color: #1d4ed8;
+}
+
+.button-primary-new:disabled {
+    -fx-background-color: #cbd5e0;
+    -fx-text-fill: #94a3b8;
+}
+
+/* Botón secundario */
+.button-secondary-new {
+    -fx-background-color: transparent;
+    -fx-text-fill: #64748b;
+    -fx-font-size: 16px;
+    -fx-font-weight: 500;
+    -fx-padding: 12px 30px;
+    -fx-background-radius: 8px;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.button-secondary-new:hover {
+    -fx-background-color: #f7fafc;
+    -fx-border-color: #cbd5e0;
+}
+
+/* Alertas y mensajes */
+.alert-warning-container-new {
+    -fx-background-color: #fef3c7;
+    -fx-background-radius: 8px;
+    -fx-border-color: #fbbf24;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-padding: 12px 15px;
+}
+
+.alert-warning-text-new {
+    -fx-font-size: 14px;
+    -fx-text-fill: #92400e;
+}
+
+.alert-icon-wrapper {
+    -fx-min-width: 20px;
+    -fx-pref-width: 20px;
+}
+
+/* ============================================
+   Estilos para la Vista de Reporte
+   ============================================ */
+
+/* Contenedor de entrada */
+.input-container {
+    -fx-spacing: 8px;
+}
+
+/* Etiqueta de entrada */
+.input-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #1e293b;
+}
+
+/* Campo de entrada */
+.input-field {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-padding: 12px 16px;
+    -fx-cursor: hand;
+    -fx-min-height: 45px;
+    -fx-pref-height: 45px;
+}
+
+.input-field:hover {
+    -fx-border-color: #3b82f6;
+    -fx-background-color: #f8fafc;
+}
+
+.input-field-selected {
+    -fx-background-color: #eff6ff;
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 2px;
+}
+
+/* ComboBox personalizado */
+.input-field-combo {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-min-height: 45px;
+    -fx-pref-height: 45px;
+    -fx-max-height: 45px;
+}
+
+.input-field-combo > .text-input {
+    -fx-background-color: #ffffff;
+}
+
+.input-field-combo .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 12px 0 0;
+}
+
+.input-field-combo .arrow-button:hover {
+    -fx-background-color: transparent;
+}
+
+.input-field-combo .arrow {
+    -fx-background-color: #64748b;
+}
+
+.input-field-combo:hover {
+    -fx-border-color: #3b82f6;
+    -fx-background-color: #ffffff;
+}
+
+.input-field-combo:hover > .text-input {
+    -fx-background-color: #ffffff;
+}
+
+.input-field-combo:focused {
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 2px;
+    -fx-background-color: #ffffff;
+}
+
+.input-field-combo:focused > .text-input {
+    -fx-background-color: #ffffff;
+}
+
+.input-field-combo .list-view {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 6px;
+    -fx-border-width: 1px;
+}
+
+.input-field-combo .list-cell {
+    -fx-background-color: #ffffff;
+    -fx-padding: 12px 16px;
+    -fx-text-fill: #1e293b;
+    -fx-min-height: 45px;
+}
+
+.input-field-combo .list-cell:hover {
+    -fx-background-color: #eff6ff;
+}
+
+.input-field-combo .list-cell:selected {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: #ffffff;
+}
+
+/* DatePicker personalizado */
+.input-field-datepicker {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-min-height: 45px;
+    -fx-pref-height: 45px;
+    -fx-max-height: 45px;
+    -fx-padding: 0;
+}
+
+.input-field-datepicker .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 12px 0 0;
+}
+
+.input-field-datepicker .arrow-button:hover {
+    -fx-background-color: transparent;
+}
+
+.input-field-datepicker .arrow {
+    -fx-background-color: #64748b;
+}
+
+.input-field-datepicker:hover {
+    -fx-border-color: #3b82f6;
+    -fx-background-color: #ffffff;
+}
+
+.input-field-datepicker:focused {
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 2px;
+    -fx-background-color: #ffffff;
+}
+
+.input-field-datepicker .text-field {
+    -fx-background-color: #ffffff;
+    -fx-background-insets: 0;
+    -fx-border-width: 0;
+    -fx-padding: 12px 16px;
+}
+
+.input-field-datepicker .text-field:hover {
+    -fx-background-color: #ffffff;
+}
+
+.input-field-datepicker .text-field:focused {
+    -fx-background-color: #ffffff;
+}
+
+.input-field-datepicker .date-picker-display-node {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #1e293b;
+}
+
+.input-field-datepicker .date-picker-popup {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 6px;
+    -fx-border-width: 1px;
+}
+
+/* Texto del campo de entrada */
+.input-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: #1e293b;
+}
+
+/* Subtítulo */
+.subtitle {
+    -fx-font-size: 18px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #1e293b;
+    -fx-padding: 0 0 10px 0;
+}
+
+/* Tarjeta de incidente */
+.incident-card {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-padding: 20px;
+    -fx-cursor: hand;
+    -fx-min-width: 150px;
+    -fx-min-height: 80px;
+    -fx-pref-width: 150px;
+    -fx-pref-height: 80px;
+}
+
+.incident-card:hover {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #3b82f6;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.2), 8, 0, 0, 2);
+}
+
+.incident-card-selected {
+    -fx-background-color: #eff6ff;
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.3), 10, 0, 0, 3);
+}
+
+/* Texto de incidente */
+.incident-text {
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #1e293b;
+    -fx-wrap-text: true;
+    -fx-text-alignment: center;
+}
+
+.incident-card-selected .incident-text {
+    -fx-font-weight: 600;
+    -fx-text-fill: #2563eb;
+}
+
+/* Área de texto de descripción */
+.incident-textarea {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-padding: 12px;
+    -fx-font-size: 14px;
+    -fx-text-fill: #1e293b;
+    -fx-wrap-text: true;
+}
+
+.incident-textarea:focused {
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 2px;
+}
+
+/* Botón primario */
+.btn-primary {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+    -fx-padding: 12px 30px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #2563eb;
+}
+
+.btn-primary:pressed {
+    -fx-background-color: #1d4ed8;
+}
+
+/* Botón secundario */
+.btn-secondary {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #3b82f6;
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-padding: 8px 20px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #eff6ff;
+}
+
+.btn-secondary:pressed {
+    -fx-background-color: #dbeafe;
+}
+
+/* ============================================
+   Estilos para la Vista de Perfil
+   ============================================ */
+
+/* Área de contenido del perfil */
+.content-area-profile {
+    -fx-background-color: #ffffff;
+    -fx-padding: 20px;
+    -fx-spacing: 20px;
+    -fx-pref-width: 100%;
+    -fx-pref-height: 100%;
+    -fx-min-width: 480px;
+    -fx-alignment: top-center;
+}
+
+/* Nombre del usuario */
+.user-name {
+    -fx-font-size: 20px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #1e293b;
+}
+
+/* Etiqueta del formulario */
+.form-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #475569;
+    -fx-padding: 0 0 5px 0;
+}
+
+/* Campo de texto del formulario */
+.text-field, .password-field {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-padding: 10px 12px;
+    -fx-font-size: 14px;
+    -fx-text-fill: #1e293b;
+    -fx-pref-width: 300px;
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 2px;
+}
+
+.text-field:pressed, .password-field:pressed {
+    -fx-border-color: #3b82f6;
+}
+
+/* GridPane del formulario */
+.grid-pane {
+    -fx-hgap: 20px;
+    -fx-vgap: 25px;
+    -fx-alignment: center;
+}
+
+/* Imagen de perfil */
+.image-view {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 2);
+}
+
+/* ============================================
+   Estilos para la Vista de Notificaciones Usuario
+   ============================================ */
+
+/* Tarjetas de notificaciones */
+.tarjeta-notificacion {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 6, 0, 0, 2);
+}
+
+.tarjeta-notificacion:hover {
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.25), 12, 0, 0, 6);
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 2px;
+}
+
+.tarjeta-notificacion-tipo {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #3b82f6;
+    -fx-background-color: #dbeafe;
+    -fx-background-radius: 12px;
+    -fx-padding: 4px 10px;
+}
+
+.tarjeta-notificacion-fecha {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+}
+
+.tarjeta-notificacion-titulo {
+    -fx-font-size: 16px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #1e293b;
+}
+
+.tarjeta-notificacion-mensaje {
+    -fx-font-size: 14px;
+    -fx-text-fill: #475569;
+}
+
+/* Badges de estado de notificación */
+.badge-notificacion-leida {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #64748b;
+    -fx-background-color: #f1f5f9;
+    -fx-background-radius: 12px;
+    -fx-padding: 4px 10px;
+}
+
+.badge-notificacion-no-leida {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #ffffff;
+    -fx-background-color: #3b82f6;
+    -fx-background-radius: 12px;
+    -fx-padding: 4px 10px;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.4), 4, 0, 0, 2);
+}
+
+/* Mensajes de error/vacío */
+.mensaje-vacio {
+    -fx-font-size: 16px;
+    -fx-text-fill: #64748b;
+    -fx-padding: 24px;
+}
+
+.mensaje-error {
+    -fx-font-size: 14px;
+    -fx-text-fill: #ef4444;
+    -fx-padding: 16px;
+    -fx-background-color: #fee2e2;
+    -fx-background-radius: 8px;
+}
+

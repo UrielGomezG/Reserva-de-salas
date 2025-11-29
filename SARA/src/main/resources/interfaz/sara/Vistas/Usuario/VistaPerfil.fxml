@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.control.ScrollPane?>
+
+<VBox xmlns="http://javafx.com/javafx/21" 
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="interfaz.sara.Controladores.Usuario.ControladorPerfil"
+      styleClass="background-container" 
+      VBox.vgrow="ALWAYS" 
+      HBox.hgrow="ALWAYS"
+      spacing="0">
+
+    <!-- Componente Navbar Compartido -->
+    <fx:include fx:id="navbarInclude" 
+                source="../BarraDeNavegacion/ComponenteNavbarUsuario.fxml" 
+                VBox.vgrow="NEVER"/>
+
+    <!-- Contenedor principal del contenido -->
+    <VBox alignment="TOP_CENTER" 
+          spacing="0.0" 
+          styleClass="main-content-wrapper" 
+          VBox.vgrow="ALWAYS"
+          HBox.hgrow="ALWAYS">
+        
+        <ScrollPane fitToWidth="true" 
+                   styleClass="scroll-pane-custom" 
+                   VBox.vgrow="ALWAYS"
+                   HBox.hgrow="ALWAYS">
+            
+            <!-- Área de contenido del perfil -->
+            <VBox alignment="TOP_CENTER" 
+                  spacing="24.0" 
+                  styleClass="content-area-profile">
+                
+                <padding>
+                    <Insets top="20.0" right="20.0" bottom="40.0" left="20.0"/>
+                </padding>
+                
+                <!-- Título de la página -->
+                <Label styleClass="title" 
+                       text="Mi Perfil" 
+                       alignment="CENTER" />
+
+                <!-- Contenedor de foto de perfil -->
+                <VBox alignment="TOP_CENTER" 
+                      spacing="10.0">
+                    
+                    <!-- Imagen de perfil circular -->
+                    <ImageView fx:id="profileImageView" 
+                              fitHeight="100.0" 
+                              fitWidth="100.0" 
+                              pickOnBounds="true" 
+                              preserveRatio="true">
+                        <clip>
+                            <Circle centerX="50.0" 
+                                   centerY="50.0" 
+                                   radius="50.0" />
+                        </clip>
+                    </ImageView>
+                    
+                    <!-- Nombre del usuario -->
+                    <Label fx:id="labelNombreUsuario" 
+                          styleClass="user-name" 
+                          text="Usuario" />
+                    
+                    <!-- Botón para cambiar foto -->
+                    <Button styleClass="btn-secondary" 
+                           text="Cambiar foto" 
+                           onAction="#manejarCambiarFoto" />
+                </VBox>
+
+                <!-- Formulario de edición -->
+                <GridPane hgap="20.0" 
+                         vgap="25.0" 
+                         alignment="CENTER">
+                    
+                    <!-- Campo: Nombre -->
+                    <Label text="Nombre" 
+                          styleClass="form-label" 
+                          GridPane.columnIndex="0" 
+                          GridPane.rowIndex="0" />
+                    <TextField fx:id="campoNombre" 
+                              promptText="Tu Nombre Completo" 
+                              GridPane.columnIndex="1" 
+                              GridPane.rowIndex="0" />
+                    
+                    <!-- Campo: Correo Electrónico -->
+                    <Label text="Correo Electrónico" 
+                          styleClass="form-label" 
+                          GridPane.columnIndex="0" 
+                          GridPane.rowIndex="1" />
+                    <TextField fx:id="campoCorreo" 
+                              promptText="ejemplo@sara.com" 
+                              GridPane.columnIndex="1" 
+                              GridPane.rowIndex="1" />
+                    
+                    <!-- Campo: Matrícula -->
+                    <Label text="Matrícula" 
+                          styleClass="form-label" 
+                          GridPane.columnIndex="0" 
+                          GridPane.rowIndex="2" />
+                    <TextField fx:id="campoMatricula" 
+                              promptText="Tu Matrícula o ID" 
+                              GridPane.columnIndex="1" 
+                              GridPane.rowIndex="2" />
+                    
+                    <!-- Campo: Contraseña -->
+                    <Label text="Contraseña" 
+                          styleClass="form-label" 
+                          GridPane.columnIndex="0" 
+                          GridPane.rowIndex="3" />
+                    <PasswordField fx:id="campoContrasena" 
+                                  promptText="********" 
+                                  GridPane.columnIndex="1" 
+                                  GridPane.rowIndex="3" />
+                    
+                    <!-- Campo: Confirmar Contraseña -->
+                    <Label text="Confirmar Contraseña" 
+                          styleClass="form-label" 
+                          GridPane.columnIndex="0" 
+                          GridPane.rowIndex="4" />
+                    <PasswordField fx:id="campoConfirmarContrasena" 
+                                  promptText="********" 
+                                  GridPane.columnIndex="1" 
+                                  GridPane.rowIndex="4" />
+                </GridPane>
+
+                <!-- Botón para guardar cambios -->
+                <HBox alignment="BOTTOM_RIGHT">
+                    <Button styleClass="btn-primary" 
+                           text="Guardar Cambios" 
+                           onAction="#manejarGuardarCambios" />
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </VBox>
+</VBox>
+

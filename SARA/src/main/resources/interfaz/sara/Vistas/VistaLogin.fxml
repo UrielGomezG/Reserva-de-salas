@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.BorderPane?>
+
+<StackPane xmlns="http://javafx.com/javafx/21" 
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="interfaz.sara.Controladores.ControladorLogin"
+           styleClass="login-container"
+           VBox.vgrow="ALWAYS" 
+           HBox.hgrow="ALWAYS">
+
+    <!-- Nombre de la aplicación en la esquina superior izquierda -->
+    <BorderPane styleClass="login-root">
+        <top>
+            <HBox styleClass="login-header">
+                <Label text="Sara" styleClass="app-name"/>
+            </HBox>
+        </top>
+        <center>
+            <!-- Contenedor principal del formulario de login -->
+            <VBox alignment="CENTER" spacing="30.0" styleClass="login-form-container">
+                <padding>
+                    <Insets top="50.0" right="50.0" bottom="50.0" left="50.0"/>
+                </padding>
+
+                <!-- Título -->
+                <Label text="Iniciar sesión" styleClass="login-title"/>
+
+                <!-- Contenedor de campos del formulario -->
+                <VBox spacing="25.0" alignment="CENTER">
+                    
+                    <!-- Campo de correo electrónico -->
+                    <VBox spacing="8.0" alignment="CENTER_LEFT">
+                        <Label text="Correo electrónico" styleClass="login-label"/>
+                        <TextField fx:id="campoUsuario" 
+                                  promptText="TuCorreo@utez.edu.mx"
+                                  prefWidth="350.0"
+                                  styleClass="login-text-field"/>
+                    </VBox>
+
+                    <!-- Campo de contraseña -->
+                    <VBox spacing="8.0" alignment="CENTER_LEFT">
+                        <Label text="Contraseña" styleClass="login-label"/>
+                        <PasswordField fx:id="campoContrasena" 
+                                      promptText="Ingrese su contraseña"
+                                      prefWidth="350.0"
+                                      styleClass="login-password-field"/>
+                    </VBox>
+
+                    <!-- Mensaje de error (inicialmente oculto) -->
+                    <Label fx:id="mensajeError" 
+                           styleClass="login-error-message"
+                           visible="false"
+                           wrapText="true"
+                           maxWidth="350.0"/>
+
+                    <!-- Botón de inicio de sesión -->
+                    <Button fx:id="botonIniciarSesion" 
+                           text="Iniciar sesión"
+                           onAction="#manejarIniciarSesion"
+                           prefWidth="350.0"
+                           prefHeight="45.0"
+                           styleClass="login-button"/>
+
+                    <!-- Enlace de registro -->
+                    <HBox alignment="CENTER" spacing="5.0">
+                        <Label text="¿No tienes cuenta?" styleClass="register-label"/>
+                        <Hyperlink text="Regístrate" styleClass="register-link" onAction="#manejarRegistro"/>
+                    </HBox>
+
+                </VBox>
+
+            </VBox>
+        </center>
+    </BorderPane>
+
+</StackPane>

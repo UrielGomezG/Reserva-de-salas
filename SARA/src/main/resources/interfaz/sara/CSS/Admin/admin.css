@@ -1,0 +1,977 @@
+/* ============================================
+   Estilos para las Vistas de Admin - SARA
+   ============================================ */
+
+/* Contenedor raíz del admin */
+.root-container-admin {
+    -fx-background-color: #f5f5f5;
+    -fx-font-family: "Segoe UI", "Arial", sans-serif;
+}
+
+/* Sidebar del administrador */
+.sidebar-container {
+    -fx-background-color: #1e293b;
+    -fx-pref-width: 240px;
+    -fx-min-width: 240px;
+    -fx-max-width: 240px;
+    -fx-pref-height: 100%;
+}
+
+.sidebar-logo {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+    -fx-padding: 0 0 20 0;
+}
+
+.sidebar-separator {
+    -fx-background-color: #334155;
+    -fx-pref-height: 1px;
+}
+
+.sidebar-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #cbd5e1;
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-padding: 12px 16px;
+    -fx-alignment: center-left;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-effect: null;
+    -fx-max-width: Infinity;
+    -fx-pref-width: Infinity;
+}
+
+.sidebar-button:hover {
+    -fx-background-color: #334155;
+    -fx-text-fill: #ffffff;
+}
+
+/* Combinación sidebar-button + sidebar-button-active para mayor especificidad */
+.sidebar-button.sidebar-button-active {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: 700;
+    -fx-font-size: 15px;
+    -fx-border-width: 0;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.5), 8, 0, 0, 2);
+    -fx-max-width: Infinity;
+    -fx-pref-width: Infinity;
+}
+
+.sidebar-button.sidebar-button-active:hover {
+    -fx-background-color: #2563eb;
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.6), 10, 0, 0, 3);
+}
+
+/* Estilo activo standalone (menor especificidad, pero por si acaso) */
+.sidebar-button-active {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: 700;
+    -fx-font-size: 15px;
+    -fx-border-width: 0;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.5), 8, 0, 0, 2);
+    -fx-max-width: Infinity;
+    -fx-pref-width: Infinity;
+}
+
+.sidebar-button-active:hover {
+    -fx-background-color: #2563eb;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.6), 10, 0, 0, 3);
+}
+
+.sidebar-button-logout {
+    -fx-background-color: #ef4444;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-padding: 12px 16px;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+}
+
+.sidebar-button-logout:hover {
+    -fx-background-color: #dc2626;
+}
+
+/* ScrollPane personalizado para admin */
+.scroll-pane-custom-admin {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-pref-width: 100%;
+    -fx-pref-height: 100%;
+}
+
+.scroll-pane-custom-admin > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane-custom-admin > .content {
+    -fx-pref-width: 100%;
+}
+
+/* Contenedor principal del contenido */
+.contenido-principal-admin {
+    -fx-background-color: #f5f5f5;
+    -fx-pref-width: 100%;
+    -fx-pref-height: 100%;
+}
+
+.contenido-ancho-maximo-admin {
+    -fx-pref-width: 100%;
+    -fx-max-width: 1400px;
+    -fx-alignment: top-left;
+}
+
+/* Título de página */
+.titulo-pagina-admin {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e293b;
+}
+
+/* Barra de búsqueda */
+.barra-busqueda-admin {
+    -fx-background-color: #ffffff;
+    -fx-padding: 16px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 4, 0, 0, 2);
+}
+
+.input-busqueda-admin {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 10px 14px;
+    -fx-font-size: 14px;
+    -fx-text-fill: #1e293b;
+}
+
+.input-busqueda-admin:focused {
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 2px;
+    -fx-background-color: #ffffff;
+}
+
+.combo-filtro-rol-admin {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 4px;
+}
+
+.combo-filtro-rol-admin:focused {
+    -fx-border-color: #3b82f6;
+}
+
+/* Label de filtro */
+.label-filtro-admin {
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #334155;
+}
+
+/* Botones */
+.boton-secundario-admin {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-padding: 10px 20px;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+
+.boton-secundario-admin:hover {
+    -fx-background-color: #2563eb;
+}
+
+.boton-secundario-admin:pressed {
+    -fx-background-color: #1d4ed8;
+}
+
+/* Tarjetas de usuarios */
+.tarjeta-usuario {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 6, 0, 0, 2);
+    -fx-transition: all 0.3s ease;
+}
+
+.tarjeta-usuario:hover {
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.25), 12, 0, 0, 6);
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 2px;
+    -fx-translate-y: -4px;
+}
+
+/* Contenedor de imagen de usuario */
+.imagen-usuario-container {
+    -fx-background-color: #f8fafc;
+    -fx-alignment: center;
+}
+
+.imagen-usuario-tarjeta {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 4);
+}
+
+
+.tarjeta-usuario-nombre {
+    -fx-font-size: 18px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #1e293b;
+    -fx-padding: 0 0 4px 0;
+}
+
+/* Estilos heredados para compatibilidad */
+.tarjeta-usuario-email {
+    -fx-font-size: 14px;
+    -fx-text-fill: #64748b;
+}
+
+.tarjeta-usuario-matricula {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+}
+
+.tarjeta-usuario-rol {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+}
+
+.tarjeta-usuario-activo {
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #10b981;
+}
+
+.tarjeta-usuario-inactivo {
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #ef4444;
+}
+
+.tarjeta-usuario-botones {
+    -fx-spacing: 8px;
+    -fx-alignment: center-left;
+}
+
+.boton-editar-usuario {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+    -fx-padding: 6px 12px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.boton-editar-usuario:hover {
+    -fx-background-color: #2563eb;
+}
+
+.boton-eliminar-usuario {
+    -fx-background-color: #ef4444;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+    -fx-padding: 6px 12px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.boton-eliminar-usuario:hover {
+    -fx-background-color: #dc2626;
+}
+
+/* ============================================
+   Estilos para la Vista de Detalle de Usuario
+   ============================================ */
+
+/* Botón volver */
+.boton-volver-admin {
+    -fx-background-color: transparent;
+    -fx-text-fill: #64748b;
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+    -fx-background-radius: 6px;
+}
+
+.boton-volver-admin:hover {
+    -fx-background-color: #f1f5f9;
+    -fx-text-fill: #1e293b;
+}
+
+/* Tarjeta de perfil */
+.tarjeta-perfil-admin {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-padding: 24px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 8, 0, 0, 2);
+}
+
+/* Imagen de perfil grande */
+.imagen-perfil-grande-admin {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 8, 0, 0, 2);
+}
+
+/* Textos grandes */
+.texto-nombre-grande-admin {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e293b;
+}
+
+.texto-rol-grande-admin {
+    -fx-font-size: 16px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #3b82f6;
+}
+
+.texto-email-grande-admin {
+    -fx-font-size: 14px;
+    -fx-text-fill: #64748b;
+}
+
+/* Grid de detalles */
+.grid-detalles-admin {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-padding: 24px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 4, 0, 0, 2);
+}
+
+/* Fila de detalle */
+.fila-detalle-admin {
+    -fx-spacing: 8px;
+    -fx-padding: 16px 0;
+}
+
+.fila-detalle-admin:not(:last-child) {
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 0 0 1px 0;
+}
+
+/* Texto etiqueta */
+.texto-etiqueta-admin {
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #64748b;
+    -fx-text-transform: uppercase;
+    -fx-letter-spacing: 0.5px;
+}
+
+/* Texto valor */
+.texto-valor-admin {
+    -fx-font-size: 16px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #1e293b;
+}
+
+/* Contenedor de botones */
+.contenedor-botones-admin {
+    -fx-padding: 24px 0;
+}
+
+/* Botón de acción primario */
+.boton-accion-primario-admin {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-padding: 12px 24px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+
+.boton-accion-primario-admin:hover {
+    -fx-background-color: #2563eb;
+}
+
+.boton-accion-primario-admin:pressed {
+    -fx-background-color: #1d4ed8;
+}
+
+/* Botón de acción secundario */
+.boton-accion-secundario-admin {
+    -fx-background-color: #ef4444;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-padding: 12px 24px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+
+.boton-accion-secundario-admin:hover {
+    -fx-background-color: #dc2626;
+}
+
+.boton-accion-secundario-admin:pressed {
+    -fx-background-color: #b91c1c;
+}
+
+/* ============================================
+   Estilos para la Vista de Editar Usuario
+   ============================================ */
+
+/* Campos de entrada */
+.input-field-admin {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 10px 14px;
+    -fx-font-size: 14px;
+    -fx-text-fill: #1e293b;
+}
+
+.input-field-admin:focused {
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 2px;
+}
+
+/* ComboBox de roles */
+.combo-roles-admin {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 4px;
+}
+
+.combo-roles-admin:focused {
+    -fx-border-color: #3b82f6;
+}
+
+/* Checkbox */
+.checkbox-admin {
+    -fx-font-size: 14px;
+    -fx-text-fill: #1e293b;
+}
+
+.checkbox-admin .box {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+}
+
+.checkbox-admin:selected .mark {
+    -fx-background-color: #3b82f6;
+}
+
+/* Texto de ayuda */
+.texto-ayuda-admin {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+    -fx-font-style: italic;
+}
+
+/* Texto de sección */
+.texto-seccion-admin {
+    -fx-font-size: 18px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #1e293b;
+    -fx-padding: 0 0 8px 0;
+}
+
+/* Botón de advertencia */
+.boton-accion-warning-admin {
+    -fx-background-color: #f59e0b;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-padding: 12px 24px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+
+.boton-accion-warning-admin:hover {
+    -fx-background-color: #d97706;
+}
+
+.boton-accion-warning-admin:pressed {
+    -fx-background-color: #b45309;
+}
+
+/* ============================================
+   Estilos para la Vista de Salas Admin
+   ============================================ */
+
+/* Tarjetas de salas */
+.tarjeta-sala-admin {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 6, 0, 0, 2);
+    -fx-transition: all 0.3s ease;
+}
+
+.tarjeta-sala-admin:hover {
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.25), 12, 0, 0, 6);
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 2px;
+    -fx-translate-y: -4px;
+}
+
+/* Contenedor de imagen */
+.imagen-sala-container {
+    -fx-background-color: #f8fafc;
+    -fx-alignment: center;
+}
+
+.imagen-sala-tarjeta {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 8, 0, 0, 3);
+}
+
+/* Badge de estado */
+.badge-estado-activa {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #ffffff;
+    -fx-background-color: #10b981;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-padding: 4px 10px;
+    -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.4), 4, 0, 0, 2);
+}
+
+.badge-estado-inactiva {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #ffffff;
+    -fx-background-color: #ef4444;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-padding: 4px 10px;
+    -fx-effect: dropshadow(gaussian, rgba(239, 68, 68, 0.4), 4, 0, 0, 2);
+}
+
+.tarjeta-sala-nombre {
+    -fx-font-size: 22px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #1e293b;
+    -fx-padding: 0 0 4px 0;
+}
+
+/* Etiquetas de información en grid */
+.tarjeta-etiqueta-info {
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #64748b;
+    -fx-letter-spacing: 0.3px;
+}
+
+.tarjeta-valor-info {
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #1e293b;
+}
+
+/* Estilos heredados para compatibilidad */
+.tarjeta-sala-codigo {
+    -fx-font-size: 14px;
+    -fx-text-fill: #64748b;
+}
+
+.tarjeta-sala-tipo {
+    -fx-font-size: 14px;
+    -fx-text-fill: #64748b;
+}
+
+.tarjeta-sala-ubicacion {
+    -fx-font-size: 14px;
+    -fx-text-fill: #64748b;
+}
+
+.tarjeta-sala-capacidad {
+    -fx-font-size: 14px;
+    -fx-text-fill: #64748b;
+}
+
+.tarjeta-sala-habilitada {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #10b981;
+}
+
+.tarjeta-sala-deshabilitada {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #ef4444;
+}
+
+/* ============================================
+   Estilos para la Vista de Registrar Sala
+   ============================================ */
+
+/* Toggle buttons para tipo de sala */
+.toggle-button-admin {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #1e293b;
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-padding: 12px 16px;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+
+.toggle-button-admin:hover {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #3b82f6;
+}
+
+.toggle-button-admin:selected {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #3b82f6;
+    -fx-font-weight: 600;
+}
+
+.toggle-button-admin:selected:hover {
+    -fx-background-color: #2563eb;
+}
+
+/* Mensaje de estado */
+.mensaje-estado-admin {
+    -fx-font-size: 14px;
+    -fx-padding: 12px 16px;
+    -fx-background-color: #fef2f2;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+}
+
+.mensaje-estado-error {
+    -fx-text-fill: #ef4444;
+    -fx-background-color: #fef2f2;
+}
+
+.mensaje-estado-exito {
+    -fx-text-fill: #10b981;
+    -fx-background-color: #f0fdf4;
+}
+
+/* Imagen de sala preview */
+.imagen-sala-preview {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 8, 0, 0, 2);
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-background-color: #f8fafc;
+}
+
+/* Botón para seleccionar imagen */
+.boton-secundario-imagen-admin {
+    -fx-background-color: #64748b;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-padding: 10px 20px;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+
+.boton-secundario-imagen-admin:hover {
+    -fx-background-color: #475569;
+}
+
+/* Botón para gestionar ubicaciones */
+.boton-gestionar-admin {
+    -fx-background-color: #64748b;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-padding: 8px 16px;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+    -fx-min-width: 100px;
+}
+
+.boton-gestionar-admin:hover {
+    -fx-background-color: #475569;
+}
+
+/* ============================================
+   Estilos para la Vista de Reservas Admin
+   ============================================ */
+
+/* Mensaje cuando no hay reservas */
+.mensaje-vacio {
+    -fx-font-size: 16px;
+    -fx-text-fill: #94a3b8;
+    -fx-padding: 40px;
+    -fx-alignment: center;
+}
+
+/* Tarjetas de reservas */
+.tarjeta-reserva-admin {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 6, 0, 0, 2);
+}
+
+.tarjeta-reserva-admin:hover {
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.25), 12, 0, 0, 6);
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 2px;
+    -fx-translate-y: -4px;
+}
+
+.tarjeta-reserva-nombre {
+    -fx-font-size: 18px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #1e293b;
+}
+
+.tarjeta-reserva-usuario {
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #334155;
+}
+
+.tarjeta-reserva-fecha {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+}
+
+.tarjeta-reserva-info {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+}
+
+.tarjeta-reserva-cancelacion {
+    -fx-font-size: 12px;
+    -fx-text-fill: #ef4444;
+    -fx-font-style: italic;
+}
+
+/* Estados de reserva */
+.tarjeta-reserva-estado-pending {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #f59e0b;
+    -fx-background-color: #fef3c7;
+    -fx-background-radius: 12px;
+    -fx-padding: 4px 10px;
+}
+
+.tarjeta-reserva-estado-confirmed {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #10b981;
+    -fx-background-color: #d1fae5;
+    -fx-background-radius: 12px;
+    -fx-padding: 4px 10px;
+}
+
+.tarjeta-reserva-estado-cancelled {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #ef4444;
+    -fx-background-color: #fee2e2;
+    -fx-background-radius: 12px;
+    -fx-padding: 4px 10px;
+}
+
+.tarjeta-reserva-estado-completed {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #6b7280;
+    -fx-background-color: #f3f4f6;
+    -fx-background-radius: 12px;
+    -fx-padding: 4px 10px;
+}
+
+.tarjeta-reserva-estado-unknown {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #64748b;
+    -fx-background-color: #f1f5f9;
+    -fx-background-radius: 12px;
+    -fx-padding: 4px 10px;
+}
+
+/* ============================================
+   Estilos para la Vista de Reportes Admin
+   ============================================ */
+
+/* Tarjetas de incidentes */
+.tarjeta-incidente-admin {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 6, 0, 0, 2);
+}
+
+.tarjeta-incidente-admin:hover {
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.25), 12, 0, 0, 6);
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 2px;
+    -fx-translate-y: -4px;
+}
+
+.tarjeta-incidente-nombre {
+    -fx-font-size: 18px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #1e293b;
+}
+
+.tarjeta-incidente-tipo {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #ef4444;
+    -fx-background-color: #fee2e2;
+    -fx-background-radius: 12px;
+    -fx-padding: 4px 10px;
+}
+
+.tarjeta-incidente-usuario {
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #334155;
+}
+
+.tarjeta-incidente-fecha {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+}
+
+.tarjeta-incidente-descripcion {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+}
+
+.tarjeta-incidente-estado {
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #64748b;
+}
+
+/* ============================================
+   Estilos para la Vista de Notificaciones Admin
+   ============================================ */
+
+/* Tarjetas de notificaciones */
+.tarjeta-notificacion-admin {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 6, 0, 0, 2);
+}
+
+.tarjeta-notificacion-admin:hover {
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.25), 12, 0, 0, 6);
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 2px;
+}
+
+.tarjeta-notificacion-tipo {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #3b82f6;
+    -fx-background-color: #dbeafe;
+    -fx-background-radius: 12px;
+    -fx-padding: 4px 10px;
+}
+
+.tarjeta-notificacion-fecha {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+}
+
+.tarjeta-notificacion-titulo {
+    -fx-font-size: 16px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #1e293b;
+}
+
+.tarjeta-notificacion-mensaje {
+    -fx-font-size: 14px;
+    -fx-text-fill: #475569;
+}
+
+/* Badges de estado de notificación */
+.badge-notificacion-leida {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #64748b;
+    -fx-background-color: #f1f5f9;
+    -fx-background-radius: 12px;
+    -fx-padding: 4px 10px;
+}
+
+.badge-notificacion-no-leida {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #ffffff;
+    -fx-background-color: #3b82f6;
+    -fx-background-radius: 12px;
+    -fx-padding: 4px 10px;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.4), 4, 0, 0, 2);
+}
+
+/* Mensajes de error/vacío */
+.mensaje-vacio {
+    -fx-font-size: 16px;
+    -fx-text-fill: #64748b;
+    -fx-padding: 24px;
+}
+
+.mensaje-error {
+    -fx-font-size: 14px;
+    -fx-text-fill: #ef4444;
+    -fx-padding: 16px;
+    -fx-background-color: #fee2e2;
+    -fx-background-radius: 8px;
+}
+

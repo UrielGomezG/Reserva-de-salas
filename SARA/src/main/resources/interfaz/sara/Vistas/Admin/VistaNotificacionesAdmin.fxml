@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="interfaz.sara.Controladores.Admin.ControladorNotificacionesAdmin"
+      styleClass="root-container-admin" spacing="0">
+    
+    <!-- Componente Sidebar Compartido -->
+    <fx:include fx:id="sidebarInclude" source="ComponenteSidebarAdmin.fxml" HBox.hgrow="NEVER"/>
+    
+    <ScrollPane fitToWidth="true" styleClass="scroll-pane-custom-admin" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+        <VBox styleClass="contenido-principal-admin" alignment="TOP_CENTER">
+            <VBox styleClass="contenido-ancho-maximo-admin" spacing="24" VBox.vgrow="ALWAYS">
+                <padding><Insets top="20" right="40" bottom="20" left="40"/></padding>
+                
+                <Label text="Notificaciones" styleClass="titulo-pagina-admin"/>
+                
+                <!-- Contenedor de notificaciones -->
+                <VBox fx:id="contenedorNotificaciones" spacing="16" VBox.vgrow="ALWAYS">
+                </VBox>
+            </VBox>
+        </VBox>
+    </ScrollPane>
+</HBox>
+

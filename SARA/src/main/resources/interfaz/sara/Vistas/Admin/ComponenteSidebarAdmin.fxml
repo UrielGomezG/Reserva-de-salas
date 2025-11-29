@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" 
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="interfaz.sara.Controladores.Admin.ControladorSidebarAdmin"
+      styleClass="sidebar-container"
+      spacing="0"
+      prefWidth="240.0">
+    
+    <padding>
+        <Insets top="20.0" right="20.0" bottom="0.0" left="20.0"/>
+    </padding>
+    
+    <!-- Logo/Nombre de la aplicación -->
+    <Label text="SARA Admin" styleClass="sidebar-logo"/>
+    
+    <!-- Separador -->
+    <Separator styleClass="sidebar-separator"/>
+    
+    <padding>
+        <Insets top="20.0"/>
+    </padding>
+    
+    <!-- Botones de navegación -->
+    <VBox spacing="8.0" VBox.vgrow="NEVER">
+        <Button fx:id="botonUsuarios" 
+                text="Usuarios" 
+                styleClass="sidebar-button sidebar-button-active"
+                onAction="#manejarUsuarios"/>
+        <Button fx:id="botonSalas" 
+                text="Salas" 
+                styleClass="sidebar-button"
+                onAction="#manejarSalas"/>
+        <Button fx:id="botonReservas" 
+                text="Reservas" 
+                styleClass="sidebar-button"
+                onAction="#manejarReservas"/>
+        <Button fx:id="botonReportes" 
+                text="Reportes" 
+                styleClass="sidebar-button"
+                onAction="#manejarReportes"/>
+    </VBox>
+    
+    <!-- Espaciador flexible que empuja los botones inferiores hacia abajo -->
+    <VBox VBox.vgrow="ALWAYS"/>
+    
+    <!-- Separador -->
+    <Separator styleClass="sidebar-separator"/>
+    
+    <padding>
+        <Insets top="20.0"/>
+    </padding>
+    
+    <!-- Botones de perfil y notificaciones -->
+    <VBox spacing="8.0" VBox.vgrow="NEVER">
+        <Button fx:id="botonPerfil" 
+                text="Perfil" 
+                styleClass="sidebar-button"
+                onAction="#manejarPerfil"/>
+        <Button fx:id="botonNotificaciones" 
+                text="Notificaciones" 
+                styleClass="sidebar-button"
+                onAction="#manejarNotificaciones"/>
+    </VBox>
+    
+    <padding>
+        <Insets top="20.0"/>
+    </padding>
+    
+    <!-- Separador -->
+    <Separator styleClass="sidebar-separator"/>
+    
+    <padding>
+        <Insets top="20.0" bottom="20.0"/>
+    </padding>
+    
+    <!-- Botón de cerrar sesión -->
+    <Button fx:id="botonCerrarSesion" 
+            text="Cerrar Sesión" 
+            styleClass="sidebar-button-logout"
+            onAction="#manejarCerrarSesion"
+            VBox.vgrow="NEVER"/>
+</VBox>
+

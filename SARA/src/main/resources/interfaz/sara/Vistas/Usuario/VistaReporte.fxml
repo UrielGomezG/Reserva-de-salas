@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ScrollPane?>
+
+<VBox xmlns="http://javafx.com/javafx/21" 
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="interfaz.sara.Controladores.Usuario.ControladorReporte"
+      styleClass="background-container" 
+      VBox.vgrow="ALWAYS" 
+      HBox.hgrow="ALWAYS"
+      spacing="0">
+
+    <!-- Componente Navbar Compartido -->
+    <fx:include fx:id="navbarInclude" 
+                source="../BarraDeNavegacion/ComponenteNavbarUsuario.fxml" 
+                VBox.vgrow="NEVER"/>
+
+    <!-- Contenedor principal del contenido -->
+    <VBox alignment="TOP_CENTER" 
+          spacing="0.0" 
+          styleClass="main-content-wrapper" 
+          VBox.vgrow="ALWAYS">
+        
+        <ScrollPane fitToWidth="true" 
+                   styleClass="scroll-pane-custom" 
+                   VBox.vgrow="ALWAYS">
+            
+            <!-- Área de contenido -->
+            <VBox alignment="TOP_LEFT" 
+                  spacing="30.0" 
+                  styleClass="content-area"
+                  VBox.vgrow="ALWAYS"
+                  HBox.hgrow="ALWAYS">
+                
+                <padding>
+                    <Insets top="20.0" right="20.0" bottom="40.0" left="20.0"/>
+                </padding>
+
+                <!-- Título de la página -->
+                <Label styleClass="title" text="Reporte de Incidente" />
+
+                <!-- Contenedor de selección de sala, fecha y reservación -->
+                <VBox spacing="10.0">
+                    <HBox spacing="20.0">
+                        <!-- Selector de sala -->
+                        <VBox styleClass="input-container" prefWidth="380.0">
+                            <Label text="Selecciona la sala" styleClass="input-label" />
+                            <ComboBox fx:id="comboSala" 
+                                     promptText="Selecciona una sala" 
+                                     styleClass="input-field-combo" 
+                                     prefWidth="380.0"
+                                     minWidth="380.0"
+                                     maxWidth="380.0"
+                                     onAction="#manejarCambioSala"/>
+                        </VBox>
+                        
+                        <!-- Selector de fecha -->
+                        <VBox styleClass="input-container" prefWidth="380.0">
+                            <Label text="Selecciona fecha" styleClass="input-label" />
+                            <DatePicker fx:id="datePickerFecha" 
+                                       styleClass="input-field-datepicker" 
+                                       prefWidth="380.0"
+                                       minWidth="380.0"
+                                       maxWidth="380.0"
+                                       onAction="#manejarCambioFecha"/>
+                        </VBox>
+                    </HBox>
+                    
+                    <!-- Selector de reservación (opcional) -->
+                    <VBox styleClass="input-container" prefWidth="780.0">
+                        <Label text="Reservación relacionada (opcional)" styleClass="input-label" />
+                        <ComboBox fx:id="comboReservacion" 
+                                 promptText="Selecciona una reservación (opcional)" 
+                                 styleClass="input-field-combo" 
+                                 prefWidth="780.0"
+                                 minWidth="780.0"
+                                 maxWidth="780.0"
+                                 onAction="#manejarCambioReservacion"/>
+                    </VBox>
+                </VBox>
+
+                <!-- Contenedor de tipos de incidente -->
+                <VBox spacing="15.0">
+                    <Label styleClass="subtitle" text="Selecciona el tipo de incidente" />
+                    <GridPane hgap="15.0" vgap="15.0">
+                        <VBox styleClass="incident-card" 
+                              alignment="CENTER" 
+                              GridPane.columnIndex="0" 
+                              GridPane.rowIndex="0" 
+                              onMouseClicked="#manejarSeleccionarIncidente">
+                            <Label text="Mueble Roto" styleClass="incident-text" />
+                        </VBox>
+                        <VBox styleClass="incident-card" 
+                              alignment="CENTER" 
+                              GridPane.columnIndex="1" 
+                              GridPane.rowIndex="0" 
+                              onMouseClicked="#manejarSeleccionarIncidente">
+                            <Label text="Electrónico Roto" styleClass="incident-text" />
+                        </VBox>
+                        <VBox styleClass="incident-card" 
+                              alignment="CENTER" 
+                              GridPane.columnIndex="2" 
+                              GridPane.rowIndex="0" 
+                              onMouseClicked="#manejarSeleccionarIncidente">
+                            <Label text="Otro" styleClass="incident-text" />
+                        </VBox>
+                        <VBox styleClass="incident-card" 
+                              alignment="CENTER" 
+                              GridPane.columnIndex="0" 
+                              GridPane.rowIndex="1" 
+                              onMouseClicked="#manejarSeleccionarIncidente">
+                            <Label text="Sucio" styleClass="incident-text" />
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- Contenedor de descripción y botón -->
+                <VBox spacing="15.0" VBox.vgrow="ALWAYS">
+                    <TextArea fx:id="textAreaDescripcion" 
+                             prefHeight="150.0" 
+                             promptText="Describe el problema en detalle..." 
+                             styleClass="incident-textarea" 
+                             VBox.vgrow="ALWAYS" />
+                    <HBox alignment="BOTTOM_RIGHT" VBox.vgrow="ALWAYS">
+                        <Button text="Entregar Reporte" 
+                               styleClass="btn-primary" 
+                               onAction="#manejarEntregarReporte" />
+                    </HBox>
+                </VBox>
+
+            </VBox>
+            
+        </ScrollPane>
+    </VBox>
+</VBox>
+

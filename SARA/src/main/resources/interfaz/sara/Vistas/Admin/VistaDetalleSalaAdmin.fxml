@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox xmlns="http://javafx.com/javafx/21" 
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="interfaz.sara.Controladores.Admin.ControladorDetalleSalaAdmin"
+      styleClass="root-container-admin" 
+      spacing="0"
+      VBox.vgrow="ALWAYS"
+      HBox.hgrow="ALWAYS">
+
+    <!-- Componente Sidebar Compartido -->
+    <fx:include fx:id="sidebarInclude" 
+                source="ComponenteSidebarAdmin.fxml" 
+                HBox.hgrow="NEVER"/>
+
+    <!-- Contenido principal -->
+    <ScrollPane fitToWidth="true" 
+               styleClass="scroll-pane-custom-admin" 
+               HBox.hgrow="ALWAYS" 
+               VBox.vgrow="ALWAYS">
+        
+        <VBox styleClass="contenido-principal-admin" 
+              alignment="TOP_CENTER"
+              VBox.vgrow="ALWAYS"
+              HBox.hgrow="ALWAYS">
+            
+            <VBox styleClass="contenido-ancho-maximo-admin" 
+                  spacing="0"
+                  VBox.vgrow="ALWAYS"
+                  HBox.hgrow="ALWAYS">
+                
+                <padding>
+                    <Insets top="20.0" right="40.0" bottom="20.0" left="40.0"/>
+                </padding>
+                
+                <!-- Encabezado con botón volver y título -->
+                <HBox alignment="CENTER_LEFT" 
+                     spacing="20.0"
+                     HBox.hgrow="ALWAYS">
+                    
+                    <Button text="← Volver" 
+                           styleClass="boton-volver-admin" 
+                           onAction="#manejarVolver"/>
+                    
+                    <Label text="Detalles de Sala" 
+                          styleClass="titulo-pagina-admin" 
+                          maxWidth="Infinity" 
+                          HBox.hgrow="ALWAYS"/>
+                </HBox>
+
+                <!-- Espaciador -->
+                <Region minHeight="32.0"/>
+
+                <!-- Tarjeta de información principal con imagen -->
+                <HBox styleClass="tarjeta-perfil-admin" 
+                     spacing="24.0" 
+                     alignment="CENTER_LEFT">
+                    
+                    <!-- Imagen de la sala -->
+                    <ImageView fx:id="imagenSalaView" 
+                              fitHeight="140.0" 
+                              fitWidth="140.0" 
+                              pickOnBounds="true" 
+                              preserveRatio="true" 
+                              styleClass="imagen-perfil-grande-admin"/>
+                    
+                    <!-- Información básica -->
+                    <VBox alignment="CENTER_LEFT" 
+                         spacing="8.0">
+                        
+                        <Label fx:id="lblNombreSala" 
+                              text="Cargando..." 
+                              styleClass="texto-nombre-grande-admin"/>
+                        
+                        <Label fx:id="lblTipo" 
+                              text="Cargando..." 
+                              styleClass="texto-rol-grande-admin"/>
+                        
+                        <Label fx:id="lblEstado" 
+                              text="Cargando..." 
+                              styleClass="texto-email-grande-admin"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Espaciador -->
+                <Region minHeight="24.0"/>
+
+                <!-- Grid de detalles -->
+                <GridPane styleClass="grid-detalles-admin" 
+                         hgap="24.0" 
+                         vgap="0.0">
+                    
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="NEVER" minWidth="150.0"/> 
+                        <ColumnConstraints hgrow="ALWAYS"/> 
+                    </columnConstraints>
+                    
+                    <!-- Fila: Código de Sala -->
+                    <VBox styleClass="fila-detalle-admin" 
+                         GridPane.columnIndex="0" 
+                         GridPane.rowIndex="0" 
+                         GridPane.columnSpan="2">
+                        <Label text="Código de Sala" 
+                              styleClass="texto-etiqueta-admin"/>
+                        <Label fx:id="lblCodigo" 
+                              text="..." 
+                              styleClass="texto-valor-admin"/>
+                    </VBox>
+                    
+                    <!-- Fila: Capacidad -->
+                    <VBox styleClass="fila-detalle-admin" 
+                         GridPane.columnIndex="0" 
+                         GridPane.rowIndex="1" 
+                         GridPane.columnSpan="2">
+                        <Label text="Capacidad" 
+                              styleClass="texto-etiqueta-admin"/>
+                        <Label fx:id="lblCapacidad" 
+                              text="..." 
+                              styleClass="texto-valor-admin"/>
+                    </VBox>
+                    
+                    <!-- Fila: Ubicación -->
+                    <VBox styleClass="fila-detalle-admin" 
+                         GridPane.columnIndex="0" 
+                         GridPane.rowIndex="2" 
+                         GridPane.columnSpan="2">
+                        <Label text="Ubicación" 
+                              styleClass="texto-etiqueta-admin"/>
+                        <Label fx:id="lblUbicacion" 
+                              text="..." 
+                              styleClass="texto-valor-admin"/>
+                    </VBox>
+                    
+                    <!-- Fila: Tipo de Sala -->
+                    <VBox styleClass="fila-detalle-admin" 
+                         GridPane.columnIndex="0" 
+                         GridPane.rowIndex="3" 
+                         GridPane.columnSpan="2">
+                        <Label text="Tipo de Sala" 
+                              styleClass="texto-etiqueta-admin"/>
+                        <Label fx:id="lblTipoDetalle" 
+                              text="..." 
+                              styleClass="texto-valor-admin"/>
+                    </VBox>
+                </GridPane>
+
+                <!-- Espaciador -->
+                <Region minHeight="8.0"/>
+
+                <!-- Botones de acción -->
+                <HBox spacing="16.0" 
+                     alignment="CENTER_LEFT" 
+                     styleClass="contenedor-botones-admin">
+                    
+                    <Button text="Editar Sala" 
+                           styleClass="boton-accion-primario-admin" 
+                           onAction="#manejarEditar"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </ScrollPane>
+</HBox>
+

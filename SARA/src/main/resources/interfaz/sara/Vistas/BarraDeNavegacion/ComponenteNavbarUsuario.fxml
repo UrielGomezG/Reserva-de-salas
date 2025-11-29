@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<VBox xmlns="http://javafx.com/javafx/21" 
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="interfaz.sara.Controladores.Usuario.ControladorNavbarUsuario"
+      styleClass="navbar-container"
+      spacing="0">
+    
+    <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="navbar-content">
+        <padding>
+            <Insets top="15.0" right="30.0" bottom="15.0" left="30.0"/>
+        </padding>
+        
+        <!-- Logo/Nombre de la aplicación -->
+        <Label text="SARA" styleClass="navbar-logo"/>
+        
+        <!-- Separador -->
+        <VBox styleClass="navbar-separator"/>
+        
+        <!-- Espaciador que empuja los botones hacia la derecha -->
+        <HBox HBox.hgrow="ALWAYS"/>
+        
+        <!-- Botones de navegación -->
+        <Button fx:id="botonMisReservas" 
+                text="Mis Reservas" 
+                styleClass="navbar-button-active"
+                onAction="#manejarMisReservas"/>
+        <Button fx:id="botonNuevaReserva" 
+                text="Nueva Reserva" 
+                styleClass="navbar-button"
+                onAction="#manejarNuevaReserva"/>
+        <Button fx:id="botonReporte" 
+                text="Reporte" 
+                styleClass="navbar-button"
+                onAction="#manejarReporte"/>
+        <Button fx:id="botonNotificaciones" 
+                text="Notificaciones" 
+                styleClass="navbar-button"
+                onAction="#manejarNotificaciones"/>
+        <Button fx:id="botonPerfil" 
+                styleClass="navbar-button-profile"
+                onAction="#manejarPerfil">
+            <graphic>
+                <ImageView fx:id="perfilImageView" 
+                          fitHeight="24.0" 
+                          fitWidth="24.0" 
+                          pickOnBounds="true" 
+                          preserveRatio="true">
+                    <clip>
+                        <Circle centerX="12.0" 
+                               centerY="12.0" 
+                               radius="12.0" />
+                    </clip>
+                    <image>
+                        <Image url="@../../../../imagenes/perfil_placeholder.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+        
+        <!-- Botón de cerrar sesión -->
+        <Button fx:id="botonCerrarSesion" 
+                text="Cerrar Sesión" 
+                styleClass="navbar-button-logout"
+                onAction="#manejarCerrarSesion"/>
+        
+    </HBox>
+    
+</VBox>
+

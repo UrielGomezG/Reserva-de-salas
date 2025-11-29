@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" 
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="interfaz.sara.Controladores.Usuario.ControladorNotificaciones"
+      styleClass="background-container" 
+      VBox.vgrow="ALWAYS" 
+      HBox.hgrow="ALWAYS"
+      spacing="0">
+
+    <!-- Componente Navbar Compartido -->
+    <fx:include fx:id="navbarInclude" 
+                source="../BarraDeNavegacion/ComponenteNavbarUsuario.fxml" 
+                VBox.vgrow="NEVER"/>
+
+    <!-- Contenedor principal del contenido -->
+    <VBox alignment="TOP_CENTER" 
+          spacing="0.0" 
+          styleClass="main-content-wrapper" 
+          VBox.vgrow="ALWAYS"
+          HBox.hgrow="ALWAYS">
+        
+        <ScrollPane fitToWidth="true" 
+                   styleClass="scroll-pane-custom" 
+                   VBox.vgrow="ALWAYS"
+                   HBox.hgrow="ALWAYS">
+            
+            <!-- Área de contenido -->
+            <VBox alignment="TOP_CENTER" 
+                  spacing="24.0" 
+                  styleClass="content-area-profile">
+                
+                <padding>
+                    <Insets top="20.0" right="20.0" bottom="40.0" left="20.0"/>
+                </padding>
+                
+                <!-- Título de la página -->
+                <Label styleClass="title" 
+                       text="Notificaciones" 
+                       alignment="CENTER" />
+
+                <!-- Contenedor de notificaciones -->
+                <VBox fx:id="contenedorNotificaciones" 
+                      spacing="16" 
+                      VBox.vgrow="ALWAYS">
+                </VBox>
+                
+            </VBox>
+            
+        </ScrollPane>
+    </VBox>
+</VBox>
+

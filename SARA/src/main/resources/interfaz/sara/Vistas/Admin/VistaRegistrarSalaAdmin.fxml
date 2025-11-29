@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox xmlns="http://javafx.com/javafx/21" 
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="interfaz.sara.Controladores.Admin.ControladorRegistrarSalaAdmin"
+      styleClass="root-container-admin" 
+      spacing="0"
+      VBox.vgrow="ALWAYS"
+      HBox.hgrow="ALWAYS">
+
+    <!-- Componente Sidebar Compartido -->
+    <fx:include fx:id="sidebarInclude" 
+                source="ComponenteSidebarAdmin.fxml" 
+                HBox.hgrow="NEVER"/>
+
+    <!-- Contenido principal -->
+    <ScrollPane fitToWidth="true" 
+               styleClass="scroll-pane-custom-admin" 
+               HBox.hgrow="ALWAYS" 
+               VBox.vgrow="ALWAYS">
+        
+        <VBox styleClass="contenido-principal-admin" 
+              alignment="TOP_CENTER"
+              VBox.vgrow="ALWAYS"
+              HBox.hgrow="ALWAYS">
+            
+            <VBox styleClass="contenido-ancho-maximo-admin" 
+                  spacing="24.0"
+                  VBox.vgrow="ALWAYS"
+                  HBox.hgrow="ALWAYS">
+                
+                <padding>
+                    <Insets top="20.0" right="40.0" bottom="20.0" left="40.0"/>
+                </padding>
+                
+                <!-- Encabezado con botón volver y título -->
+                <HBox alignment="CENTER_LEFT" 
+                     spacing="20.0"
+                     HBox.hgrow="ALWAYS">
+                    
+                    <Button text="← Volver" 
+                           styleClass="boton-volver-admin" 
+                           onAction="#manejarVolver"/>
+                    
+                    <Label text="Registrar Nueva Sala" 
+                          styleClass="titulo-pagina-admin" 
+                          maxWidth="Infinity" 
+                          HBox.hgrow="ALWAYS"/>
+                </HBox>
+
+                <!-- Formulario de registro -->
+                <VBox styleClass="grid-detalles-admin" 
+                     spacing="24.0">
+                    
+                    <!-- Campo: Imagen de la Sala -->
+                    <VBox spacing="8.0" alignment="TOP_CENTER">
+                        <Label text="Imagen de la Sala" 
+                              styleClass="texto-etiqueta-admin"/>
+                        <VBox spacing="12.0" alignment="TOP_CENTER">
+                            <ImageView fx:id="imagenSalaView" 
+                                      fitHeight="200.0" 
+                                      fitWidth="300.0" 
+                                      preserveRatio="true"
+                                      styleClass="imagen-sala-preview"/>
+                            <Button text="Seleccionar Imagen" 
+                                   styleClass="boton-secundario-imagen-admin" 
+                                   onAction="#manejarSeleccionarImagen"/>
+                        </VBox>
+                    </VBox>
+                    
+                    <!-- Campo: Nombre de la Sala -->
+                    <VBox spacing="8.0">
+                        <Label text="Nombre de la Sala" 
+                              styleClass="texto-etiqueta-admin"/>
+                        <TextField fx:id="campoNombre" 
+                                  promptText="Ejemplo: Sala de Juntas Principal" 
+                                  styleClass="input-field-admin"/>
+                    </VBox>
+
+                    <!-- Campo: Código de Sala -->
+                    <VBox spacing="8.0">
+                        <Label text="Código de Sala" 
+                              styleClass="texto-etiqueta-admin"/>
+                        <TextField fx:id="campoCodigo" 
+                                  promptText="Ejemplo: 101, A-101, SALA-01" 
+                                  styleClass="input-field-admin"/>
+                    </VBox>
+
+                    <!-- Campo: Capacidad -->
+                    <VBox spacing="8.0">
+                        <Label text="Capacidad (número de personas)" 
+                              styleClass="texto-etiqueta-admin"/>
+                        <TextField fx:id="campoCapacidad" 
+                                  promptText="Ejemplo: 10, 25, 50" 
+                                  styleClass="input-field-admin"/>
+                    </VBox>
+
+                    <!-- Campo: Tipo de Sala -->
+                    <VBox spacing="12.0">
+                        <Label text="Tipo de Sala" 
+                              styleClass="texto-etiqueta-admin"/>
+                        <HBox spacing="12.0">
+                            <fx:define>
+                                <ToggleGroup fx:id="grupoTipoSala"/>
+                            </fx:define>
+                            
+                            <ToggleButton fx:id="toggleBoardroom" 
+                                         toggleGroup="$grupoTipoSala" 
+                                         text="Sala de Juntas"
+                                         styleClass="toggle-button-admin" 
+                                         HBox.hgrow="ALWAYS"/>
+                            
+                            <ToggleButton fx:id="toggleLaboratory" 
+                                         toggleGroup="$grupoTipoSala" 
+                                         text="Laboratorio"
+                                         styleClass="toggle-button-admin" 
+                                         HBox.hgrow="ALWAYS"/>
+                            
+                            <ToggleButton fx:id="toggleAuditorium" 
+                                         toggleGroup="$grupoTipoSala" 
+                                         text="Auditorio"
+                                         styleClass="toggle-button-admin" 
+                                         HBox.hgrow="ALWAYS"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Campo: Ubicación -->
+                    <VBox spacing="8.0">
+                        <Label text="Ubicación" 
+                              styleClass="texto-etiqueta-admin"/>
+                        <HBox spacing="8.0">
+                            <ComboBox fx:id="comboUbicacion" 
+                                     promptText="Seleccionar o escribir ubicación" 
+                                     styleClass="combo-roles-admin"
+                                     editable="true"
+                                     HBox.hgrow="ALWAYS"/>
+                            <Button text="Gestionar" 
+                                   styleClass="boton-gestionar-admin" 
+                                   onAction="#manejarGestionarUbicaciones"
+                                   HBox.hgrow="NEVER"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Mensaje de error/éxito -->
+                    <Label fx:id="mensajeEstado" 
+                          styleClass="mensaje-estado-admin" 
+                          visible="false" 
+                          managed="false"/>
+                </VBox>
+
+                <!-- Botones de acción -->
+                <HBox alignment="CENTER_RIGHT" 
+                     spacing="16.0" 
+                     styleClass="contenedor-botones-admin">
+                    
+                    <Button text="Cancelar" 
+                           styleClass="boton-accion-warning-admin" 
+                           onAction="#manejarCancelar"/>
+                    
+                    <Button text="Guardar Sala" 
+                           styleClass="boton-accion-primario-admin" 
+                           onAction="#manejarGuardar"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </ScrollPane>
+</HBox>
+

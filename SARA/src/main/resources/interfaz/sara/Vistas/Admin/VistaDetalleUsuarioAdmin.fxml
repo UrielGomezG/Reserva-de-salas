@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.layout.Region?>
+
+<HBox xmlns="http://javafx.com/javafx/21" 
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="interfaz.sara.Controladores.Admin.ControladorDetalleUsuarioAdmin"
+      styleClass="root-container-admin" 
+      spacing="0"
+      VBox.vgrow="ALWAYS"
+      HBox.hgrow="ALWAYS">
+
+    <!-- Componente Sidebar Compartido -->
+    <fx:include fx:id="sidebarInclude" 
+                source="ComponenteSidebarAdmin.fxml" 
+                HBox.hgrow="NEVER"/>
+
+    <!-- Contenido principal -->
+    <ScrollPane fitToWidth="true" 
+               styleClass="scroll-pane-custom-admin" 
+               HBox.hgrow="ALWAYS" 
+               VBox.vgrow="ALWAYS">
+        
+        <VBox styleClass="contenido-principal-admin" 
+              alignment="TOP_CENTER"
+              VBox.vgrow="ALWAYS"
+              HBox.hgrow="ALWAYS">
+            
+            <VBox styleClass="contenido-ancho-maximo-admin" 
+                  spacing="0"
+                  VBox.vgrow="ALWAYS"
+                  HBox.hgrow="ALWAYS">
+                
+                <padding>
+                    <Insets top="20.0" right="40.0" bottom="20.0" left="40.0"/>
+                </padding>
+                
+                <!-- Encabezado con botón volver y título -->
+                <HBox alignment="CENTER_LEFT" 
+                     spacing="20.0"
+                     HBox.hgrow="ALWAYS">
+                    
+                    <Button text="← Volver" 
+                           styleClass="boton-volver-admin" 
+                           onAction="#manejarVolver"/>
+                    
+                    <Label text="Detalles de Usuario" 
+                          styleClass="titulo-pagina-admin" 
+                          maxWidth="Infinity" 
+                          HBox.hgrow="ALWAYS"/>
+                </HBox>
+
+                <!-- Espaciador -->
+                <Region minHeight="32.0"/>
+
+                <!-- Tarjeta de perfil con imagen y datos principales -->
+                <HBox styleClass="tarjeta-perfil-admin" 
+                     spacing="24.0" 
+                     alignment="CENTER_LEFT">
+                    
+                    <!-- Imagen de perfil circular -->
+                    <ImageView fx:id="profileImageView" 
+                              fitHeight="140.0" 
+                              fitWidth="140.0" 
+                              pickOnBounds="true" 
+                              preserveRatio="true" 
+                              styleClass="imagen-perfil-grande-admin">
+                        <clip>
+                            <Circle centerX="70.0" 
+                                   centerY="70.0" 
+                                   radius="70.0" />
+                        </clip>
+                    </ImageView>
+                    
+                    <!-- Información principal del usuario -->
+                    <VBox alignment="CENTER_LEFT" 
+                         spacing="8.0">
+                        
+                        <Label fx:id="labelNombrePrincipal" 
+                              text="Cargando..." 
+                              styleClass="texto-nombre-grande-admin"/>
+                        
+                        <Label fx:id="labelRol" 
+                              text="Cargando..." 
+                              styleClass="texto-rol-grande-admin" 
+                              maxWidth="-1"/>
+                        
+                        <Label fx:id="labelEmailPrincipal" 
+                              text="Cargando..." 
+                              styleClass="texto-email-grande-admin"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Espaciador -->
+                <Region minHeight="24.0"/>
+
+                <!-- Grid con detalles del usuario -->
+                <GridPane styleClass="grid-detalles-admin" 
+                         hgap="24.0" 
+                         vgap="0.0">
+                    
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="NEVER" minWidth="150.0"/> 
+                        <ColumnConstraints hgrow="ALWAYS"/> 
+                    </columnConstraints>
+                    
+                    <!-- Fila: Correo Institucional -->
+                    <VBox styleClass="fila-detalle-admin" 
+                         GridPane.columnIndex="0" 
+                         GridPane.rowIndex="0" 
+                         GridPane.columnSpan="2">
+                        <Label text="Correo Institucional" 
+                              styleClass="texto-etiqueta-admin"/>
+                        <Label fx:id="labelEmailDetalle" 
+                              text="..." 
+                              styleClass="texto-valor-admin"/>
+                    </VBox>
+                    
+                    <!-- Fila: Matrícula -->
+                    <VBox styleClass="fila-detalle-admin" 
+                         GridPane.columnIndex="0" 
+                         GridPane.rowIndex="1" 
+                         GridPane.columnSpan="2">
+                        <Label text="Matrícula" 
+                              styleClass="texto-etiqueta-admin"/>
+                        <Label fx:id="labelMatricula" 
+                              text="..." 
+                              styleClass="texto-valor-admin"/>
+                    </VBox>
+                    
+                    <!-- Fila: Fecha de Registro -->
+                    <VBox styleClass="fila-detalle-admin" 
+                         GridPane.columnIndex="0" 
+                         GridPane.rowIndex="2" 
+                         GridPane.columnSpan="2">
+                        <Label text="Fecha de Registro" 
+                              styleClass="texto-etiqueta-admin"/>
+                        <Label fx:id="labelFechaRegistro" 
+                              text="..." 
+                              styleClass="texto-valor-admin"/>
+                    </VBox>
+                    
+                    <!-- Fila: Total de Reservas -->
+                    <VBox styleClass="fila-detalle-admin" 
+                         GridPane.columnIndex="0" 
+                         GridPane.rowIndex="3" 
+                         GridPane.columnSpan="2">
+                        <Label text="Total de Reservas" 
+                              styleClass="texto-etiqueta-admin"/>
+                        <Label fx:id="labelTotalReservas" 
+                              text="..." 
+                              styleClass="texto-valor-admin"/>
+                    </VBox>
+                    
+                    <!-- Fila: Sala Más Utilizada -->
+                    <VBox styleClass="fila-detalle-admin" 
+                         GridPane.columnIndex="0" 
+                         GridPane.rowIndex="4" 
+                         GridPane.columnSpan="2">
+                        <Label text="Sala Más Utilizada" 
+                              styleClass="texto-etiqueta-admin"/>
+                        <Label fx:id="labelSalaMasUsada" 
+                              text="..." 
+                              styleClass="texto-valor-admin"/>
+                    </VBox>
+                </GridPane>
+
+                <!-- Espaciador -->
+                <Region minHeight="8.0"/>
+
+                <!-- Contenedor de botones de acción -->
+                <HBox spacing="16.0" 
+                     alignment="CENTER_LEFT" 
+                     styleClass="contenedor-botones-admin">
+                    
+                    <Button text="Editar Usuario" 
+                           styleClass="boton-accion-primario-admin" 
+                           onAction="#manejarEditarUsuario"/>
+                    
+                    <Button text="Eliminar Usuario" 
+                           styleClass="boton-accion-secundario-admin" 
+                           onAction="#manejarEliminarUsuario"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </ScrollPane>
+</HBox>
+

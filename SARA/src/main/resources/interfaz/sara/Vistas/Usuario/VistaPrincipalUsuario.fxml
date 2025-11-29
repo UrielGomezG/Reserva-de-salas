@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" 
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="interfaz.sara.Controladores.Usuario.ControladorPrincipalUsuario"
+      styleClass="background-container" 
+      VBox.vgrow="ALWAYS" 
+      HBox.hgrow="ALWAYS"
+      spacing="0">
+
+    <!-- Componente Navbar Compartido -->
+    <fx:include fx:id="navbarInclude" 
+                source="../BarraDeNavegacion/ComponenteNavbarUsuario.fxml" 
+                VBox.vgrow="NEVER"/>
+
+    <!-- Contenedor principal del contenido -->
+    <VBox alignment="TOP_CENTER" 
+          spacing="0.0" 
+          styleClass="main-content-wrapper" 
+          VBox.vgrow="ALWAYS">
+        
+        <ScrollPane fitToWidth="true" 
+                   styleClass="scroll-pane-custom" 
+                   VBox.vgrow="ALWAYS">
+            
+            <!-- Área de contenido que ocupa todo el espacio disponible -->
+            <VBox VBox.vgrow="ALWAYS"
+                  HBox.hgrow="ALWAYS"
+                  alignment="TOP_LEFT" 
+                  spacing="20.0" 
+                  styleClass="content-area">
+                
+                <padding>
+                    <Insets top="20.0" right="20.0" bottom="40.0" left="20.0"/>
+                </padding>
+
+                <!-- Título de la página -->
+                <Label styleClass="title" text="Mis Reservas" />
+
+                <!-- Contenedor de pestañas de filtro -->
+                <VBox spacing="0.0">
+                    
+                    <!-- Pestañas para filtrar reservas -->
+                    <HBox alignment="CENTER_LEFT" 
+                          spacing="25.0" 
+                          styleClass="tabs-container">
+                        
+                        <!-- Pestaña: Próximas -->
+                        <VBox fx:id="tabProximasContainer" 
+                              alignment="CENTER_LEFT" 
+                              spacing="5.0" 
+                              onMouseClicked="#manejarFiltroProximas">
+                            <Label fx:id="tabProximasLabel" 
+                                   styleClass="tab-active" 
+                                   text="Próximas" />
+                            <Separator fx:id="tabProximasSeparator" 
+                                      prefWidth="50.0" 
+                                      styleClass="tabs-underline" />
+                        </VBox>
+                        
+                        <!-- Pestaña: Pasadas -->
+                        <VBox fx:id="tabPasadasContainer" 
+                              alignment="CENTER_LEFT" 
+                              spacing="5.0" 
+                              onMouseClicked="#manejarFiltroPasadas">
+                            <Label fx:id="tabPasadasLabel" 
+                                   styleClass="tab-inactive" 
+                                   text="Pasadas" />
+                            <Separator fx:id="tabPasadasSeparator" 
+                                      prefWidth="50.0" 
+                                      visible="false" 
+                                      styleClass="tabs-underline" />
+                        </VBox>
+                        
+                        <!-- Pestaña: Todas -->
+                        <VBox fx:id="tabTodasContainer" 
+                              alignment="CENTER_LEFT" 
+                              spacing="5.0" 
+                              onMouseClicked="#manejarFiltroTodas">
+                            <Label fx:id="tabTodasLabel" 
+                                   styleClass="tab-inactive" 
+                                   text="Todas" />
+                            <Separator fx:id="tabTodasSeparator" 
+                                      prefWidth="50.0" 
+                                      visible="false" 
+                                      styleClass="tabs-underline" />
+                        </VBox>
+                        
+                    </HBox>
+                    
+                    <!-- Separador debajo de las pestañas -->
+                    <Separator prefHeight="1.0" 
+                              prefWidth="200.0" 
+                              styleClass="separator-tabs" />
+                    
+                </VBox>
+
+                <!-- Contenedor para la lista de reservas -->
+                <VBox fx:id="contenedorListaReservas" 
+                      VBox.vgrow="ALWAYS"
+                      spacing="25.0" 
+                      styleClass="bookings-list">
+                    <!-- Las reservas se agregarán dinámicamente aquí -->
+                </VBox>
+                
+            </VBox>
+            
+        </ScrollPane>
+    </VBox>
+</VBox>
+
