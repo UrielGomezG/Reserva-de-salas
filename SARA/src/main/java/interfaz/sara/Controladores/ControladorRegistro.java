@@ -16,122 +16,88 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Controlador para la vista de registro (VistaRegistro.fxml)
- * Maneja el registro de nuevos usuarios en el sistema SARA
+ * Controlador para el registro de nuevos usuarios
+ * Valida datos y crea cuentas con contraseñas hasheadas
  */
 public class ControladorRegistro {
 
-    // ========== Componentes FXML ==========
-    
     @FXML
     private TextField campoUsuario;
-
     @FXML
     private TextField campoEmail;
-
     @FXML
     private TextField campoMatricula;
-
     @FXML
     private PasswordField campoContrasena;
-
     @FXML
     private Button botonRegistrarse;
-
     @FXML
     private Label mensajeError;
 
-    // ========== Métodos de inicialización ==========
-    
-    /**
-     * Inicializa el controlador después de que se carga el FXML
-     * Configura los valores iniciales y prepara los componentes
-     */
     @FXML
     private void initialize() {
-        // Configurar el mensaje de error inicialmente oculto
         mensajeError.setVisible(false);
         mensajeError.setManaged(false);
-        
-        // Permitir que el botón se active presionando Enter en los campos
         campoUsuario.setOnAction(e -> manejarRegistro());
         campoEmail.setOnAction(e -> manejarRegistro());
         campoMatricula.setOnAction(e -> manejarRegistro());
         campoContrasena.setOnAction(e -> manejarRegistro());
     }
 
-    // ========== Métodos de manejo de eventos ==========
-    
-    /**
-     * Maneja el evento de clic en el botón "Registrarse"
-     * Valida los datos y registra al nuevo usuario
-     */
     @FXML
     private void manejarRegistro() {
-        // Ocultar mensajes de error previos
         ocultarMensajeError();
         
-        // Obtener los valores de los campos
         String usuario = campoUsuario.getText().trim();
         String email = campoEmail.getText().trim();
         String matricula = campoMatricula.getText().trim();
         String contrasena = campoContrasena.getText();
         
-        // Validar que todos los campos estén completos
         if (!validarCampos(usuario, email, matricula, contrasena)) {
             return;
         }
         
-        // Validar formato del email
         if (!validarFormatoEmail(email)) {
             mostrarMensajeError("Por favor, ingrese un correo electrónico válido.");
             campoEmail.requestFocus();
             return;
         }
         
-        // Intentar registrar al usuario
         if (registrarUsuario(usuario, email, matricula, contrasena)) {
-            // Registro exitoso - navegar al login después de un breve retraso
             mostrarMensajeExito("¡Registro exitoso! Redirigiendo al inicio de sesión...");
-            
-            // Navegar al login después de 1 segundo
             new Thread(() -> {
                 try {
                     Thread.sleep(1000);
                     Platform.runLater(() -> navegarALogin());
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Thread.currentThread().interrupt();
                 }
             }).start();
         } else {
-            // Error en el registro
             mostrarMensajeError("Error al registrar usuario. Por favor, verifique los datos e intente nuevamente.");
         }
     }
     
-    /**
-     * Maneja el evento de clic en el enlace "Inicia sesión"
-     * Navega de vuelta a la pantalla de login
-     */
     @FXML
     private void manejarIrALogin() {
         navegarALogin();
     }
 
-    // ========== Métodos de validación ==========
-    
-    /**
-     * Valida que todos los campos requeridos estén completos
-     * 
-     * @param usuario El nombre de usuario ingresado
-     * @param email El correo electrónico ingresado
-     * @param matricula La matrícula ingresada
-     * @param contrasena La contraseña ingresada
-     * @return true si todos los campos son válidos, false en caso contrario
-     */
     private boolean validarCampos(String usuario, String email, String matricula, String contrasena) {
         if (usuario.isEmpty()) {
             mostrarMensajeError("Por favor, ingrese su nombre de usuario.");
+            campoUsuario.requestFocus();
+            return false;
+        }
+        
+        if (usuario.length() < 3 || usuario.length() > 50) {
+            mostrarMensajeError("El nombre de usuario debe tener entre 3 y 50 caracteres.");
+            campoUsuario.requestFocus();
+            return false;
+        }
+        
+        if (!usuario.matches("^[a-zA-Z0-9_]+$")) {
+            mostrarMensajeError("El nombre de usuario solo puede contener letras, números y guiones bajos.");
             campoUsuario.requestFocus();
             return false;
         }
@@ -142,8 +108,32 @@ public class ControladorRegistro {
             return false;
         }
         
+        if (email.length() > 100) {
+            mostrarMensajeError("El correo electrónico no puede exceder 100 caracteres.");
+            campoEmail.requestFocus();
+            return false;
+        }
+        
+        if (!validarFormatoEmail(email)) {
+            mostrarMensajeError("Por favor, ingrese un correo electrónico válido con el dominio @utez.edu.mx");
+            campoEmail.requestFocus();
+            return false;
+        }
+        
+        if (!email.toLowerCase().endsWith("@utez.edu.mx")) {
+            mostrarMensajeError("El correo electrónico debe tener el dominio @utez.edu.mx");
+            campoEmail.requestFocus();
+            return false;
+        }
+        
         if (matricula.isEmpty()) {
             mostrarMensajeError("Por favor, ingrese su matrícula.");
+            campoMatricula.requestFocus();
+            return false;
+        }
+        
+        if (matricula.length() < 5 || matricula.length() > 20) {
+            mostrarMensajeError("La matrícula debe tener entre 5 y 20 caracteres.");
             campoMatricula.requestFocus();
             return false;
         }
@@ -154,9 +144,14 @@ public class ControladorRegistro {
             return false;
         }
         
-        // Validar longitud mínima de contraseña
-        if (contrasena.length() < 6) {
-            mostrarMensajeError("La contraseña debe tener al menos 6 caracteres.");
+        if (contrasena.length() < 8 || contrasena.length() > 100) {
+            mostrarMensajeError("La contraseña debe tener entre 8 y 100 caracteres.");
+            campoContrasena.requestFocus();
+            return false;
+        }
+        
+        if (!validarContrasenaSegura(contrasena)) {
+            mostrarMensajeError("La contraseña debe contener al menos un carácter especial (ej: !@#$%^&*()_+-=[]{}|;:,.<>?).");
             campoContrasena.requestFocus();
             return false;
         }
@@ -164,142 +159,80 @@ public class ControladorRegistro {
         return true;
     }
     
-    /**
-     * Valida el formato del correo electrónico
-     * 
-     * @param email El correo electrónico a validar
-     * @return true si el formato es válido, false en caso contrario
-     */
     private boolean validarFormatoEmail(String email) {
-        // Expresión regular básica para validar email
-        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
-        return email.matches(emailRegex);
+        return email.matches("^[A-Za-z0-9+_.-]+@utez\\.edu\\.mx$");
+    }
+    
+    private boolean validarContrasenaSegura(String contrasena) {
+        String caracteresEspeciales = "!@#$%^&*()_+-=[]{}|;:,.<>?";
+        for (char c : contrasena.toCharArray()) {
+            if (caracteresEspeciales.indexOf(c) >= 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    // ========== Métodos de registro ==========
-    
     /**
-     * Registra un nuevo usuario en la base de datos
-     * 
-     * @param usuario El nombre de usuario
-     * @param email El correo electrónico
-     * @param matricula La matrícula
-     * @param contrasena La contraseña en texto plano
-     * @return true si el registro es exitoso, false en caso contrario
+     * Registra un nuevo usuario hasheando la contraseña antes de guardarla
      */
     private boolean registrarUsuario(String usuario, String email, String matricula, String contrasena) {
         ConexionBD conexionBD = ConexionBD.obtenerInstancia();
-        Connection conexion = null;
-        PreparedStatement statement = null;
-        ResultSet resultado = null;
         
-        try {
-            // Obtener conexión a la base de datos
-            conexion = conexionBD.obtenerConexion();
-            
-            // Verificar si el usuario, email o matrícula ya existen
+        try (Connection conexion = conexionBD.obtenerConexion()) {
             if (existeUsuario(conexion, usuario, email, matricula)) {
                 mostrarMensajeError("El usuario, correo electrónico o matrícula ya están registrados.");
                 return false;
             }
             
-            // Consulta SQL para insertar el nuevo usuario
-            // NOTA: En producción, la contraseña debe ser hasheada con BCrypt o similar
-            String sql = "INSERT INTO users (username, email, matricula, password_hash, is_active) " +
-                        "VALUES (?, ?, ?, ?, 1)";
-            
-            statement = conexion.prepareStatement(sql);
-            statement.setString(1, usuario);
-            statement.setString(2, email);
-            statement.setString(3, matricula);
-            statement.setString(4, contrasena); // TODO: Hash de contraseña antes de guardar
-            
-            int filasAfectadas = statement.executeUpdate();
-            
-            if (filasAfectadas > 0) {
-                System.out.println("Usuario registrado exitosamente: " + usuario);
-                return true;
-            } else {
-                System.out.println("Error: No se pudo insertar el usuario");
+            String hashContrasena = interfaz.sara.Utilidades.PasswordHasher.hashPassword(contrasena);
+            if (hashContrasena == null || hashContrasena.isEmpty() || 
+                hashContrasena.length() != 64 || !hashContrasena.matches("^[a-f0-9]{64}$")) {
+                mostrarMensajeError("Error al procesar la contraseña. Por favor, intente nuevamente.");
                 return false;
             }
             
-        } catch (SQLException e) {
-            System.err.println("Error al registrar usuario en la base de datos");
-            System.err.println("Mensaje: " + e.getMessage());
+            String sql = "INSERT INTO users (username, email, matricula, password_hash, is_active) " +
+                        "VALUES (?, ?, ?, ?, 1)";
             
-            // Manejar errores específicos de base de datos
+            try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+                statement.setString(1, usuario);
+                statement.setString(2, email);
+                statement.setString(3, matricula);
+                statement.setString(4, hashContrasena);
+                
+                return statement.executeUpdate() > 0;
+            }
+            
+        } catch (SQLException e) {
+            System.err.println("Error al registrar usuario: " + e.getMessage());
             if (e.getMessage().contains("Duplicate entry")) {
                 mostrarMensajeError("El usuario, correo electrónico o matrícula ya están registrados.");
             } else {
                 mostrarMensajeError("Error de conexión a la base de datos. Por favor, intente más tarde.");
             }
-            
-            e.printStackTrace();
             return false;
+        }
+    }
+    
+    private boolean existeUsuario(Connection conexion, String usuario, String email, String matricula) throws SQLException {
+        String sql = "SELECT COUNT(*) as count FROM users WHERE username = ? OR email = ? OR matricula = ?";
+        
+        try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+            statement.setString(1, usuario);
+            statement.setString(2, email);
+            statement.setString(3, matricula);
             
-        } finally {
-            // Cerrar recursos
-            try {
-                if (resultado != null) resultado.close();
-                if (statement != null) statement.close();
-                // No cerramos la conexión aquí, la reutilizamos (singleton)
-            } catch (SQLException e) {
-                System.err.println("Error al cerrar recursos de base de datos");
-                e.printStackTrace();
+            try (ResultSet resultado = statement.executeQuery()) {
+                return resultado.next() && resultado.getInt("count") > 0;
             }
         }
     }
-    
-    /**
-     * Verifica si un usuario, email o matrícula ya existen en la base de datos
-     * 
-     * @param conexion La conexión a la base de datos
-     * @param usuario El nombre de usuario a verificar
-     * @param email El correo electrónico a verificar
-     * @param matricula La matrícula a verificar
-     * @return true si existe alguno de los valores, false en caso contrario
-     */
-    private boolean existeUsuario(Connection conexion, String usuario, String email, String matricula) throws SQLException {
-        String sql = "SELECT COUNT(*) as count FROM users " +
-                    "WHERE username = ? OR email = ? OR matricula = ?";
-        
-        PreparedStatement statement = conexion.prepareStatement(sql);
-        statement.setString(1, usuario);
-        statement.setString(2, email);
-        statement.setString(3, matricula);
-        
-        ResultSet resultado = statement.executeQuery();
-        
-        if (resultado.next()) {
-            int count = resultado.getInt("count");
-            resultado.close();
-            statement.close();
-            return count > 0;
-        }
-        
-        resultado.close();
-        statement.close();
-        return false;
-    }
 
-    // ========== Métodos de navegación ==========
-    
-    /**
-     * Navega a la pantalla de login
-     */
     private void navegarALogin() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
-        gestorNavegacion.navegarALogin();
+        GestorNavegacion.obtenerInstancia().navegarALogin();
     }
 
-    // ========== Métodos de interfaz de usuario ==========
-    
-    /**
-     * Muestra un mensaje de error al usuario
-     * 
-     * @param mensaje El mensaje de error a mostrar
-     */
     private void mostrarMensajeError(String mensaje) {
         mensajeError.setText(mensaje);
         mensajeError.setVisible(true);
@@ -307,11 +240,6 @@ public class ControladorRegistro {
         mensajeError.setTextFill(Color.RED);
     }
     
-    /**
-     * Muestra un mensaje de éxito al usuario
-     * 
-     * @param mensaje El mensaje de éxito a mostrar
-     */
     private void mostrarMensajeExito(String mensaje) {
         mensajeError.setText(mensaje);
         mensajeError.setVisible(true);
@@ -319,20 +247,12 @@ public class ControladorRegistro {
         mensajeError.setTextFill(Color.GREEN);
     }
 
-    /**
-     * Oculta el mensaje de error/éxito
-     */
     private void ocultarMensajeError() {
         mensajeError.setVisible(false);
         mensajeError.setManaged(false);
         mensajeError.setText("");
     }
 
-    // ========== Métodos públicos auxiliares (si se necesitan) ==========
-    
-    /**
-     * Limpia todos los campos del formulario
-     */
     public void limpiarFormulario() {
         campoUsuario.clear();
         campoEmail.clear();
@@ -341,4 +261,3 @@ public class ControladorRegistro {
         ocultarMensajeError();
     }
 }
-

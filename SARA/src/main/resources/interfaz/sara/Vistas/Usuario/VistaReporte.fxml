@@ -18,6 +18,7 @@
       VBox.vgrow="ALWAYS" 
       HBox.hgrow="ALWAYS"
       spacing="0">
+      
 
     <!-- Componente Navbar Compartido -->
     <fx:include fx:id="navbarInclude" 
@@ -48,7 +49,7 @@
                 <!-- Título de la página -->
                 <Label styleClass="title" text="Reporte de Incidente" />
 
-                <!-- Contenedor de selección de sala, fecha y reservación -->
+                <!-- Contenedor de selección de sala y reservación -->
                 <VBox spacing="10.0">
                     <HBox spacing="20.0">
                         <!-- Selector de sala -->
@@ -62,24 +63,13 @@
                                      maxWidth="380.0"
                                      onAction="#manejarCambioSala"/>
                         </VBox>
-                        
-                        <!-- Selector de fecha -->
-                        <VBox styleClass="input-container" prefWidth="380.0">
-                            <Label text="Selecciona fecha" styleClass="input-label" />
-                            <DatePicker fx:id="datePickerFecha" 
-                                       styleClass="input-field-datepicker" 
-                                       prefWidth="380.0"
-                                       minWidth="380.0"
-                                       maxWidth="380.0"
-                                       onAction="#manejarCambioFecha"/>
-                        </VBox>
                     </HBox>
                     
-                    <!-- Selector de reservación (opcional) -->
+                    <!-- Selector de reservación (obligatorio) -->
                     <VBox styleClass="input-container" prefWidth="780.0">
-                        <Label text="Reservación relacionada (opcional)" styleClass="input-label" />
+                        <Label text="Reservación relacionada *" styleClass="input-label" />
                         <ComboBox fx:id="comboReservacion" 
-                                 promptText="Selecciona una reservación (opcional)" 
+                                 promptText="Selecciona una reservación" 
                                  styleClass="input-field-combo" 
                                  prefWidth="780.0"
                                  minWidth="780.0"
@@ -92,33 +82,37 @@
                 <VBox spacing="15.0">
                     <Label styleClass="subtitle" text="Selecciona el tipo de incidente" />
                     <GridPane hgap="15.0" vgap="15.0">
-                        <VBox styleClass="incident-card" 
+                        <VBox fx:id="cardMuebleRoto" 
+                              styleClass="incident-card" 
                               alignment="CENTER" 
+                              onMouseClicked="#manejarSeleccionarTipoMuebleRoto"
                               GridPane.columnIndex="0" 
-                              GridPane.rowIndex="0" 
-                              onMouseClicked="#manejarSeleccionarIncidente">
-                            <Label text="Mueble Roto" styleClass="incident-text" />
+                              GridPane.rowIndex="0">
+                            <Label text="Mueble Roto" styleClass="incident-card-label" />
                         </VBox>
-                        <VBox styleClass="incident-card" 
+                        <VBox fx:id="cardElectronicoRoto" 
+                              styleClass="incident-card" 
                               alignment="CENTER" 
+                              onMouseClicked="#manejarSeleccionarTipoElectronicoRoto"
                               GridPane.columnIndex="1" 
-                              GridPane.rowIndex="0" 
-                              onMouseClicked="#manejarSeleccionarIncidente">
-                            <Label text="Electrónico Roto" styleClass="incident-text" />
+                              GridPane.rowIndex="0">
+                            <Label text="Electrónico Roto" styleClass="incident-card-label" />
                         </VBox>
-                        <VBox styleClass="incident-card" 
+                        <VBox fx:id="cardOtro" 
+                              styleClass="incident-card" 
                               alignment="CENTER" 
+                              onMouseClicked="#manejarSeleccionarTipoOtro"
                               GridPane.columnIndex="2" 
-                              GridPane.rowIndex="0" 
-                              onMouseClicked="#manejarSeleccionarIncidente">
-                            <Label text="Otro" styleClass="incident-text" />
+                              GridPane.rowIndex="0">
+                            <Label text="Otro" styleClass="incident-card-label" />
                         </VBox>
-                        <VBox styleClass="incident-card" 
+                        <VBox fx:id="cardSucio" 
+                              styleClass="incident-card" 
                               alignment="CENTER" 
+                              onMouseClicked="#manejarSeleccionarTipoSucio"
                               GridPane.columnIndex="0" 
-                              GridPane.rowIndex="1" 
-                              onMouseClicked="#manejarSeleccionarIncidente">
-                            <Label text="Sucio" styleClass="incident-text" />
+                              GridPane.rowIndex="1">
+                            <Label text="Sucio" styleClass="incident-card-label" />
                         </VBox>
                     </GridPane>
                 </VBox>

@@ -1,12 +1,13 @@
 package interfaz.sara.Controladores.Admin;
 
 import interfaz.sara.ConexionBD.ConexionBD;
-import interfaz.sara.Utilidades.GestorNavegacion;
+import interfaz.sara.Utilidades.GestorNavegacionAdmin;
 import interfaz.sara.Utilidades.SesionUsuario;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -65,6 +66,9 @@ public class ControladorDetalleUsuarioAdmin {
     
     /** ID del usuario que se está visualizando */
     private Long usuarioId;
+    
+    /** Carpeta donde se almacenan las fotos de perfil */
+    private static final String CARPETA_FOTOS_PERFIL = "profile_pictures";
 
     // ========== Métodos de inicialización ==========
     
@@ -83,7 +87,7 @@ public class ControladorDetalleUsuarioAdmin {
         }
         
         // Obtener el ID del usuario seleccionado
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         usuarioId = gestorNavegacion.obtenerUsuarioIdSeleccionado();
         
         if (usuarioId == null) {
@@ -306,17 +310,18 @@ public class ControladorDetalleUsuarioAdmin {
      */
     private void cargarImagenPorDefecto() {
         try {
-            InputStream imagenStream = getClass().getResourceAsStream(
-                "/interfaz/sara/imagenes/perfil_placeholder.png"
-            );
-            if (imagenStream != null) {
-                Image imagen = new Image(imagenStream);
+            // Cargar desde la carpeta profile_pictures
+            File defaultFile = new File(CARPETA_FOTOS_PERFIL, "usuario.png");
+            if (defaultFile.exists()) {
+                Image imagen = new Image(new FileInputStream(defaultFile));
                 profileImageView.setImage(imagen);
             } else {
+                System.err.println("No se encontró la imagen de perfil por defecto: " + defaultFile.getAbsolutePath());
                 profileImageView.setImage(null);
             }
         } catch (Exception e) {
             System.err.println("Error al cargar imagen por defecto: " + e.getMessage());
+            profileImageView.setImage(null);
         }
     }
 
@@ -328,7 +333,7 @@ public class ControladorDetalleUsuarioAdmin {
      */
     @FXML
     private void manejarVolver() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         gestorNavegacion.navegarAVistaUsuariosAdmin();
     }
     
@@ -338,20 +343,101 @@ public class ControladorDetalleUsuarioAdmin {
      */
     @FXML
     private void manejarEditarUsuario() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         gestorNavegacion.navegarAVistaEditarUsuarioAdmin(usuarioId);
     }
     
     /**
      * Maneja el clic en el botón "Eliminar Usuario"
+     * Elimina permanentemente la cuenta del usuario
      */
     @FXML
     private void manejarEliminarUsuario() {
-        // TODO: Implementar confirmación y eliminación de usuario
-        mostrarAlerta("Información", "Eliminar Usuario", 
-                     "Eliminando usuario: " + labelNombrePrincipal.getText() + 
-                     "\nLa funcionalidad de eliminación estará disponible próximamente.", 
-                     Alert.AlertType.INFORMATION);
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Confirmar Eliminación");
+        confirmacion.setHeaderText("Eliminar Usuario Permanentemente");
+        confirmacion.setContentText("¿Está seguro que desea eliminar permanentemente la cuenta de " + 
+                                   labelNombrePrincipal.getText() + "?\n\n" +
+                                   "Esta acción no se puede deshacer. Se eliminarán todos los datos del usuario.");
+        
+        confirmacion.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                eliminarUsuarioDeBD();
+            }
+        });
+    }
+    
+    /**
+     * Elimina el usuario de la base de datos
+     */
+    private void eliminarUsuarioDeBD() {
+        ConexionBD conexionBD = ConexionBD.obtenerInstancia();
+        Connection conexion = null;
+        
+        try {
+            conexion = conexionBD.obtenerConexion();
+            conexion.setAutoCommit(false);
+            
+            // Eliminar roles del usuario
+            String sqlEliminarRoles = "DELETE FROM user_roles WHERE user_id = ?";
+            try (PreparedStatement stmt = conexion.prepareStatement(sqlEliminarRoles)) {
+                stmt.setLong(1, usuarioId);
+                stmt.executeUpdate();
+            }
+            
+            // Eliminar el usuario
+            String sqlEliminarUsuario = "DELETE FROM users WHERE id = ?";
+            try (PreparedStatement stmt = conexion.prepareStatement(sqlEliminarUsuario)) {
+                stmt.setLong(1, usuarioId);
+                int filasAfectadas = stmt.executeUpdate();
+                
+                if (filasAfectadas > 0) {
+                    conexion.commit();
+                    mostrarAlerta("Éxito", "Usuario eliminado", 
+                                 "El usuario ha sido eliminado permanentemente.", 
+                                 Alert.AlertType.INFORMATION);
+                    
+                    // Volver a la lista de usuarios
+                    manejarVolver();
+                } else {
+                    conexion.rollback();
+                    mostrarAlerta("Error", "Error al eliminar", 
+                                 "No se pudo eliminar el usuario.", 
+                                 Alert.AlertType.ERROR);
+                }
+            }
+        } catch (SQLException e) {
+            if (conexion != null) {
+                try {
+                    conexion.rollback();
+                } catch (SQLException rollbackEx) {
+                    System.err.println("Error al hacer rollback: " + rollbackEx.getMessage());
+                }
+            }
+            
+            System.err.println("Error al eliminar usuario: " + e.getMessage());
+            e.printStackTrace();
+            
+            // Verificar si hay restricciones de clave foránea
+            if (e.getMessage().contains("foreign key constraint")) {
+                mostrarAlerta("Error", "No se puede eliminar", 
+                             "No se puede eliminar este usuario porque tiene registros relacionados " +
+                             "(reservaciones, reportes, etc.). Considere deshabilitar la cuenta en su lugar.", 
+                             Alert.AlertType.ERROR);
+            } else {
+                mostrarAlerta("Error", "Error al eliminar", 
+                             "No se pudo eliminar el usuario. Por favor, intente más tarde.", 
+                             Alert.AlertType.ERROR);
+            }
+        } finally {
+            if (conexion != null) {
+                try {
+                    conexion.setAutoCommit(true);
+                } catch (SQLException e) {
+                    System.err.println("Error al restaurar autocommit: " + e.getMessage());
+                }
+            }
+        }
     }
     
     /**

@@ -6,9 +6,12 @@ import interfaz.sara.Utilidades.SesionUsuario;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -416,6 +419,12 @@ public class ControladorPrincipalUsuario {
             Label motivoCancelacion = new Label("Cancelación: " + reserva.getMotivoCancelacion());
             motivoCancelacion.getStyleClass().add("booking-cancellation");
             tarjeta.getChildren().add(motivoCancelacion);
+        } else if (!reserva.estaCancelada() && reserva.esProxima()) {
+            // Agregar botón de cancelar solo para reservas futuras no canceladas
+            Button btnCancelar = new Button("Cancelar Reserva");
+            btnCancelar.getStyleClass().add("button-secondary-new");
+            btnCancelar.setOnAction(e -> manejarCancelarReserva(reserva));
+            tarjeta.getChildren().add(btnCancelar);
         }
         
         return tarjeta;
@@ -454,6 +463,112 @@ public class ControladorPrincipalUsuario {
      */
     public TipoFiltro getFiltroActivo() {
         return filtroActivo;
+    }
+    
+    /**
+     * Maneja la cancelación de una reserva por el usuario
+     * Valida que haya al menos 2 horas de antelación
+     * 
+     * @param reserva La reserva a cancelar
+     */
+    private void manejarCancelarReserva(Reserva reserva) {
+        if (reserva.getFechaInicio() == null) {
+            mostrarAlerta("Error", "Error al cancelar", 
+                         "No se puede cancelar esta reserva. Fecha de inicio no disponible.", 
+                         Alert.AlertType.ERROR);
+            return;
+        }
+        
+        // Validar que haya al menos 2 horas de antelación
+        LocalDateTime ahora = LocalDateTime.now();
+        LocalDateTime fechaInicio = reserva.getFechaInicio();
+        long horasRestantes = java.time.Duration.between(ahora, fechaInicio).toHours();
+        
+        if (horasRestantes < 2) {
+            mostrarAlerta("Error", "No se puede cancelar", 
+                         "No se puede cancelar la reserva con menos de 2 horas de antelación.\n\n" +
+                         "Tiempo restante: " + horasRestantes + " hora(s)", 
+                         Alert.AlertType.WARNING);
+            return;
+        }
+        
+        // Solicitar motivo de cancelación (opcional)
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Cancelar Reserva");
+        dialog.setHeaderText("¿Desea cancelar esta reserva?");
+        dialog.setContentText("Motivo de cancelación (opcional):");
+        
+        dialog.showAndWait().ifPresent(motivo -> {
+            // Confirmar cancelación
+            Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmacion.setTitle("Confirmar Cancelación");
+            confirmacion.setHeaderText("¿Cancelar esta reserva?");
+            confirmacion.setContentText("Esta acción no se puede deshacer.");
+            
+            confirmacion.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    cancelarReserva(reserva, motivo);
+                }
+            });
+        });
+    }
+    
+    /**
+     * Cancela la reserva en la base de datos
+     * 
+     * @param reserva La reserva a cancelar
+     * @param motivo El motivo de cancelación
+     */
+    private void cancelarReserva(Reserva reserva, String motivo) {
+        ConexionBD conexionBD = ConexionBD.obtenerInstancia();
+        SesionUsuario sesion = SesionUsuario.obtenerInstancia();
+        
+        String sql = "UPDATE reservations SET " +
+                    "status_id = (SELECT id FROM reservation_status WHERE code = 'CANCELLED_USER' LIMIT 1), " +
+                    "cancelled_by_user_id = ?, " +
+                    "cancellation_reason = ? " +
+                    "WHERE id = ?";
+        
+        try {
+            Connection conexion = conexionBD.obtenerConexion();
+            try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+                statement.setLong(1, sesion.getUsuarioId());
+                statement.setString(2, motivo != null && !motivo.trim().isEmpty() ? motivo.trim() : "Cancelada por el usuario");
+                statement.setLong(3, reserva.getId());
+                
+                int filasAfectadas = statement.executeUpdate();
+                
+                if (filasAfectadas > 0) {
+                    mostrarAlerta("Éxito", "Reserva cancelada", 
+                                 "La reserva ha sido cancelada exitosamente.", 
+                                 Alert.AlertType.INFORMATION);
+                    
+                    // Recargar reservas
+                    cargarReservas();
+                } else {
+                    mostrarAlerta("Error", "Error al cancelar", 
+                                 "No se pudo cancelar la reserva. Por favor, intente más tarde.", 
+                                 Alert.AlertType.ERROR);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al cancelar reserva: " + e.getMessage());
+            e.printStackTrace();
+            mostrarAlerta("Error", "Error al cancelar", 
+                         "No se pudo cancelar la reserva. Por favor, intente más tarde.", 
+                         Alert.AlertType.ERROR);
+        }
+    }
+    
+    /**
+     * Muestra una alerta al usuario
+     */
+    private void mostrarAlerta(String titulo, String encabezado, String mensaje, Alert.AlertType tipo) {
+        Alert alerta = new Alert(tipo);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(encabezado);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
     }
 }
 

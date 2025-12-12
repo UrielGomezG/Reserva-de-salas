@@ -1,7 +1,7 @@
 package interfaz.sara.Controladores.Admin;
 
 import interfaz.sara.ConexionBD.ConexionBD;
-import interfaz.sara.Utilidades.GestorNavegacion;
+import interfaz.sara.Utilidades.GestorNavegacionAdmin;
 import interfaz.sara.Utilidades.SesionUsuario;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -91,8 +91,7 @@ public class ControladorRegistrarSalaAdmin {
     /** Archivo de imagen seleccionado */
     private File archivoImagenSeleccionado;
     
-    /** Carpeta donde se guardan las imágenes de las salas */
-    private static final String CARPETA_IMAGENES_SALAS = "room_images";
+    private static final String CARPETA_IMAGENES_SALAS = "SARA/room_images";
 
     // ========== Métodos de inicialización ==========
     
@@ -618,7 +617,7 @@ public class ControladorRegistrarSalaAdmin {
      */
     @FXML
     private void manejarVolver() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         gestorNavegacion.navegarAVistaSalasAdmin();
     }
     
@@ -700,9 +699,27 @@ public class ControladorRegistrarSalaAdmin {
             return false;
         }
         
+        if (nombre.length() < 3) {
+            mostrarMensajeEstado("El nombre de la sala debe tener al menos 3 caracteres.", true);
+            campoNombre.requestFocus();
+            return false;
+        }
+        
+        if (nombre.length() > 100) {
+            mostrarMensajeEstado("El nombre de la sala no puede exceder 100 caracteres.", true);
+            campoNombre.requestFocus();
+            return false;
+        }
+        
         // Validar código
         if (codigo.isEmpty()) {
             mostrarMensajeEstado("El código de la sala es obligatorio.", true);
+            campoCodigo.requestFocus();
+            return false;
+        }
+        
+        if (codigo.length() > 20) {
+            mostrarMensajeEstado("El código de la sala no puede exceder 20 caracteres.", true);
             campoCodigo.requestFocus();
             return false;
         }
@@ -718,6 +735,12 @@ public class ControladorRegistrarSalaAdmin {
             int capacidad = Integer.parseInt(capacidadStr);
             if (capacidad <= 0) {
                 mostrarMensajeEstado("La capacidad debe ser mayor a 0.", true);
+                campoCapacidad.requestFocus();
+                return false;
+            }
+            
+            if (capacidad > 1000) {
+                mostrarMensajeEstado("La capacidad no puede exceder 1000 personas.", true);
                 campoCapacidad.requestFocus();
                 return false;
             }
@@ -740,6 +763,12 @@ public class ControladorRegistrarSalaAdmin {
         
         if (ubicacionFinal == null || ubicacionFinal.isEmpty()) {
             mostrarMensajeEstado("Debe seleccionar o escribir una ubicación.", true);
+            comboUbicacion.requestFocus();
+            return false;
+        }
+        
+        if (ubicacionFinal.length() > 100) {
+            mostrarMensajeEstado("La ubicación no puede exceder 100 caracteres.", true);
             comboUbicacion.requestFocus();
             return false;
         }

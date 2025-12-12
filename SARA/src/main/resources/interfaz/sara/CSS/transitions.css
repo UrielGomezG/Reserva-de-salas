@@ -1,0 +1,115 @@
+/* ============================================
+   Animaciones de Transición entre Pantallas
+   ============================================ */
+
+/* Clase base para animaciones de entrada */
+.fade-in {
+    -fx-opacity: 0;
+}
+
+.fade-in-enter {
+    -fx-opacity: 1;
+    -fx-transition: opacity 0.3s ease-in;
+}
+
+/* Animación de deslizamiento desde la derecha */
+.slide-in-right {
+    -fx-translate-x: 100%;
+}
+
+.slide-in-right-enter {
+    -fx-translate-x: 0;
+    -fx-transition: translate-x 0.4s ease-out;
+}
+
+/* Animación de deslizamiento desde la izquierda */
+.slide-in-left {
+    -fx-translate-x: -100%;
+}
+
+.slide-in-left-enter {
+    -fx-translate-x: 0;
+    -fx-transition: translate-x 0.4s ease-out;
+}
+
+/* Animación de deslizamiento desde abajo */
+.slide-in-up {
+    -fx-translate-y: 100%;
+}
+
+.slide-in-up-enter {
+    -fx-translate-y: 0;
+    -fx-transition: translate-y 0.4s ease-out;
+}
+
+/* Animación de deslizamiento desde arriba */
+.slide-in-down {
+    -fx-translate-y: -100%;
+}
+
+.slide-in-down-enter {
+    -fx-translate-y: 0;
+    -fx-transition: translate-y 0.4s ease-out;
+}
+
+/* Animación de escala */
+.scale-in {
+    -fx-scale-x: 0.8;
+    -fx-scale-y: 0.8;
+    -fx-opacity: 0;
+}
+
+.scale-in-enter {
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
+    -fx-opacity: 1;
+    -fx-transition: scale 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+/* Animación combinada: fade + slide */
+.fade-slide-in {
+    -fx-opacity: 0;
+    -fx-translate-x: 50px;
+}
+
+.fade-slide-in-enter {
+    -fx-opacity: 1;
+    -fx-translate-x: 0;
+    -fx-transition: opacity 0.4s ease-out, translate-x 0.4s ease-out;
+}
+
+/* Clase para aplicar a contenedores principales */
+.transition-container {
+    -fx-opacity: 1;
+}
+
+/* Animación de salida (fade out) */
+.fade-out {
+    -fx-opacity: 1;
+}
+
+.fade-out-exit {
+    -fx-opacity: 0;
+    -fx-transition: opacity 0.2s ease-in;
+}
+
+/* Animación de salida deslizándose hacia la izquierda */
+.slide-out-left {
+    -fx-translate-x: 0;
+}
+
+.slide-out-left-exit {
+    -fx-translate-x: -100%;
+    -fx-transition: translate-x 0.3s ease-in;
+}
+
+/* Animación de salida deslizándose hacia la derecha */
+.slide-out-right {
+    -fx-translate-x: 0;
+}
+
+.slide-out-right-exit {
+    -fx-translate-x: 100%;
+    -fx-transition: translate-x 0.3s ease-in;
+}
+

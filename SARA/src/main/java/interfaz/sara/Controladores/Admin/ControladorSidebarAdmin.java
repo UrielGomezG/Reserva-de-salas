@@ -1,6 +1,6 @@
 package interfaz.sara.Controladores.Admin;
 
-import interfaz.sara.Utilidades.GestorNavegacion;
+import interfaz.sara.Utilidades.GestorNavegacionAdmin;
 import interfaz.sara.Utilidades.SesionUsuario;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -118,7 +118,7 @@ public class ControladorSidebarAdmin {
      */
     @FXML
     private void manejarUsuarios() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         gestorNavegacion.navegarAVistaUsuariosAdmin();
     }
     
@@ -127,7 +127,7 @@ public class ControladorSidebarAdmin {
      */
     @FXML
     private void manejarSalas() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         gestorNavegacion.navegarAVistaSalasAdmin();
     }
     
@@ -136,7 +136,7 @@ public class ControladorSidebarAdmin {
      */
     @FXML
     private void manejarReservas() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         gestorNavegacion.navegarAVistaReservasAdmin();
     }
     
@@ -145,7 +145,7 @@ public class ControladorSidebarAdmin {
      */
     @FXML
     private void manejarReportes() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         gestorNavegacion.navegarAVistaReportesAdmin();
     }
     
@@ -154,7 +154,7 @@ public class ControladorSidebarAdmin {
      */
     @FXML
     private void manejarPerfil() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         gestorNavegacion.navegarAVistaPerfilAdmin();
     }
     
@@ -163,7 +163,7 @@ public class ControladorSidebarAdmin {
      */
     @FXML
     private void manejarNotificaciones() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         gestorNavegacion.navegarAVistaNotificacionesAdmin();
     }
     
@@ -175,7 +175,7 @@ public class ControladorSidebarAdmin {
         SesionUsuario sesion = SesionUsuario.obtenerInstancia();
         sesion.cerrarSesion();
         
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         gestorNavegacion.navegarALogin();
     }
 }

@@ -1,7 +1,7 @@
 package interfaz.sara.Controladores.Admin;
 
 import interfaz.sara.ConexionBD.ConexionBD;
-import interfaz.sara.Utilidades.GestorNavegacion;
+import interfaz.sara.Utilidades.GestorNavegacionAdmin;
 import interfaz.sara.Utilidades.SesionUsuario;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -78,7 +78,7 @@ public class ControladorDetalleSalaAdmin {
         }
         
         // Obtener el ID de la sala seleccionada
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         salaId = gestorNavegacion.obtenerSalaIdSeleccionado();
         
         if (salaId == null) {
@@ -291,7 +291,7 @@ public class ControladorDetalleSalaAdmin {
      */
     @FXML
     private void manejarVolver() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         gestorNavegacion.navegarAVistaSalasAdmin();
     }
     
@@ -301,7 +301,7 @@ public class ControladorDetalleSalaAdmin {
      */
     @FXML
     private void manejarEditar() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         gestorNavegacion.navegarAVistaEditarSalaAdmin(salaId);
     }
     

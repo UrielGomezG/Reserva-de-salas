@@ -2,7 +2,7 @@ package interfaz.sara.Controladores.Usuario;
 
 import interfaz.sara.ConexionBD.ConexionBD;
 import interfaz.sara.Modelo.Sala;
-import interfaz.sara.Utilidades.GestorNavegacion;
+import interfaz.sara.Utilidades.GestorNavegacionUsuario;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -18,6 +18,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,9 @@ public class ControladorNuevaReserva {
     
     @FXML
     private VBox navbarInclude;
+    
+    @FXML
+    private Button botonVolver;
 
     // ========== Variables de estado ==========
     
@@ -52,6 +56,15 @@ public class ControladorNuevaReserva {
     
     /** Fecha seleccionada por el usuario */
     private LocalDate fechaSeleccionada;
+    
+    /** Sala seleccionada */
+    private Sala salaSeleccionada;
+    
+    /** Hora seleccionada (formato HH:mm) */
+    private String horaSeleccionada;
+    
+    /** Estado actual: 0 = mostrar salas, 1 = mostrar calendario */
+    private int estadoActual = 0;
     
     /** Formateador para la fecha seleccionada */
     private static final DateTimeFormatter formateadorFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -70,18 +83,28 @@ public class ControladorNuevaReserva {
      */
     @FXML
     private void initialize() {
-        // Establecer la fecha actual
-        fechaActual = LocalDate.now();
+        // Inicializar estado
+        estadoActual = 0; // Empezar mostrando salas
+        salaSeleccionada = null;
+        horaSeleccionada = null;
         fechaSeleccionada = null;
+        
+        // Establecer la fecha actual del calendario (asegurar que esté dentro de los límites)
+        fechaActual = LocalDate.now();
+        LocalDate limiteInferior = LocalDate.now().minusWeeks(2);
+        LocalDate limiteSuperior = LocalDate.now().plusWeeks(4);
+        
+        if (fechaActual.isBefore(limiteInferior)) {
+            fechaActual = limiteInferior;
+        } else if (fechaActual.isAfter(limiteSuperior)) {
+            fechaActual = limiteSuperior;
+        }
         
         // Actualizar el navbar para marcar "Nueva Reserva" como activo
         actualizarNavbarActivo();
         
-        // Generar el calendario del mes actual
-        generarCalendario();
-        
-        // Actualizar la etiqueta de fecha seleccionada
-        actualizarEtiquetaFecha();
+        // Mostrar primero las salas disponibles
+        mostrarVistaSalas();
     }
     
     /**
@@ -122,43 +145,89 @@ public class ControladorNuevaReserva {
     
     /**
      * Maneja el clic en la flecha izquierda para ir al mes anterior
+     * Limita la navegación a 2 semanas pasadas desde hoy
+     * Solo funciona cuando se está en vista de calendario
      */
     @FXML
     private void manejarMesAnterior() {
-        fechaActual = fechaActual.minusMonths(1);
+        if (estadoActual != 1) {
+            return; // Solo funciona en vista de calendario
+        }
+        
+        LocalDate limiteInferior = LocalDate.now().minusWeeks(2);
+        LocalDate nuevaFecha = fechaActual.minusMonths(1);
+        
+        if (nuevaFecha.isBefore(limiteInferior)) {
+            fechaActual = limiteInferior;
+        } else {
+            fechaActual = nuevaFecha;
+        }
         generarCalendario();
     }
     
     /**
      * Maneja el clic en la flecha derecha para ir al mes siguiente
+     * Limita la navegación a 4 semanas futuras desde hoy
+     * Solo funciona cuando se está en vista de calendario
      */
     @FXML
     private void manejarMesSiguiente() {
-        fechaActual = fechaActual.plusMonths(1);
+        if (estadoActual != 1) {
+            return; // Solo funciona en vista de calendario
+        }
+        
+        LocalDate limiteSuperior = LocalDate.now().plusWeeks(4);
+        LocalDate nuevaFecha = fechaActual.plusMonths(1);
+        
+        if (nuevaFecha.isAfter(limiteSuperior)) {
+            fechaActual = limiteSuperior;
+        } else {
+            fechaActual = nuevaFecha;
+        }
         generarCalendario();
     }
     
     /**
-     * Maneja el clic en el botón "Nueva Reserva"
-     * Navega al formulario para crear una nueva reserva
+     * Maneja el botón para volver a la vista de salas
      */
     @FXML
-    private void manejarNuevaReserva() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
-        gestorNavegacion.navegarAVistaCrearReserva();
+    private void manejarVolverASalas() {
+        estadoActual = 0;
+        salaSeleccionada = null;
+        horaSeleccionada = null;
+        mostrarVistaSalas();
     }
     
     /**
-     * Maneja la selección de un horario específico para crear una reserva
-     * Navega al formulario de crear reserva con el horario pre-seleccionado
+     * Maneja la selección de un horario específico
+     * Muestra el calendario con fechas disponibles para esa hora
      * 
      * @param horario El horario seleccionado (formato HH:mm)
      * @param salaId El ID de la sala seleccionada
      */
     private void seleccionarHorario(String horario, Long salaId) {
-        // TODO: Pasar parámetros a la vista de crear reserva
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
-        gestorNavegacion.navegarAVistaCrearReserva();
+        // Buscar la sala seleccionada
+        try {
+            List<Sala> salas = obtenerSalasHabilitadas();
+            for (Sala sala : salas) {
+                if (sala.getId().equals(salaId)) {
+                    salaSeleccionada = sala;
+                    horaSeleccionada = horario;
+                    break;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al obtener sala: " + e.getMessage());
+            return;
+        }
+        
+        if (salaSeleccionada == null) {
+            return;
+        }
+        
+        // Cambiar a vista de calendario
+        estadoActual = 1;
+        mostrarVistaCalendario();
     }
 
     // ========== Métodos de generación del calendario ==========
@@ -201,6 +270,7 @@ public class ControladorNuevaReserva {
     
     /**
      * Crea un Label para un día específico del calendario
+     * Solo muestra como disponible si la hora seleccionada está libre en esa fecha
      * 
      * @param dia El número del día
      * @param fila La fila en el grid
@@ -217,33 +287,78 @@ public class ControladorNuevaReserva {
         
         // Crear la fecha correspondiente
         LocalDate fecha = fechaActual.withDayOfMonth(dia);
+        LocalDate hoy = LocalDate.now();
         
-        // Estilo especial para el día actual
-        if (fecha.equals(LocalDate.now())) {
-            label.getStyleClass().add("calendar-day-today");
+        // Verificar límites de navegación
+        LocalDate limiteInferior = hoy.minusWeeks(2);
+        LocalDate limiteSuperior = hoy.plusWeeks(4);
+        
+        // Deshabilitar días pasados
+        if (fecha.isBefore(hoy)) {
+            label.getStyleClass().add("calendar-day-disabled");
+            label.setDisable(true);
+            return label;
         }
         
-        // Estilo especial para la fecha seleccionada
-        if (fecha.equals(fechaSeleccionada)) {
-            label.getStyleClass().add("calendar-day-selected");
+        // Verificar límites de navegación
+        if (fecha.isBefore(limiteInferior) || fecha.isAfter(limiteSuperior)) {
+            label.getStyleClass().add("calendar-day-disabled");
+            label.setDisable(true);
+            return label;
         }
         
-        // Agregar evento de clic
-        label.setOnMouseClicked(e -> seleccionarFecha(fecha));
+        // Verificar el estado de la reserva para esta hora y fecha
+        Integer estadoReserva = null; // null = disponible, 1 = pendiente, 2 = confirmada
+        if (salaSeleccionada != null && horaSeleccionada != null) {
+            estadoReserva = obtenerEstadoReserva(salaSeleccionada.getId(), fecha, horaSeleccionada);
+        }
+        
+        // Si no hay sala/hora seleccionada, no se puede seleccionar fecha
+        if (salaSeleccionada == null || horaSeleccionada == null) {
+            label.getStyleClass().add("calendar-day-disabled");
+            label.setDisable(true);
+        } else if (estadoReserva != null) {
+            // Hay una reserva para esta hora
+            if (estadoReserva == 1) {
+                // Reserva pendiente - mostrar en azul
+                label.getStyleClass().add("calendar-day-pending");
+                label.setDisable(true);
+            } else if (estadoReserva == 2) {
+                // Reserva confirmada - mostrar en rojo
+                label.getStyleClass().add("calendar-day-occupied");
+                label.setDisable(true);
+            }
+        } else {
+            // Fecha disponible y seleccionable - mostrar en verde
+            label.getStyleClass().add("calendar-day-available");
+            
+            // Estilo especial para el día actual (sobrescribe el verde pero mantiene la disponibilidad)
+            if (fecha.equals(hoy)) {
+                label.getStyleClass().add("calendar-day-today");
+            }
+            
+            // Agregar evento de clic
+            label.setOnMouseClicked(e -> seleccionarFecha(fecha));
+        }
         
         return label;
     }
     
     /**
-     * Selecciona una fecha y actualiza la visualización
+     * Selecciona una fecha y redirige a crear reserva
      * 
      * @param fecha La fecha seleccionada
      */
     private void seleccionarFecha(LocalDate fecha) {
+        if (salaSeleccionada == null || horaSeleccionada == null) {
+            return;
+        }
+        
         fechaSeleccionada = fecha;
-        generarCalendario(); // Regenerar para aplicar el estilo de selección
-        actualizarEtiquetaFecha();
-        cargarDisponibilidadSalas();
+        
+        // Redirigir a crear reserva con los datos seleccionados
+        GestorNavegacionUsuario gestor = GestorNavegacionUsuario.obtenerInstancia();
+        gestor.navegarAVistaCrearReserva(salaSeleccionada.getId(), horaSeleccionada, fechaSeleccionada);
     }
 
     // ========== Métodos de visualización ==========
@@ -260,18 +375,26 @@ public class ControladorNuevaReserva {
     }
     
     /**
-     * Carga y muestra la disponibilidad de las salas para la fecha seleccionada
+     * Muestra la vista de salas (estado inicial)
      */
-    private void cargarDisponibilidadSalas() {
-        if (fechaSeleccionada == null) {
-            return;
+    private void mostrarVistaSalas() {
+        // Ocultar calendario
+        gridCalendario.setVisible(false);
+        gridCalendario.setManaged(false);
+        labelMesActual.setVisible(false);
+        labelMesActual.setManaged(false);
+        
+        // Ocultar botón volver
+        if (botonVolver != null) {
+            botonVolver.setVisible(false);
+            botonVolver.setManaged(false);
         }
         
-        // Limpiar el contenedor
+        // Limpiar y mostrar salas
         contenedorDisponibilidad.getChildren().clear();
+        labelFechaSeleccionada.setText("Seleccione una sala y hora");
         
         try {
-            // Obtener todas las salas habilitadas
             List<Sala> salas = obtenerSalasHabilitadas();
             
             if (salas.isEmpty()) {
@@ -281,28 +404,56 @@ public class ControladorNuevaReserva {
                 return;
             }
             
-            // Para cada sala, mostrar su disponibilidad
+            // Para cada sala, mostrar sus horarios disponibles
             for (Sala sala : salas) {
-                VBox tarjetaSala = crearTarjetaDisponibilidadSala(sala);
+                VBox tarjetaSala = crearTarjetaSalaConHorarios(sala);
                 contenedorDisponibilidad.getChildren().add(tarjetaSala);
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al cargar disponibilidad de salas: " + e.getMessage());
+            System.err.println("Error al cargar salas: " + e.getMessage());
             e.printStackTrace();
-            Label mensajeError = new Label("Error al cargar la disponibilidad de salas");
+            Label mensajeError = new Label("Error al cargar las salas");
             mensajeError.getStyleClass().add("empty-message");
             contenedorDisponibilidad.getChildren().add(mensajeError);
         }
     }
     
     /**
-     * Crea una tarjeta que muestra la disponibilidad de una sala
+     * Muestra la vista de calendario (después de seleccionar hora)
+     */
+    private void mostrarVistaCalendario() {
+        // Mostrar calendario
+        gridCalendario.setVisible(true);
+        gridCalendario.setManaged(true);
+        labelMesActual.setVisible(true);
+        labelMesActual.setManaged(true);
+        
+        // Mostrar botón volver
+        if (botonVolver != null) {
+            botonVolver.setVisible(true);
+            botonVolver.setManaged(true);
+        }
+        
+        // Actualizar etiqueta
+        if (salaSeleccionada != null && horaSeleccionada != null) {
+            labelFechaSeleccionada.setText("Sala: " + salaSeleccionada.getNombre() + " - Hora: " + horaSeleccionada + " - Seleccione una fecha");
+        }
+        
+        // Generar calendario
+        generarCalendario();
+        
+        // Limpiar contenedor de disponibilidad (ya no se usa en este estado)
+        contenedorDisponibilidad.getChildren().clear();
+    }
+    
+    /**
+     * Crea una tarjeta que muestra una sala con sus horarios disponibles
      * 
      * @param sala La sala a mostrar
-     * @return VBox con la tarjeta de disponibilidad
+     * @return VBox con la tarjeta de la sala
      */
-    private VBox crearTarjetaDisponibilidadSala(Sala sala) {
+    private VBox crearTarjetaSalaConHorarios(Sala sala) {
         VBox tarjeta = new VBox(10);
         tarjeta.getStyleClass().add("room-availability-card");
         tarjeta.setPadding(new Insets(15));
@@ -325,20 +476,16 @@ public class ControladorNuevaReserva {
         
         header.getChildren().addAll(nombreSala, tipoSala, spacer, capacidad);
         
-        // Horarios disponibles (simplificado - mostrar horarios de 8:00 a 20:00)
+        // Horarios disponibles (8:00 a 20:00)
         VBox horariosBox = new VBox(5);
         horariosBox.getStyleClass().add("time-slots-container");
         
-        // Obtener horarios ocupados para esta sala en la fecha seleccionada
-        List<String> horariosOcupados = obtenerHorariosOcupados(sala.getId(), fechaSeleccionada);
-        
-        // Crear bloques de horarios
+        // Crear bloques de horarios (todos disponibles inicialmente)
         HBox horariosRow = new HBox(10);
         for (int hora = 8; hora < 21; hora++) {
             String horario = String.format("%02d:00", hora);
-            boolean ocupado = horariosOcupados.contains(horario);
             
-            Label bloqueHorario = crearBloqueHorario(horario, ocupado, sala.getId());
+            Label bloqueHorario = crearBloqueHorario(horario, false, sala.getId());
             horariosRow.getChildren().add(bloqueHorario);
             
             // Nueva fila cada 6 horarios
@@ -359,7 +506,7 @@ public class ControladorNuevaReserva {
      * Crea un bloque visual para un horario específico
      * 
      * @param horario El horario (formato HH:mm)
-     * @param ocupado true si el horario está ocupado, false si está disponible
+     * @param ocupado true si el horario está ocupado, false si está disponible (no se usa en el nuevo flujo)
      * @param salaId El ID de la sala
      * @return Label configurado como bloque de horario
      */
@@ -370,13 +517,8 @@ public class ControladorNuevaReserva {
         bloque.setPrefSize(80, 35);
         bloque.setMaxSize(80, 35);
         
-        if (ocupado) {
-            bloque.getStyleClass().add("time-slot-occupied");
-            bloque.setDisable(true);
-        } else {
-            bloque.getStyleClass().add("time-slot-available");
-            bloque.setOnMouseClicked(e -> seleccionarHorario(horario, salaId));
-        }
+        bloque.getStyleClass().add("time-slot-available");
+        bloque.setOnMouseClicked(e -> seleccionarHorario(horario, salaId));
         
         return bloque;
     }
@@ -422,60 +564,64 @@ public class ControladorNuevaReserva {
     }
     
     /**
-     * Obtiene los horarios ocupados para una sala en una fecha específica
+     * Verifica si una hora específica está disponible en una fecha para una sala
      * 
      * @param salaId El ID de la sala
      * @param fecha La fecha a consultar
-     * @return Lista de horarios ocupados (formato HH:mm)
-     * @throws SQLException Si ocurre un error al consultar la base de datos
+     * @param hora La hora a verificar (formato HH:mm)
+     * @return true si la hora está disponible, false si está ocupada
      */
-    private List<String> obtenerHorariosOcupados(Long salaId, LocalDate fecha) {
-        List<String> horariosOcupados = new ArrayList<>();
+    /**
+     * Obtiene el estado de la reserva para una hora específica
+     * 
+     * @param salaId El ID de la sala
+     * @param fecha La fecha a verificar
+     * @param hora La hora a verificar (formato HH:mm)
+     * @return null si está disponible, 1 si hay reserva pendiente, 2 si hay reserva confirmada
+     */
+    private Integer obtenerEstadoReserva(Long salaId, LocalDate fecha, String hora) {
         ConexionBD conexionBD = ConexionBD.obtenerInstancia();
-        Connection conexion = null;
         
         try {
-            conexion = conexionBD.obtenerConexion();
+            Connection conexion = conexionBD.obtenerConexion();
             
-            // Consultar reservas confirmadas o pendientes para esta sala en esta fecha
-            String sql = "SELECT start_at, end_at " +
+            // Parsear la hora
+            java.time.LocalTime horaLocal = java.time.LocalTime.parse(hora, DateTimeFormatter.ofPattern("HH:mm"));
+            java.time.LocalDateTime fechaHoraInicio = LocalDateTime.of(fecha, horaLocal);
+            java.time.LocalDateTime fechaHoraFin = fechaHoraInicio.plusHours(1);
+            
+            // Consultar si hay reservas que ocupen esta hora
+            // Retornar el status_id de la reserva si existe
+            // Prioridad: si hay una confirmada, mostrar confirmada; si solo hay pendientes, mostrar pendiente
+            String sql = "SELECT status_id " +
                         "FROM reservations " +
                         "WHERE room_id = ? " +
-                        "AND DATE(start_at) = ? " +
                         "AND status_id IN (1, 2) " + // PENDING o CONFIRMED
-                        "ORDER BY start_at";
+                        "AND DATE(start_at) = ? " +
+                        "AND start_at < ? " + // La reserva comienza antes del fin de esta hora
+                        "AND end_at >= ? " + // La reserva termina en o después del inicio de esta hora
+                        "ORDER BY status_id DESC " + // Priorizar CONFIRMED (2) sobre PENDING (1)
+                        "LIMIT 1";
             
             try (PreparedStatement statement = conexion.prepareStatement(sql)) {
                 statement.setLong(1, salaId);
                 statement.setDate(2, java.sql.Date.valueOf(fecha));
+                statement.setTimestamp(3, java.sql.Timestamp.valueOf(fechaHoraFin));
+                statement.setTimestamp(4, java.sql.Timestamp.valueOf(fechaHoraInicio));
                 
                 try (ResultSet resultado = statement.executeQuery()) {
-                    while (resultado.next()) {
-                        if (resultado.getTimestamp("start_at") != null && 
-                            resultado.getTimestamp("end_at") != null) {
-                            
-                            java.time.LocalDateTime inicio = resultado.getTimestamp("start_at").toLocalDateTime();
-                            java.time.LocalDateTime fin = resultado.getTimestamp("end_at").toLocalDateTime();
-                            
-                            // Agregar cada hora ocupada entre inicio y fin
-                            java.time.LocalDateTime horaActual = inicio;
-                            while (horaActual.isBefore(fin)) {
-                                String horario = horaActual.format(DateTimeFormatter.ofPattern("HH:mm"));
-                                if (!horariosOcupados.contains(horario)) {
-                                    horariosOcupados.add(horario);
-                                }
-                                horaActual = horaActual.plusHours(1);
-                            }
-                        }
+                    if (resultado.next()) {
+                        return resultado.getInt("status_id");
                     }
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error al obtener horarios ocupados: " + e.getMessage());
+            System.err.println("Error al verificar estado de reserva: " + e.getMessage());
             e.printStackTrace();
+            return null; // En caso de error, asumir disponible
         }
         
-        return horariosOcupados;
+        return null; // No hay reserva, está disponible
     }
 }
 

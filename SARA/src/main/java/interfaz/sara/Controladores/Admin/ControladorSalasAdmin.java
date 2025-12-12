@@ -3,6 +3,7 @@ package interfaz.sara.Controladores.Admin;
 import interfaz.sara.ConexionBD.ConexionBD;
 import interfaz.sara.Modelo.Sala;
 import interfaz.sara.Utilidades.GestorNavegacion;
+import interfaz.sara.Utilidades.GestorNavegacionAdmin;
 import interfaz.sara.Utilidades.SesionUsuario;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -16,6 +17,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -67,12 +70,13 @@ public class ControladorSalasAdmin {
         if (!sesion.estaAutenticado() || !sesion.esAdmin()) {
             // Redirigir inmediatamente sin mostrar alerta para evitar cruce de pantallas
             Platform.runLater(() -> {
-                GestorNavegacion gestor = GestorNavegacion.obtenerInstancia();
                 if (!sesion.estaAutenticado()) {
+                    GestorNavegacion gestor = GestorNavegacion.obtenerInstancia();
                     gestor.navegarALogin();
                 } else {
                     // Si está autenticado pero no es admin, redirigir a vista de usuario
-                    gestor.navegarAVistaPrincipalUsuario();
+                    interfaz.sara.Utilidades.GestorNavegacionUsuario gestorUsuario = interfaz.sara.Utilidades.GestorNavegacionUsuario.obtenerInstancia();
+                    gestorUsuario.navegarAVistaPrincipalUsuario();
                 }
             });
             return;
@@ -211,11 +215,11 @@ public class ControladorSalasAdmin {
         tarjeta.setSpacing(0);
         tarjeta.setPadding(new Insets(0));
         tarjeta.setPrefWidth(320);
-        tarjeta.setMaxWidth(320);
-        tarjeta.setMinWidth(320);
+        tarjeta.setMaxWidth(400);
+        tarjeta.setMinWidth(280);
         tarjeta.setPrefHeight(420);
-        tarjeta.setMaxHeight(420);
-        tarjeta.setMinHeight(420);
+        tarjeta.setMaxHeight(Region.USE_COMPUTED_SIZE);
+        tarjeta.setMinHeight(380);
         tarjeta.setCursor(javafx.scene.Cursor.HAND);
         
         // Hacer toda la tarjeta clicable para ver/editar detalles
@@ -226,13 +230,15 @@ public class ControladorSalasAdmin {
         imagenContainer.setPrefHeight(200);
         imagenContainer.setMaxHeight(200);
         imagenContainer.setMinHeight(200);
-        imagenContainer.setPrefWidth(320);
+        imagenContainer.setPrefWidth(Region.USE_COMPUTED_SIZE);
+        imagenContainer.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(imagenContainer, Priority.ALWAYS);
         imagenContainer.getStyleClass().add("imagen-sala-container");
         
         ImageView imageView = new ImageView();
-        imageView.setFitWidth(320);
+        imageView.setFitWidth(Region.USE_COMPUTED_SIZE);
         imageView.setFitHeight(200);
-        imageView.setPreserveRatio(false); // Para que llene el espacio completamente
+        imageView.setPreserveRatio(true); // Mantener proporción para responsive
         imageView.setSmooth(true);
         imageView.setCache(true);
         imageView.getStyleClass().add("imagen-sala-tarjeta");
@@ -416,7 +422,7 @@ public class ControladorSalasAdmin {
      */
     @FXML
     private void manejarRegistrarSala() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         gestorNavegacion.navegarAVistaRegistrarSalaAdmin();
     }
     
@@ -426,7 +432,7 @@ public class ControladorSalasAdmin {
      * @param sala Sala seleccionada
      */
     private void manejarVerDetalleSala(Sala sala) {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         gestorNavegacion.navegarAVistaDetalleSalaAdmin(sala.getId());
     }
     

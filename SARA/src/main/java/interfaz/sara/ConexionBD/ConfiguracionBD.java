@@ -28,7 +28,7 @@ public class ConfiguracionBD {
     
     /** URL de conexión completa a la base de datos */
     private static final String URL_CONEXION = String.format(
-        "jdbc:mysql://%s:%d/%s?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true",
+        "jdbc:mysql://%s:%d/%s?useSSL=false&serverTimezone=America/Mexico_City&allowPublicKeyRetrieval=true&useLegacyDatetimeCode=false",
         HOST, PUERTO, NOMBRE_BD
     );
     

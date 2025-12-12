@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -70,7 +69,6 @@ public class ControladorPerfilAdmin {
     /** Ruta de la imagen de perfil actual */
     private String rutaImagenPerfil;
     
-    /** Carpeta donde se guardan las fotos de perfil */
     private static final String CARPETA_FOTOS_PERFIL = "profile_pictures";
 
     // ========== Métodos de inicialización ==========
@@ -86,12 +84,13 @@ public class ControladorPerfilAdmin {
         if (!sesion.estaAutenticado() || !sesion.esAdmin()) {
             // Redirigir inmediatamente sin mostrar alerta para evitar cruce de pantallas
             Platform.runLater(() -> {
-                GestorNavegacion gestor = GestorNavegacion.obtenerInstancia();
                 if (!sesion.estaAutenticado()) {
+                    GestorNavegacion gestor = GestorNavegacion.obtenerInstancia();
                     gestor.navegarALogin();
                 } else {
                     // Si está autenticado pero no es admin, redirigir a vista de usuario
-                    gestor.navegarAVistaPrincipalUsuario();
+                    interfaz.sara.Utilidades.GestorNavegacionUsuario gestorUsuario = interfaz.sara.Utilidades.GestorNavegacionUsuario.obtenerInstancia();
+                    gestorUsuario.navegarAVistaPrincipalUsuario();
                 }
             });
             return;
@@ -238,22 +237,13 @@ public class ControladorPerfilAdmin {
      */
     private void cargarImagenPorDefecto() {
         try {
-            // Intentar cargar desde la carpeta profile_pictures
+            // Cargar desde la carpeta profile_pictures
             File defaultFile = new File(CARPETA_FOTOS_PERFIL, "usuario.png");
             if (defaultFile.exists()) {
                 Image imagen = new Image(new FileInputStream(defaultFile));
                 profileImageView.setImage(imagen);
-                return;
-            }
-            
-            // Intentar cargar desde recursos
-            InputStream imagenStream = getClass().getResourceAsStream(
-                "/interfaz/sara/imagenes/usuario.png"
-            );
-            if (imagenStream != null) {
-                Image imagen = new Image(imagenStream);
-                profileImageView.setImage(imagen);
             } else {
+                System.err.println("No se encontró la imagen de perfil por defecto: " + defaultFile.getAbsolutePath());
                 profileImageView.setImage(null);
             }
         } catch (Exception e) {
@@ -459,10 +449,28 @@ public class ControladorPerfilAdmin {
                 return;
             }
             
-            if (nuevaContrasena.length() < 6) {
+            if (nuevaContrasena.length() < 8) {
                 mostrarAlerta("Error de validación", "Contraseña muy corta", 
-                             "La contraseña debe tener al menos 6 caracteres.", 
+                             "La contraseña debe tener al menos 8 caracteres.", 
                              Alert.AlertType.ERROR);
+                passwordField.requestFocus();
+                return;
+            }
+            
+            if (nuevaContrasena.length() > 100) {
+                mostrarAlerta("Error de validación", "Contraseña muy larga", 
+                             "La contraseña no puede exceder 100 caracteres.", 
+                             Alert.AlertType.ERROR);
+                passwordField.requestFocus();
+                return;
+            }
+            
+            // Validar que la contraseña contenga al menos un carácter especial
+            if (!validarContrasenaSegura(nuevaContrasena)) {
+                mostrarAlerta("Error de validación", "Contraseña inválida", 
+                             "La contraseña debe contener al menos un carácter especial (ej: !@#$%^&*()_+-=[]{}|;:,.<>?).", 
+                             Alert.AlertType.ERROR);
+                passwordField.requestFocus();
                 return;
             }
         }
@@ -481,6 +489,7 @@ public class ControladorPerfilAdmin {
         String correo = emailField.getText().trim();
         String matricula = matriculaField.getText().trim();
         
+        // Validar nombre
         if (nombre.isEmpty()) {
             mostrarAlerta("Error de validación", "Campo requerido", 
                          "El nombre es obligatorio. Por favor, ingrese su nombre completo.", 
@@ -489,6 +498,23 @@ public class ControladorPerfilAdmin {
             return false;
         }
         
+        if (nombre.length() < 3) {
+            mostrarAlerta("Error de validación", "Nombre muy corto", 
+                         "El nombre debe tener al menos 3 caracteres.", 
+                         Alert.AlertType.ERROR);
+            nameField.requestFocus();
+            return false;
+        }
+        
+        if (nombre.length() > 100) {
+            mostrarAlerta("Error de validación", "Nombre muy largo", 
+                         "El nombre no puede exceder 100 caracteres.", 
+                         Alert.AlertType.ERROR);
+            nameField.requestFocus();
+            return false;
+        }
+        
+        // Validar correo electrónico
         if (correo.isEmpty()) {
             mostrarAlerta("Error de validación", "Campo requerido", 
                          "El correo electrónico es obligatorio. Por favor, ingrese su correo.", 
@@ -497,15 +523,33 @@ public class ControladorPerfilAdmin {
             return false;
         }
         
-        // Validar formato de correo básico
-        if (!correo.contains("@") || !correo.contains(".")) {
-            mostrarAlerta("Error de validación", "Correo inválido", 
-                         "Por favor, ingrese un correo electrónico válido.", 
+        if (correo.length() > 100) {
+            mostrarAlerta("Error de validación", "Correo muy largo", 
+                         "El correo electrónico no puede exceder 100 caracteres.", 
                          Alert.AlertType.ERROR);
             emailField.requestFocus();
             return false;
         }
         
+        // Validar formato de correo con expresión regular
+        if (!validarFormatoEmail(correo)) {
+            mostrarAlerta("Error de validación", "Correo inválido", 
+                         "Por favor, ingrese un correo electrónico válido con el dominio @utez.edu.mx", 
+                         Alert.AlertType.ERROR);
+            emailField.requestFocus();
+            return false;
+        }
+        
+        // Validar que el dominio sea @utez.edu.mx
+        if (!correo.toLowerCase().endsWith("@utez.edu.mx")) {
+            mostrarAlerta("Error de validación", "Dominio inválido", 
+                         "El correo electrónico debe tener el dominio @utez.edu.mx", 
+                         Alert.AlertType.ERROR);
+            emailField.requestFocus();
+            return false;
+        }
+        
+        // Validar matrícula
         if (matricula.isEmpty()) {
             mostrarAlerta("Error de validación", "Campo requerido", 
                          "La matrícula es obligatoria. Por favor, ingrese su matrícula.", 
@@ -514,7 +558,57 @@ public class ControladorPerfilAdmin {
             return false;
         }
         
+        if (matricula.length() < 5) {
+            mostrarAlerta("Error de validación", "Matrícula muy corta", 
+                         "La matrícula debe tener al menos 5 caracteres.", 
+                         Alert.AlertType.ERROR);
+            matriculaField.requestFocus();
+            return false;
+        }
+        
+        if (matricula.length() > 20) {
+            mostrarAlerta("Error de validación", "Matrícula muy larga", 
+                         "La matrícula no puede exceder 20 caracteres.", 
+                         Alert.AlertType.ERROR);
+            matriculaField.requestFocus();
+            return false;
+        }
+        
         return true;
+    }
+    
+    /**
+     * Valida el formato del correo electrónico usando expresión regular
+     * Debe ser del dominio @utez.edu.mx
+     * 
+     * @param email El correo electrónico a validar
+     * @return true si el formato es válido, false en caso contrario
+     */
+    private boolean validarFormatoEmail(String email) {
+        String emailRegex = "^[A-Za-z0-9+_.-]+@utez\\.edu\\.mx$";
+        return email.matches(emailRegex);
+    }
+    
+    /**
+     * Valida que la contraseña sea segura
+     * Debe tener al menos 8 caracteres y contener al menos un carácter especial
+     * 
+     * @param contrasena La contraseña a validar
+     * @return true si la contraseña es segura, false en caso contrario
+     */
+    private boolean validarContrasenaSegura(String contrasena) {
+        // Verificar que tenga al menos un carácter especial
+        String caracteresEspeciales = "!@#$%^&*()_+-=[]{}|;:,.<>?";
+        boolean tieneCaracterEspecial = false;
+        
+        for (char c : contrasena.toCharArray()) {
+            if (caracteresEspeciales.indexOf(c) >= 0) {
+                tieneCaracterEspecial = true;
+                break;
+            }
+        }
+        
+        return tieneCaracterEspecial;
     }
     
     /**
@@ -543,8 +637,14 @@ public class ControladorPerfilAdmin {
                 statement.setString(2, correo);
                 statement.setString(3, matricula);
                 
-                // Hash de la contraseña
-                String hashContrasena = hashPassword(nuevaContrasena);
+                // Hash de la contraseña usando UTF-8
+                String hashContrasena = interfaz.sara.Utilidades.PasswordHasher.hashPassword(nuevaContrasena);
+                if (hashContrasena == null) {
+                    mostrarAlerta("Error", "Error al procesar la contraseña", 
+                                "No se pudo procesar la contraseña. Por favor, intente nuevamente.", 
+                                javafx.scene.control.Alert.AlertType.ERROR);
+                    return;
+                }
                 statement.setString(4, hashContrasena);
                 statement.setLong(5, usuarioId);
             } else {
@@ -614,26 +714,6 @@ public class ControladorPerfilAdmin {
         }
     }
     
-    /**
-     * Genera un hash simple de la contraseña usando SHA-256
-     * 
-     * @param password Contraseña en texto plano
-     * @return Hash de la contraseña
-     */
-    private String hashPassword(String password) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hashBytes = md.digest(password.getBytes());
-            StringBuilder sb = new StringBuilder();
-            for (byte b : hashBytes) {
-                sb.append(String.format("%02x", b));
-            }
-            return sb.toString();
-        } catch (Exception e) {
-            System.err.println("Error al generar hash: " + e.getMessage());
-            return password;
-        }
-    }
     
     /**
      * Muestra una alerta al usuario

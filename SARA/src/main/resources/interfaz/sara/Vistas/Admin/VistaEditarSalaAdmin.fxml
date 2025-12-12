@@ -173,7 +173,8 @@
                            styleClass="boton-accion-secundario-admin" 
                            onAction="#manejarEliminar"/>
                     
-                    <Button text="Guardar Cambios" 
+                    <Button fx:id="btnGuardar" 
+                           text="Guardar Cambios" 
                            styleClass="boton-accion-primario-admin" 
                            onAction="#manejarGuardar"/>
                 </HBox>

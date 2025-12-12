@@ -2,6 +2,7 @@ package interfaz.sara.Controladores.Admin;
 
 import interfaz.sara.ConexionBD.ConexionBD;
 import interfaz.sara.Utilidades.GestorNavegacion;
+import interfaz.sara.Utilidades.GestorNavegacionAdmin;
 import interfaz.sara.Utilidades.SesionUsuario;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -90,12 +91,13 @@ public class ControladorNotificacionesAdmin {
         if (!sesion.estaAutenticado() || !sesion.esAdmin()) {
             // Redirigir inmediatamente sin mostrar alerta para evitar cruce de pantallas
             Platform.runLater(() -> {
-                GestorNavegacion gestor = GestorNavegacion.obtenerInstancia();
                 if (!sesion.estaAutenticado()) {
+                    GestorNavegacion gestor = GestorNavegacion.obtenerInstancia();
                     gestor.navegarALogin();
                 } else {
                     // Si está autenticado pero no es admin, redirigir a vista de usuario
-                    gestor.navegarAVistaPrincipalUsuario();
+                    interfaz.sara.Utilidades.GestorNavegacionUsuario gestorUsuario = interfaz.sara.Utilidades.GestorNavegacionUsuario.obtenerInstancia();
+                    gestorUsuario.navegarAVistaPrincipalUsuario();
                 }
             });
             return;
@@ -188,20 +190,38 @@ public class ControladorNotificacionesAdmin {
      */
     private void cargarReservasPendientes() {
         ConexionBD conexionBD = ConexionBD.obtenerInstancia();
+        SesionUsuario sesion = SesionUsuario.obtenerInstancia();
+        
+        if (!sesion.estaAutenticado()) {
+            return;
+        }
+        
+        Long adminId = sesion.getUsuarioId();
+        
+        // Crear tabla si no existe
+        crearTablaSiNoExiste();
         
         // Obtener reservas con estado PENDING
+        // Verificar si ya fueron leídas por el admin
         String sql = "SELECT r.id, r.room_id, ro.name as nombre_sala, r.user_id, " +
-                    "u.username as nombre_usuario, r.start_at, r.end_at, r.reason, r.created_at " +
+                    "u.username as nombre_usuario, r.start_at, r.end_at, r.reason, r.created_at, " +
+                    "CASE WHEN nr.id IS NOT NULL THEN 1 ELSE 0 END as leida, " +
+                    "nr.read_at as fecha_lectura " +
                     "FROM reservations r " +
                     "INNER JOIN rooms ro ON r.room_id = ro.id " +
                     "INNER JOIN users u ON r.user_id = u.id " +
                     "INNER JOIN reservation_status rs ON r.status_id = rs.id " +
+                    "LEFT JOIN notification_reads nr ON nr.user_id = ? " +
+                    "    AND nr.notification_type = 'RESERVATION' " +
+                    "    AND nr.entity_id = r.id " +
                     "WHERE rs.code = 'PENDING' " +
                     "ORDER BY r.created_at DESC";
         
         try {
             Connection conexion = conexionBD.obtenerConexion();
             try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+                statement.setLong(1, adminId);
+                
                 try (ResultSet resultado = statement.executeQuery()) {
                     while (resultado.next()) {
                         Long id = resultado.getLong("id");
@@ -219,6 +239,13 @@ public class ControladorNotificacionesAdmin {
                             fechaInicio = resultado.getTimestamp("start_at").toLocalDateTime();
                         }
                         
+                        // Verificar si está leída
+                        boolean leida = resultado.getInt("leida") == 1;
+                        LocalDateTime fechaLectura = null;
+                        if (resultado.getTimestamp("fecha_lectura") != null) {
+                            fechaLectura = resultado.getTimestamp("fecha_lectura").toLocalDateTime();
+                        }
+                        
                         // Crear mensaje de notificación
                         String titulo = "Nueva Reserva Pendiente";
                         String mensaje = String.format("El usuario %s ha solicitado reservar la sala %s. ", nombreUsuario, nombreSala);
@@ -231,7 +258,7 @@ public class ControladorNotificacionesAdmin {
                         
                         // Usar ID negativo para distinguir de notificaciones normales
                         NotificacionInfo notificacion = new NotificacionInfo(
-                            -id, "Reserva Pendiente", titulo, mensaje, fechaCreacion, false, null
+                            -id, "Reserva Pendiente", titulo, mensaje, fechaCreacion, leida, fechaLectura
                         );
                         
                         listaNotificaciones.add(notificacion);
@@ -249,15 +276,28 @@ public class ControladorNotificacionesAdmin {
      */
     private void cargarIncidentesRecientes() {
         ConexionBD conexionBD = ConexionBD.obtenerInstancia();
+        SesionUsuario sesion = SesionUsuario.obtenerInstancia();
+        
+        if (!sesion.estaAutenticado()) {
+            return;
+        }
+        
+        Long adminId = sesion.getUsuarioId();
         
         // Obtener incidentes recientes (últimos 30 días)
+        // Verificar si ya fueron leídos por el admin
         String sql = "SELECT i.id, i.room_id, ro.name as nombre_sala, i.reported_by_user_id, " +
                     "u.username as nombre_usuario, it.name as tipo_incidente, " +
-                    "i.title, i.description, i.created_at " +
+                    "i.title, i.description, i.created_at, " +
+                    "CASE WHEN nr.id IS NOT NULL THEN 1 ELSE 0 END as leida, " +
+                    "nr.read_at as fecha_lectura " +
                     "FROM incidents i " +
                     "INNER JOIN rooms ro ON i.room_id = ro.id " +
                     "INNER JOIN users u ON i.reported_by_user_id = u.id " +
                     "INNER JOIN incident_types it ON i.incident_type_id = it.id " +
+                    "LEFT JOIN notification_reads nr ON nr.user_id = ? " +
+                    "    AND nr.notification_type = 'INCIDENT' " +
+                    "    AND nr.entity_id = i.id " +
                     "WHERE i.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) " +
                     "ORDER BY i.created_at DESC " +
                     "LIMIT 50";
@@ -265,6 +305,8 @@ public class ControladorNotificacionesAdmin {
         try {
             Connection conexion = conexionBD.obtenerConexion();
             try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+                statement.setLong(1, adminId);
+                
                 try (ResultSet resultado = statement.executeQuery()) {
                     while (resultado.next()) {
                         Long id = resultado.getLong("id");
@@ -277,6 +319,13 @@ public class ControladorNotificacionesAdmin {
                         LocalDateTime fechaCreacion = null;
                         if (resultado.getTimestamp("created_at") != null) {
                             fechaCreacion = resultado.getTimestamp("created_at").toLocalDateTime();
+                        }
+                        
+                        // Verificar si está leída
+                        boolean leida = resultado.getInt("leida") == 1;
+                        LocalDateTime fechaLectura = null;
+                        if (resultado.getTimestamp("fecha_lectura") != null) {
+                            fechaLectura = resultado.getTimestamp("fecha_lectura").toLocalDateTime();
                         }
                         
                         // Crear mensaje de notificación
@@ -292,7 +341,7 @@ public class ControladorNotificacionesAdmin {
                         
                         // Usar ID con offset para distinguir de reservas
                         NotificacionInfo notificacion = new NotificacionInfo(
-                            id + 1000000, "Incidente", tituloNotificacion, mensaje, fechaCreacion, false, null
+                            id + 1000000, "Incidente", tituloNotificacion, mensaje, fechaCreacion, leida, fechaLectura
                         );
                         
                         listaNotificaciones.add(notificacion);
@@ -390,9 +439,9 @@ public class ControladorNotificacionesAdmin {
         
         tarjeta.getChildren().add(infoContainer);
         
-        // Si no está leída, marcarla como leída al hacer clic
+        // Permitir hacer clic en todas las notificaciones para marcarlas como leídas
+        tarjeta.setOnMouseClicked(e -> marcarComoLeida(notificacion));
         if (!notificacion.isLeida()) {
-            tarjeta.setOnMouseClicked(e -> marcarComoLeida(notificacion));
             tarjeta.setStyle("-fx-cursor: hand;");
         }
         
@@ -400,33 +449,94 @@ public class ControladorNotificacionesAdmin {
     }
     
     /**
-     * Marca una notificación como leída
-     * Si es una reserva, navega a la vista de detalle de reserva
-     * Si es un incidente, puede navegar a la vista de reportes
+     * Marca una notificación como leída en la base de datos
+     * Si es una reserva, navega a la vista de detalle de reserva después de marcarla
+     * Si es un incidente, navega a la vista de reportes después de marcarla
      * 
      * @param notificacion La notificación a marcar como leída
      */
     private void marcarComoLeida(NotificacionInfo notificacion) {
-        Long id = notificacion.getId();
-        
-        // Si es una reserva (ID negativo), navegar a detalle de reserva
-        if (id < 0) {
-            Long reservaId = -id;
-            GestorNavegacion gestor = GestorNavegacion.obtenerInstancia();
-            gestor.navegarAVistaDetalleReservaAdmin(reservaId);
+        // Si ya está leída, solo navegar si es necesario
+        if (notificacion.isLeida()) {
+            Long id = notificacion.getId();
+            if (id < 0) {
+                Long reservaId = -id;
+                GestorNavegacionAdmin gestor = GestorNavegacionAdmin.obtenerInstancia();
+                gestor.navegarAVistaDetalleReservaAdmin(reservaId);
+            } else if (id > 1000000) {
+                GestorNavegacionAdmin gestor = GestorNavegacionAdmin.obtenerInstancia();
+                gestor.navegarAVistaReportesAdmin();
+            }
             return;
         }
         
-        // Si es un incidente (ID con offset), navegar a reportes
+        Long id = notificacion.getId();
+        SesionUsuario sesion = SesionUsuario.obtenerInstancia();
+        
+        if (!sesion.estaAutenticado()) {
+            return;
+        }
+        
+        Long adminId = sesion.getUsuarioId();
+        ConexionBD conexionBD = ConexionBD.obtenerInstancia();
+        
+        // Si es una reserva (ID negativo)
+        if (id < 0) {
+            Long reservaId = -id;
+            
+            // Insertar o actualizar registro de lectura
+            String sql = "INSERT INTO notification_reads (user_id, notification_type, entity_id, read_at) " +
+                        "VALUES (?, 'RESERVATION', ?, NOW()) " +
+                        "ON DUPLICATE KEY UPDATE read_at = NOW()";
+            
+            try {
+                Connection conexion = conexionBD.obtenerConexion();
+                try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+                    statement.setLong(1, adminId);
+                    statement.setLong(2, reservaId);
+                    
+                    statement.executeUpdate();
+                    
+                    // Navegar a detalle de reserva
+                    GestorNavegacionAdmin gestor = GestorNavegacionAdmin.obtenerInstancia();
+                    gestor.navegarAVistaDetalleReservaAdmin(reservaId);
+                }
+            } catch (SQLException e) {
+                System.err.println("Error al marcar notificación como leída: " + e.getMessage());
+                e.printStackTrace();
+            }
+            return;
+        }
+        
+        // Si es un incidente (ID con offset)
         if (id > 1000000) {
-            // Navegar a la vista de reportes (el admin puede filtrar por incidente si es necesario)
-            GestorNavegacion gestor = GestorNavegacion.obtenerInstancia();
-            gestor.navegarAVistaReportesAdmin();
+            Long incidenteId = id - 1000000;
+            
+            // Insertar o actualizar registro de lectura
+            String sql = "INSERT INTO notification_reads (user_id, notification_type, entity_id, read_at) " +
+                        "VALUES (?, 'INCIDENT', ?, NOW()) " +
+                        "ON DUPLICATE KEY UPDATE read_at = NOW()";
+            
+            try {
+                Connection conexion = conexionBD.obtenerConexion();
+                try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+                    statement.setLong(1, adminId);
+                    statement.setLong(2, incidenteId);
+                    
+                    statement.executeUpdate();
+                    
+                    // Navegar a la vista de reportes
+                    GestorNavegacionAdmin gestor = GestorNavegacionAdmin.obtenerInstancia();
+                    gestor.navegarAVistaReportesAdmin();
+                }
+            } catch (SQLException e) {
+                System.err.println("Error al marcar notificación como leída: " + e.getMessage());
+                e.printStackTrace();
+            }
             return;
         }
         
         // Para notificaciones normales de la tabla notifications (si existen)
-        ConexionBD conexionBD = ConexionBD.obtenerInstancia();
         String sql = "UPDATE notifications SET delivered = 1, sent_at = NOW() WHERE id = ?";
         
         try {
@@ -443,6 +553,35 @@ public class ControladorNotificacionesAdmin {
             }
         } catch (SQLException e) {
             System.err.println("Error al marcar notificación como leída: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Crea la tabla notification_reads si no existe
+     */
+    private void crearTablaSiNoExiste() {
+        ConexionBD conexionBD = ConexionBD.obtenerInstancia();
+        String sql = "CREATE TABLE IF NOT EXISTS notification_reads (" +
+                    "id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, " +
+                    "user_id bigint(20) UNSIGNED NOT NULL, " +
+                    "notification_type VARCHAR(50) NOT NULL, " +
+                    "entity_id bigint(20) UNSIGNED NOT NULL, " +
+                    "read_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, " +
+                    "created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, " +
+                    "PRIMARY KEY (id), " +
+                    "UNIQUE KEY unique_user_notification (user_id, notification_type, entity_id), " +
+                    "KEY idx_user_read_at (user_id, read_at), " +
+                    "CONSTRAINT fk_notification_reads_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+        
+        try {
+            Connection conexion = conexionBD.obtenerConexion();
+            try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+                statement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            // La tabla ya existe o hay un error, continuar
+            System.err.println("Nota: Error al crear tabla notification_reads (puede que ya exista): " + e.getMessage());
         }
     }
     

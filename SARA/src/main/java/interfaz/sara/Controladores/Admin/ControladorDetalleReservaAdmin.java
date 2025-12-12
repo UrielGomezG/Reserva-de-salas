@@ -2,6 +2,7 @@ package interfaz.sara.Controladores.Admin;
 
 import interfaz.sara.ConexionBD.ConexionBD;
 import interfaz.sara.Utilidades.GestorNavegacion;
+import interfaz.sara.Utilidades.GestorNavegacionAdmin;
 import interfaz.sara.Utilidades.SesionUsuario;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -15,7 +16,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.Duration;
 
 /**
  * Controlador para la vista de detalle y autorización de reserva del administrador
@@ -89,18 +92,19 @@ public class ControladorDetalleReservaAdmin {
         if (!sesion.estaAutenticado() || !sesion.esAdmin()) {
             // Redirigir inmediatamente sin mostrar alerta para evitar cruce de pantallas
             Platform.runLater(() -> {
-                GestorNavegacion gestor = GestorNavegacion.obtenerInstancia();
                 if (!sesion.estaAutenticado()) {
+                    GestorNavegacion gestor = GestorNavegacion.obtenerInstancia();
                     gestor.navegarALogin();
                 } else {
                     // Si está autenticado pero no es admin, redirigir a vista de usuario
-                    gestor.navegarAVistaPrincipalUsuario();
+                    interfaz.sara.Utilidades.GestorNavegacionUsuario gestorUsuario = interfaz.sara.Utilidades.GestorNavegacionUsuario.obtenerInstancia();
+                    gestorUsuario.navegarAVistaPrincipalUsuario();
                 }
             });
             return;
         }
         
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         reservaId = gestorNavegacion.obtenerReservaIdSeleccionado();
         
         if (reservaId == null) {
@@ -298,7 +302,7 @@ public class ControladorDetalleReservaAdmin {
      */
     @FXML
     private void manejarVolver() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         gestorNavegacion.navegarAVistaReservasAdmin();
     }
     
@@ -320,21 +324,61 @@ public class ControladorDetalleReservaAdmin {
     
     /**
      * Autoriza la reserva cambiando su estado a CONFIRMED
+     * Si la confirmación es antes de las 2 horas del inicio, programa un recordatorio
      */
     private void autorizarReserva() {
         ConexionBD conexionBD = ConexionBD.obtenerInstancia();
         
-        // Buscar el status_id de CONFIRMED (generalmente es 2)
-        String sqlUpdate = "UPDATE reservations SET status_id = (SELECT id FROM reservation_status WHERE code = 'CONFIRMED' LIMIT 1) WHERE id = ?";
-        
         try {
             Connection conexion = conexionBD.obtenerConexion();
-            try (PreparedStatement statement = conexion.prepareStatement(sqlUpdate)) {
-                statement.setLong(1, reservaId);
+            
+            // Primero obtener los datos de la reserva para verificar la fecha de inicio
+            String sqlSelect = "SELECT r.user_id, r.start_at, ro.name as nombre_sala " +
+                              "FROM reservations r " +
+                              "INNER JOIN rooms ro ON r.room_id = ro.id " +
+                              "WHERE r.id = ?";
+            
+            Long userId = null;
+            LocalDateTime fechaInicio = null;
+            String nombreSala = null;
+            
+            try (PreparedStatement selectStmt = conexion.prepareStatement(sqlSelect)) {
+                selectStmt.setLong(1, reservaId);
+                try (ResultSet resultado = selectStmt.executeQuery()) {
+                    if (resultado.next()) {
+                        userId = resultado.getLong("user_id");
+                        if (resultado.getTimestamp("start_at") != null) {
+                            fechaInicio = resultado.getTimestamp("start_at").toLocalDateTime();
+                        }
+                        nombreSala = resultado.getString("nombre_sala");
+                    }
+                }
+            }
+            
+            if (userId == null || fechaInicio == null) {
+                mostrarMensajeEstado("Error: No se pudieron obtener los datos de la reserva.", true);
+                return;
+            }
+            
+            // Actualizar el estado de la reserva a CONFIRMED
+            String sqlUpdate = "UPDATE reservations SET status_id = (SELECT id FROM reservation_status WHERE code = 'CONFIRMED' LIMIT 1) WHERE id = ?";
+            
+            try (PreparedStatement updateStmt = conexion.prepareStatement(sqlUpdate)) {
+                updateStmt.setLong(1, reservaId);
                 
-                int filasAfectadas = statement.executeUpdate();
+                int filasAfectadas = updateStmt.executeUpdate();
                 
                 if (filasAfectadas > 0) {
+                    // Verificar si la confirmación fue antes de las 2 horas del inicio
+                    LocalDateTime ahora = LocalDateTime.now();
+                    Duration tiempoHastaInicio = Duration.between(ahora, fechaInicio);
+                    long horasHastaInicio = tiempoHastaInicio.toHours();
+                    
+                    // Si hay más de 2 horas hasta el inicio, programar recordatorio
+                    if (horasHastaInicio > 2) {
+                        programarRecordatorio(userId, reservaId, fechaInicio, nombreSala, conexion);
+                    }
+                    
                     mostrarMensajeEstado("Reserva autorizada exitosamente.", false);
                     // Recargar datos y actualizar botones
                     Platform.runLater(() -> {
@@ -359,6 +403,92 @@ public class ControladorDetalleReservaAdmin {
             e.printStackTrace();
             mostrarMensajeEstado("Error al autorizar la reserva: " + e.getMessage(), true);
         }
+    }
+    
+    /**
+     * Programa un recordatorio para 2 horas antes del inicio de la reservación
+     * 
+     * @param userId ID del usuario propietario de la reserva
+     * @param reservaId ID de la reserva
+     * @param fechaInicio Fecha y hora de inicio de la reserva
+     * @param nombreSala Nombre de la sala
+     * @param conexion Conexión a la base de datos
+     */
+    private void programarRecordatorio(Long userId, Long reservaId, LocalDateTime fechaInicio, 
+                                      String nombreSala, Connection conexion) throws SQLException {
+        // Calcular la fecha del recordatorio (2 horas antes del inicio)
+        LocalDateTime fechaRecordatorio = fechaInicio.minusHours(2);
+        
+        // Obtener el ID del tipo de notificación RESERVATION_REMINDER
+        int tipoNotificacionId = obtenerTipoNotificacionId("RESERVATION_REMINDER", conexion);
+        if (tipoNotificacionId == 0) {
+            // Si no existe, crearlo
+            tipoNotificacionId = crearTipoNotificacion("RESERVATION_REMINDER", "Recordatorio de reserva", conexion);
+        }
+        
+        // Crear mensaje del recordatorio
+        String mensaje = String.format("Recordatorio: Tu reserva de la sala %s comienza en 2 horas. " +
+                                       "Fecha: %s", 
+                                       nombreSala, 
+                                       fechaInicio.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+        
+        // Insertar notificación programada
+        String sql = "INSERT INTO notifications (user_id, type_id, reservation_id, message, sent_at, delivered, created_at) " +
+                     "VALUES (?, ?, ?, ?, ?, 0, NOW())";
+        
+        try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+            statement.setLong(1, userId);
+            statement.setInt(2, tipoNotificacionId);
+            statement.setLong(3, reservaId);
+            statement.setString(4, mensaje);
+            statement.setTimestamp(5, java.sql.Timestamp.valueOf(fechaRecordatorio));
+            
+            statement.executeUpdate();
+        }
+    }
+    
+    /**
+     * Obtiene el ID del tipo de notificación
+     * 
+     * @param codigo Código del tipo de notificación
+     * @param conexion Conexión a la base de datos
+     * @return ID del tipo de notificación, o 0 si no existe
+     */
+    private int obtenerTipoNotificacionId(String codigo, Connection conexion) throws SQLException {
+        String sql = "SELECT id FROM notification_types WHERE code = ? LIMIT 1";
+        try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+            statement.setString(1, codigo);
+            try (ResultSet resultado = statement.executeQuery()) {
+                if (resultado.next()) {
+                    return resultado.getInt("id");
+                }
+            }
+        }
+        return 0;
+    }
+    
+    /**
+     * Crea un nuevo tipo de notificación si no existe
+     * 
+     * @param codigo Código del tipo de notificación
+     * @param etiqueta Etiqueta del tipo de notificación
+     * @param conexion Conexión a la base de datos
+     * @return ID del tipo de notificación creado
+     */
+    private int crearTipoNotificacion(String codigo, String etiqueta, Connection conexion) throws SQLException {
+        String sql = "INSERT INTO notification_types (code, label) VALUES (?, ?)";
+        try (PreparedStatement statement = conexion.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            statement.setString(1, codigo);
+            statement.setString(2, etiqueta);
+            statement.executeUpdate();
+            
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                }
+            }
+        }
+        return 0;
     }
     
     /**

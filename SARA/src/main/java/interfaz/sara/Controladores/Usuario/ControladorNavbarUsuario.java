@@ -1,7 +1,7 @@
 package interfaz.sara.Controladores.Usuario;
 
 import interfaz.sara.ConexionBD.ConexionBD;
-import interfaz.sara.Utilidades.GestorNavegacion;
+import interfaz.sara.Utilidades.GestorNavegacionUsuario;
 import interfaz.sara.Utilidades.SesionUsuario;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -46,6 +46,9 @@ public class ControladorNavbarUsuario {
     
     @FXML
     private ImageView perfilImageView;
+    
+    /** Carpeta donde se almacenan las fotos de perfil */
+    private static final String CARPETA_FOTOS_PERFIL = "profile_pictures";
 
     // ========== Métodos de inicialización ==========
     
@@ -137,14 +140,13 @@ public class ControladorNavbarUsuario {
         }
         
         try {
-            // Intentar cargar desde recursos
-            InputStream imagenStream = getClass().getResourceAsStream(
-                "/interfaz/sara/imagenes/perfil_placeholder.png"
-            );
-            if (imagenStream != null) {
-                Image imagen = new Image(imagenStream);
+            // Cargar desde la carpeta profile_pictures
+            File defaultFile = new File(CARPETA_FOTOS_PERFIL, "usuario.png");
+            if (defaultFile.exists()) {
+                Image imagen = new Image(new FileInputStream(defaultFile));
                 perfilImageView.setImage(imagen);
             } else {
+                System.err.println("No se encontró la imagen de perfil por defecto: " + defaultFile.getAbsolutePath());
                 perfilImageView.setImage(null);
             }
         } catch (Exception e) {
@@ -231,7 +233,7 @@ public class ControladorNavbarUsuario {
      */
     @FXML
     private void manejarMisReservas() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionUsuario gestorNavegacion = GestorNavegacionUsuario.obtenerInstancia();
         gestorNavegacion.navegarAVistaPrincipalUsuario();
     }
     
@@ -240,7 +242,7 @@ public class ControladorNavbarUsuario {
      */
     @FXML
     private void manejarNuevaReserva() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionUsuario gestorNavegacion = GestorNavegacionUsuario.obtenerInstancia();
         gestorNavegacion.navegarAVistaNuevaReserva();
     }
     
@@ -249,7 +251,7 @@ public class ControladorNavbarUsuario {
      */
     @FXML
     private void manejarPerfil() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionUsuario gestorNavegacion = GestorNavegacionUsuario.obtenerInstancia();
         gestorNavegacion.navegarAVistaPerfil();
     }
     
@@ -258,7 +260,7 @@ public class ControladorNavbarUsuario {
      */
     @FXML
     private void manejarReporte() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionUsuario gestorNavegacion = GestorNavegacionUsuario.obtenerInstancia();
         gestorNavegacion.navegarAVistaReporte();
     }
     
@@ -267,7 +269,7 @@ public class ControladorNavbarUsuario {
      */
     @FXML
     private void manejarNotificaciones() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionUsuario gestorNavegacion = GestorNavegacionUsuario.obtenerInstancia();
         gestorNavegacion.navegarAVistaNotificaciones();
     }
     
@@ -279,7 +281,7 @@ public class ControladorNavbarUsuario {
         SesionUsuario sesion = SesionUsuario.obtenerInstancia();
         sesion.cerrarSesion();
         
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionUsuario gestorNavegacion = GestorNavegacionUsuario.obtenerInstancia();
         gestorNavegacion.navegarALogin();
     }
 }

@@ -36,12 +36,12 @@
 /* Contenedor del formulario - tarjeta blanca centrada */
 .login-form-container {
     -fx-background-color: #ffffff;
-    -fx-background-radius: 0;
-    -fx-effect: none;
+    -fx-background-radius: 12px;
     -fx-border-width: 0;
     -fx-min-width: 450px;
     -fx-max-width: 450px;
     -fx-pref-width: 450px;
+    -fx-padding: 40px;
 }
 
 /* Título principal "Iniciar sesión" */
@@ -61,7 +61,7 @@
     -fx-padding: 0;
 }
 
-/* Campo de texto para correo electrónico */
+/* Campo de texto para correo electrónico con animaciones */
 .login-text-field {
     -fx-background-color: #ffffff;
     -fx-background-radius: 6px;
@@ -72,19 +72,24 @@
     -fx-font-size: 14px;
     -fx-text-fill: #1e293b;
     -fx-pref-height: 50px;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.1), 4, 0, 0, 1);
+    -fx-transition: all 0.3s ease;
 }
 
 .login-text-field:focused {
     -fx-background-color: #ffffff;
     -fx-border-color: #3b82f6;
     -fx-border-width: 2px;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.3), 8, 0, 0, 2);
+    -fx-translate-y: -2px;
 }
 
 .login-text-field:hover {
     -fx-border-color: #2563eb;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.2), 6, 0, 0, 2);
 }
 
-/* Campo de contraseña */
+/* Campo de contraseña con animaciones */
 .login-password-field {
     -fx-background-color: #ffffff;
     -fx-background-radius: 6px;
@@ -95,19 +100,24 @@
     -fx-font-size: 14px;
     -fx-text-fill: #1e293b;
     -fx-pref-height: 50px;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.1), 4, 0, 0, 1);
+    -fx-transition: all 0.3s ease;
 }
 
 .login-password-field:focused {
     -fx-background-color: #ffffff;
     -fx-border-color: #3b82f6;
     -fx-border-width: 2px;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.3), 8, 0, 0, 2);
+    -fx-translate-y: -2px;
 }
 
 .login-password-field:hover {
     -fx-border-color: #2563eb;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.2), 6, 0, 0, 2);
 }
 
-/* Botón de inicio de sesión - azul sólido */
+/* Botón de inicio de sesión - azul sólido con animaciones */
 .login-button {
     -fx-background-color: #3b82f6;
     -fx-background-radius: 6px;
@@ -116,17 +126,24 @@
     -fx-font-weight: 600;
     -fx-padding: 14px;
     -fx-cursor: hand;
-    -fx-effect: none;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.3), 8, 0, 0, 3);
+    -fx-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .login-button:hover {
     -fx-background-color: #2563eb;
-    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.4), 12, 0, 0, 4);
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.5), 12, 0, 0, 5);
+    -fx-translate-y: -3px;
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
 }
 
 .login-button:pressed {
     -fx-background-color: #1d4ed8;
-    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.2), 8, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.2), 6, 0, 0, 2);
+    -fx-translate-y: 0px;
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
 }
 
 .login-button:disabled {
@@ -142,7 +159,7 @@
     -fx-text-fill: #64748b;
 }
 
-/* Hipervínculo de registro */
+/* Hipervínculo de registro con animaciones */
 .register-link {
     -fx-font-size: 14px;
     -fx-text-fill: #3b82f6;
@@ -150,15 +167,21 @@
     -fx-underline: false;
     -fx-cursor: hand;
     -fx-padding: 0;
+    -fx-transition: all 0.3s ease;
 }
 
 .register-link:hover {
     -fx-text-fill: #2563eb;
     -fx-underline: true;
+    -fx-translate-x: 2px;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
 }
 
 .register-link:pressed {
     -fx-text-fill: #1d4ed8;
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
 }
 
 /* Mensaje de error */
@@ -173,6 +196,7 @@
     -fx-border-width: 1px;
     -fx-alignment: center-left;
     -fx-wrap-text: true;
+    -fx-effect: dropshadow(gaussian, rgba(220, 38, 38, 0.2), 6, 0, 0, 2);
 }
 
 /* Eliminar bordes de foco predeterminados */

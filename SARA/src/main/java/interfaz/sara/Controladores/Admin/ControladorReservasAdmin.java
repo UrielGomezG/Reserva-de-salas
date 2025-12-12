@@ -3,6 +3,7 @@ package interfaz.sara.Controladores.Admin;
 import interfaz.sara.ConexionBD.ConexionBD;
 import interfaz.sara.Modelo.Reserva;
 import interfaz.sara.Utilidades.GestorNavegacion;
+import interfaz.sara.Utilidades.GestorNavegacionAdmin;
 import interfaz.sara.Utilidades.SesionUsuario;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -25,7 +26,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -87,12 +87,13 @@ public class ControladorReservasAdmin {
         if (!sesion.estaAutenticado() || !sesion.esAdmin()) {
             // Redirigir inmediatamente sin mostrar alerta para evitar cruce de pantallas
             Platform.runLater(() -> {
-                GestorNavegacion gestor = GestorNavegacion.obtenerInstancia();
                 if (!sesion.estaAutenticado()) {
+                    GestorNavegacion gestor = GestorNavegacion.obtenerInstancia();
                     gestor.navegarALogin();
                 } else {
                     // Si está autenticado pero no es admin, redirigir a vista de usuario
-                    gestor.navegarAVistaPrincipalUsuario();
+                    interfaz.sara.Utilidades.GestorNavegacionUsuario gestorUsuario = interfaz.sara.Utilidades.GestorNavegacionUsuario.obtenerInstancia();
+                    gestorUsuario.navegarAVistaPrincipalUsuario();
                 }
             });
             return;
@@ -505,7 +506,7 @@ public class ControladorReservasAdmin {
      * @param reserva La reserva a ver
      */
     private void manejarVerDetalleReserva(Reserva reserva) {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         gestorNavegacion.navegarAVistaDetalleReservaAdmin(reserva.getId());
     }
     

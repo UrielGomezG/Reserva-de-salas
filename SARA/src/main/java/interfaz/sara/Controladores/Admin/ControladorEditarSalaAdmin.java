@@ -1,7 +1,7 @@
 package interfaz.sara.Controladores.Admin;
 
 import interfaz.sara.ConexionBD.ConexionBD;
-import interfaz.sara.Utilidades.GestorNavegacion;
+import interfaz.sara.Utilidades.GestorNavegacionAdmin;
 import interfaz.sara.Utilidades.SesionUsuario;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -13,7 +13,9 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
@@ -29,10 +31,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Controlador para la vista de editar sala (VistaEditarSalaAdmin.fxml)
@@ -77,6 +85,9 @@ public class ControladorEditarSalaAdmin {
     
     @FXML
     private Button btnActivarDesactivar;
+    
+    @FXML
+    private Button btnGuardar;
 
     // ========== Variables de estado ==========
     
@@ -112,7 +123,7 @@ public class ControladorEditarSalaAdmin {
         }
         
         // Obtener el ID de la sala a editar
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         salaId = gestorNavegacion.obtenerSalaIdSeleccionado();
         
         if (salaId == null) {
@@ -280,6 +291,42 @@ public class ControladorEditarSalaAdmin {
                         // Actualizar botón de activar/desactivar
                         btnActivarDesactivar.setText(habilitada ? "Desactivar Sala" : "Activar Sala");
                         
+                        // Verificar si hay reservaciones activas o en curso
+                        boolean tieneReservas = tieneReservasActivas();
+                        if (tieneReservas) {
+                            // Deshabilitar todos los campos de edición
+                            campoNombre.setEditable(false);
+                            campoCodigo.setEditable(false);
+                            campoCapacidad.setEditable(false);
+                            toggleBoardroom.setDisable(true);
+                            toggleLaboratory.setDisable(true);
+                            toggleAuditorium.setDisable(true);
+                            comboUbicacion.setDisable(true);
+                            
+                            // Deshabilitar botón de guardar
+                            if (btnGuardar != null) {
+                                btnGuardar.setDisable(true);
+                            }
+                            
+                            // Mostrar mensaje informativo
+                            mostrarMensajeEstado("No se puede editar la sala: tiene reservaciones pendientes o en curso. " +
+                                               "Espere a que todas las reservaciones terminen para poder editar.", true);
+                        } else {
+                            // Habilitar todos los campos de edición
+                            campoNombre.setEditable(true);
+                            campoCodigo.setEditable(true);
+                            campoCapacidad.setEditable(true);
+                            toggleBoardroom.setDisable(false);
+                            toggleLaboratory.setDisable(false);
+                            toggleAuditorium.setDisable(false);
+                            comboUbicacion.setDisable(false);
+                            
+                            // Habilitar botón de guardar
+                            if (btnGuardar != null) {
+                                btnGuardar.setDisable(false);
+                            }
+                        }
+                        
                         // Cargar imagen de la sala
                         cargarImagenSala(rutaImagen);
                     } else {
@@ -381,7 +428,7 @@ public class ControladorEditarSalaAdmin {
      */
     @FXML
     private void manejarVolver() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         gestorNavegacion.navegarAVistaDetalleSalaAdmin(salaId);
     }
     
@@ -402,6 +449,13 @@ public class ControladorEditarSalaAdmin {
     private void manejarGuardar() {
         // Ocultar mensajes anteriores
         ocultarMensajeEstado();
+        
+        // Verificar si hay reservaciones activas o en curso
+        if (tieneReservasActivas()) {
+            mostrarMensajeEstado("No se puede editar la sala: tiene reservaciones pendientes o en curso. " +
+                               "Espere a que todas las reservaciones terminen para poder editar.", true);
+            return;
+        }
         
         // Validar campos
         if (!validarCampos()) {
@@ -430,9 +484,27 @@ public class ControladorEditarSalaAdmin {
             return false;
         }
         
+        if (nombre.length() < 3) {
+            mostrarMensajeEstado("El nombre de la sala debe tener al menos 3 caracteres.", true);
+            campoNombre.requestFocus();
+            return false;
+        }
+        
+        if (nombre.length() > 100) {
+            mostrarMensajeEstado("El nombre de la sala no puede exceder 100 caracteres.", true);
+            campoNombre.requestFocus();
+            return false;
+        }
+        
         // Validar código
         if (codigo.isEmpty()) {
             mostrarMensajeEstado("El código de la sala es obligatorio.", true);
+            campoCodigo.requestFocus();
+            return false;
+        }
+        
+        if (codigo.length() > 20) {
+            mostrarMensajeEstado("El código de la sala no puede exceder 20 caracteres.", true);
             campoCodigo.requestFocus();
             return false;
         }
@@ -451,6 +523,12 @@ public class ControladorEditarSalaAdmin {
                 campoCapacidad.requestFocus();
                 return false;
             }
+            
+            if (capacidad > 1000) {
+                mostrarMensajeEstado("La capacidad no puede exceder 1000 personas.", true);
+                campoCapacidad.requestFocus();
+                return false;
+            }
         } catch (NumberFormatException e) {
             mostrarMensajeEstado("La capacidad debe ser un número válido.", true);
             campoCapacidad.requestFocus();
@@ -466,10 +544,16 @@ public class ControladorEditarSalaAdmin {
         // Validar ubicación (puede ser de la lista o escrita por el usuario)
         String ubicacionEscrita = comboUbicacion.getEditor().getText().trim();
         String ubicacionSeleccionada = comboUbicacion.getSelectionModel().getSelectedItem();
+        String ubicacionFinal = ubicacionSeleccionada != null ? ubicacionSeleccionada : ubicacionEscrita;
         
-        if ((ubicacionSeleccionada == null || ubicacionSeleccionada.isEmpty()) && 
-            (ubicacionEscrita == null || ubicacionEscrita.isEmpty())) {
+        if (ubicacionFinal == null || ubicacionFinal.isEmpty()) {
             mostrarMensajeEstado("Debe seleccionar o escribir una ubicación.", true);
+            comboUbicacion.requestFocus();
+            return false;
+        }
+        
+        if (ubicacionFinal.length() > 100) {
+            mostrarMensajeEstado("La ubicación no puede exceder 100 caracteres.", true);
             comboUbicacion.requestFocus();
             return false;
         }
@@ -505,6 +589,15 @@ public class ControladorEditarSalaAdmin {
      * Guarda los cambios de la sala en la base de datos
      */
     private void guardarCambiosEnBD() {
+        // Validar que no haya reservas activas antes de permitir editar
+        if (tieneReservasActivas()) {
+            mostrarAlerta("Error", "No se puede editar", 
+                         "No se puede editar esta sala porque tiene reservas activas (pendientes o confirmadas). " +
+                         "Por favor, cancele las reservas activas antes de editar la sala.", 
+                         Alert.AlertType.ERROR);
+            return;
+        }
+        
         String nombre = campoNombre.getText().trim();
         String codigoStr = campoCodigo.getText().trim();
         int capacidad = Integer.parseInt(campoCapacidad.getText().trim());
@@ -585,13 +678,13 @@ public class ControladorEditarSalaAdmin {
                         try {
                             Thread.sleep(1500); // Esperar 1.5 segundos para que el usuario vea el mensaje
                             Platform.runLater(() -> {
-                                GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+                                GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
                                 gestorNavegacion.navegarAVistaSalasAdmin();
                             });
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
                             // Navegar inmediatamente si se interrumpe
-                            GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+                            GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
                             gestorNavegacion.navegarAVistaSalasAdmin();
                         }
                     });
@@ -626,6 +719,42 @@ public class ControladorEditarSalaAdmin {
     private void manejarActivarDesactivar() {
         String accion = salaHabilitada ? "desactivar" : "activar";
         
+        // Si se está deshabilitando, verificar si hay reservaciones activas
+        if (salaHabilitada) { // Si se va a deshabilitar (actualmente está habilitada)
+            if (tieneReservasActivas()) {
+                // Pedir razón al admin
+                TextInputDialog dialogRazon = new TextInputDialog();
+                dialogRazon.setTitle("Razón de Desactivación");
+                dialogRazon.setHeaderText("Desactivar Sala");
+                dialogRazon.setContentText("Ingrese la razón por la cual desactiva esta sala:\n" +
+                                          "(Las reservaciones pendientes y en curso serán canceladas)");
+                
+                Optional<String> resultadoRazon = dialogRazon.showAndWait();
+                if (!resultadoRazon.isPresent() || resultadoRazon.get().trim().isEmpty()) {
+                    mostrarAlerta("Error", "Razón requerida", 
+                                 "Debe proporcionar una razón para desactivar la sala.", 
+                                 Alert.AlertType.WARNING);
+                    return;
+                }
+                
+                String razon = resultadoRazon.get().trim();
+                
+                Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+                confirmacion.setTitle("Confirmar Desactivación");
+                confirmacion.setHeaderText("Desactivar Sala");
+                confirmacion.setContentText("¿Está seguro que desea desactivar la sala " + 
+                                           campoNombre.getText().trim() + "?\n\n" +
+                                           "Las reservaciones pendientes y en curso serán canceladas automáticamente.");
+                
+                confirmacion.showAndWait().ifPresent(response -> {
+                    if (response == ButtonType.OK) {
+                        cambiarEstadoSala(false, razon);
+                    }
+                });
+                return;
+            }
+        }
+        
         Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
         confirmacion.setTitle("Confirmar Acción");
         confirmacion.setHeaderText(accion.substring(0, 1).toUpperCase() + accion.substring(1) + " Sala");
@@ -634,41 +763,66 @@ public class ControladorEditarSalaAdmin {
         
         confirmacion.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                cambiarEstadoSala(!salaHabilitada);
+                cambiarEstadoSala(!salaHabilitada, null);
             }
         });
     }
     
     /**
      * Cambia el estado (habilitada/deshabilitada) de la sala
+     * Cancela automáticamente las reservas pendientes y en curso si se deshabilita
      * 
      * @param nuevoEstado true para habilitar, false para deshabilitar
+     * @param razon Razón de desactivación (solo si se deshabilita)
      */
-    private void cambiarEstadoSala(boolean nuevoEstado) {
+    private void cambiarEstadoSala(boolean nuevoEstado, String razon) {
         ConexionBD conexionBD = ConexionBD.obtenerInstancia();
-        
-        String sql = "UPDATE rooms SET is_enabled = ? WHERE id = ?";
         
         try {
             Connection conexion = conexionBD.obtenerConexion();
-            try (PreparedStatement statement = conexion.prepareStatement(sql)) {
-                statement.setInt(1, nuevoEstado ? 1 : 0);
-                statement.setLong(2, salaId);
-                
-                int filasAfectadas = statement.executeUpdate();
-                
-                if (filasAfectadas > 0) {
-                    salaHabilitada = nuevoEstado;
-                    btnActivarDesactivar.setText(nuevoEstado ? "Desactivar Sala" : "Activar Sala");
+            conexion.setAutoCommit(false);
+            
+            try {
+                // Si se está deshabilitando, cancelar reservas pendientes y en curso
+                if (!nuevoEstado) {
+                    String nombreSala = campoNombre.getText().trim();
+                    Set<Long> usuariosAfectados = cancelarReservasActivas(conexion, razon != null ? razon : "Sala deshabilitada");
                     
-                    mostrarAlerta("Éxito", "Estado actualizado", 
-                                 "El estado de la sala ha sido actualizado exitosamente.", 
-                                 Alert.AlertType.INFORMATION);
-                } else {
-                    mostrarAlerta("Error", "Error al actualizar", 
-                                 "No se pudo actualizar el estado de la sala.", 
-                                 Alert.AlertType.ERROR);
+                    // Crear notificaciones para los usuarios afectados
+                    if (!usuariosAfectados.isEmpty()) {
+                        crearNotificacionesCancelacion(conexion, usuariosAfectados, nombreSala, razon != null ? razon : "Sala deshabilitada");
+                    }
                 }
+                
+                String sql = "UPDATE rooms SET is_enabled = ? WHERE id = ?";
+                try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+                    statement.setInt(1, nuevoEstado ? 1 : 0);
+                    statement.setLong(2, salaId);
+                    
+                    int filasAfectadas = statement.executeUpdate();
+                    
+                    if (filasAfectadas > 0) {
+                        conexion.commit();
+                        salaHabilitada = nuevoEstado;
+                        btnActivarDesactivar.setText(nuevoEstado ? "Desactivar Sala" : "Activar Sala");
+                        
+                        String mensaje = nuevoEstado 
+                            ? "El estado de la sala ha sido actualizado exitosamente."
+                            : "La sala ha sido deshabilitada y las reservaciones pendientes y en curso han sido canceladas automáticamente.";
+                        
+                        mostrarAlerta("Éxito", "Estado actualizado", mensaje, Alert.AlertType.INFORMATION);
+                    } else {
+                        conexion.rollback();
+                        mostrarAlerta("Error", "Error al actualizar", 
+                                     "No se pudo actualizar el estado de la sala.", 
+                                     Alert.AlertType.ERROR);
+                    }
+                }
+            } catch (SQLException e) {
+                conexion.rollback();
+                throw e;
+            } finally {
+                conexion.setAutoCommit(true);
             }
         } catch (SQLException e) {
             System.err.println("Error al cambiar estado de la sala: " + e.getMessage());
@@ -685,49 +839,107 @@ public class ControladorEditarSalaAdmin {
      */
     @FXML
     private void manejarEliminar() {
-        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmacion.setTitle("Confirmar Eliminación");
-        confirmacion.setHeaderText("Eliminar Sala");
-        confirmacion.setContentText("¿Está seguro que desea eliminar la sala " + 
-                                   campoNombre.getText().trim() + "?\n\n" +
-                                   "Esta acción no se puede deshacer. La sala será eliminada permanentemente.");
-        
-        confirmacion.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                eliminarSalaDeBD();
+        // Verificar si hay reservaciones activas
+        if (tieneReservasActivas()) {
+            // Pedir razón al admin
+            TextInputDialog dialogRazon = new TextInputDialog();
+            dialogRazon.setTitle("Razón de Eliminación");
+            dialogRazon.setHeaderText("Eliminar Sala");
+            dialogRazon.setContentText("Ingrese la razón por la cual elimina esta sala:\n" +
+                                      "(Las reservaciones pendientes y en curso serán canceladas)");
+            
+            Optional<String> resultadoRazon = dialogRazon.showAndWait();
+            if (!resultadoRazon.isPresent() || resultadoRazon.get().trim().isEmpty()) {
+                mostrarAlerta("Error", "Razón requerida", 
+                             "Debe proporcionar una razón para eliminar la sala.", 
+                             Alert.AlertType.WARNING);
+                return;
             }
-        });
+            
+            String razon = resultadoRazon.get().trim();
+            
+            Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmacion.setTitle("Confirmar Eliminación");
+            confirmacion.setHeaderText("Eliminar Sala");
+            confirmacion.setContentText("¿Está seguro que desea eliminar la sala " + 
+                                       campoNombre.getText().trim() + "?\n\n" +
+                                       "Esta acción no se puede deshacer. La sala será eliminada permanentemente.\n" +
+                                       "Las reservaciones pendientes y en curso serán canceladas automáticamente.");
+            
+            confirmacion.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    eliminarSalaDeBD(razon);
+                }
+            });
+        } else {
+            Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmacion.setTitle("Confirmar Eliminación");
+            confirmacion.setHeaderText("Eliminar Sala");
+            confirmacion.setContentText("¿Está seguro que desea eliminar la sala " + 
+                                       campoNombre.getText().trim() + "?\n\n" +
+                                       "Esta acción no se puede deshacer. La sala será eliminada permanentemente.");
+            
+            confirmacion.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    eliminarSalaDeBD(null);
+                }
+            });
+        }
     }
     
     /**
      * Elimina la sala de la base de datos (soft delete)
+     * Cancela automáticamente las reservas pendientes y en curso
+     * 
+     * @param razon Razón de eliminación proporcionada por el admin
      */
-    private void eliminarSalaDeBD() {
+    private void eliminarSalaDeBD(String razon) {
         ConexionBD conexionBD = ConexionBD.obtenerInstancia();
-        
-        // Soft delete: marcar deleted_at en lugar de eliminar físicamente
-        String sql = "UPDATE rooms SET deleted_at = NOW() WHERE id = ?";
         
         try {
             Connection conexion = conexionBD.obtenerConexion();
-            try (PreparedStatement statement = conexion.prepareStatement(sql)) {
-                statement.setLong(1, salaId);
+            conexion.setAutoCommit(false);
+            
+            try {
+                String nombreSala = campoNombre.getText().trim();
                 
-                int filasAfectadas = statement.executeUpdate();
+                // Cancelar reservas pendientes y en curso antes de eliminar
+                Set<Long> usuariosAfectados = cancelarReservasActivas(conexion, razon != null ? razon : "Sala eliminada");
                 
-                if (filasAfectadas > 0) {
-                    mostrarAlerta("Éxito", "Sala eliminada", 
-                                 "La sala ha sido eliminada exitosamente.", 
-                                 Alert.AlertType.INFORMATION);
-                    
-                    // Volver a la lista de salas
-                    GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
-                    gestorNavegacion.navegarAVistaSalasAdmin();
-                } else {
-                    mostrarAlerta("Error", "Error al eliminar", 
-                                 "No se pudo eliminar la sala.", 
-                                 Alert.AlertType.ERROR);
+                // Crear notificaciones para los usuarios afectados
+                if (!usuariosAfectados.isEmpty()) {
+                    crearNotificacionesCancelacion(conexion, usuariosAfectados, nombreSala, razon != null ? razon : "Sala eliminada");
                 }
+                
+                // Soft delete: marcar deleted_at en lugar de eliminar físicamente
+                String sql = "UPDATE rooms SET deleted_at = NOW() WHERE id = ?";
+                try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+                    statement.setLong(1, salaId);
+                    
+                    int filasAfectadas = statement.executeUpdate();
+                    
+                    if (filasAfectadas > 0) {
+                        conexion.commit();
+                        mostrarAlerta("Éxito", "Sala eliminada", 
+                                     "La sala ha sido eliminada exitosamente. " +
+                                     "Las reservaciones pendientes y en curso han sido canceladas automáticamente.", 
+                                     Alert.AlertType.INFORMATION);
+                        
+                        // Volver a la lista de salas
+                        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
+                        gestorNavegacion.navegarAVistaSalasAdmin();
+                    } else {
+                        conexion.rollback();
+                        mostrarAlerta("Error", "Error al eliminar", 
+                                     "No se pudo eliminar la sala.", 
+                                     Alert.AlertType.ERROR);
+                    }
+                }
+            } catch (SQLException e) {
+                conexion.rollback();
+                throw e;
+            } finally {
+                conexion.setAutoCommit(true);
             }
         } catch (SQLException e) {
             System.err.println("Error al eliminar sala: " + e.getMessage());
@@ -745,6 +957,174 @@ public class ControladorEditarSalaAdmin {
                              Alert.AlertType.ERROR);
             }
         }
+    }
+    
+    /**
+     * Verifica si la sala tiene reservas activas o en curso (PENDING o CONFIRMED)
+     * - Pendientes: reservaciones con estado PENDING o CONFIRMED que aún no han comenzado
+     * - En curso: reservaciones CONFIRMED que ya comenzaron pero aún no terminaron
+     * 
+     * @return true si tiene reservas activas o en curso, false en caso contrario
+     */
+    private boolean tieneReservasActivas() {
+        ConexionBD conexionBD = ConexionBD.obtenerInstancia();
+        
+        String sql = "SELECT COUNT(*) as count " +
+                    "FROM reservations " +
+                    "WHERE room_id = ? " +
+                    "AND status_id IN (1, 2) " + // PENDING o CONFIRMED
+                    "AND (start_at > NOW() " + // Reservaciones pendientes (futuras)
+                    "     OR (start_at <= NOW() AND end_at > NOW()))"; // Reservaciones en curso
+        
+        try {
+            Connection conexion = conexionBD.obtenerConexion();
+            try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+                statement.setLong(1, salaId);
+                
+                try (ResultSet resultado = statement.executeQuery()) {
+                    if (resultado.next()) {
+                        return resultado.getInt("count") > 0;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al verificar reservas activas: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Cancela automáticamente todas las reservas pendientes y en curso de la sala
+     * 
+     * @param conexion La conexión a la base de datos (debe estar en transacción)
+     * @param razon Razón de cancelación
+     * @return Set con los IDs de los usuarios afectados
+     * @throws SQLException Si ocurre un error al cancelar las reservas
+     */
+    private Set<Long> cancelarReservasActivas(Connection conexion, String razon) throws SQLException {
+        // Primero obtener los usuarios afectados
+        String sqlSelect = "SELECT DISTINCT user_id " +
+                          "FROM reservations " +
+                          "WHERE room_id = ? " +
+                          "AND status_id IN (1, 2) " + // PENDING o CONFIRMED
+                          "AND (start_at > NOW() " + // Reservaciones pendientes (futuras)
+                          "     OR (start_at <= NOW() AND end_at > NOW()))"; // Reservaciones en curso
+        
+        Set<Long> usuariosAfectados = new HashSet<>();
+        
+        try (PreparedStatement selectStmt = conexion.prepareStatement(sqlSelect)) {
+            selectStmt.setLong(1, salaId);
+            try (ResultSet resultado = selectStmt.executeQuery()) {
+                while (resultado.next()) {
+                    usuariosAfectados.add(resultado.getLong("user_id"));
+                }
+            }
+        }
+        
+        // Cancelar las reservas
+        String sql = "UPDATE reservations " +
+                    "SET status_id = (SELECT id FROM reservation_status WHERE code = 'CANCELLED_ADMIN' LIMIT 1), " +
+                    "    cancellation_reason = ?, " +
+                    "    cancelled_by_user_id = NULL " +
+                    "WHERE room_id = ? " +
+                    "AND status_id IN (1, 2) " + // PENDING o CONFIRMED
+                    "AND (start_at > NOW() " + // Reservaciones pendientes (futuras)
+                    "     OR (start_at <= NOW() AND end_at > NOW()))"; // Reservaciones en curso
+        
+        try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+            statement.setString(1, razon);
+            statement.setLong(2, salaId);
+            int filasAfectadas = statement.executeUpdate();
+            
+            if (filasAfectadas > 0) {
+                System.out.println("Se cancelaron " + filasAfectadas + " reserva(s) automáticamente.");
+            }
+        }
+        
+        return usuariosAfectados;
+    }
+    
+    /**
+     * Crea notificaciones para los usuarios afectados por la cancelación de reservas
+     * 
+     * @param conexion La conexión a la base de datos (debe estar en transacción)
+     * @param usuariosAfectados Set con los IDs de los usuarios afectados
+     * @param nombreSala Nombre de la sala
+     * @param razon Razón de cancelación
+     * @throws SQLException Si ocurre un error al crear las notificaciones
+     */
+    private void crearNotificacionesCancelacion(Connection conexion, Set<Long> usuariosAfectados, 
+                                               String nombreSala, String razon) throws SQLException {
+        // Obtener el ID del tipo de notificación INCIDENT_REPORT o crear uno nuevo para cancelaciones
+        int tipoNotificacionId = obtenerTipoNotificacionId("RESERVATION_CANCELLED", conexion);
+        if (tipoNotificacionId == 0) {
+            tipoNotificacionId = crearTipoNotificacion("RESERVATION_CANCELLED", "Reserva Cancelada", conexion);
+        }
+        
+        DateTimeFormatter formateadorFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        
+        // Crear notificación para cada usuario afectado
+        String sql = "INSERT INTO notifications (user_id, type_id, reservation_id, message, sent_at, delivered, created_at) " +
+                    "VALUES (?, ?, NULL, ?, NOW(), 1, NOW())";
+        
+        try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+            for (Long userId : usuariosAfectados) {
+                String mensaje = String.format("Tu reserva de la sala %s ha sido cancelada. Razón: %s", 
+                                               nombreSala, razon);
+                
+                statement.setLong(1, userId);
+                statement.setInt(2, tipoNotificacionId);
+                statement.setString(3, mensaje);
+                
+                statement.executeUpdate();
+            }
+        }
+    }
+    
+    /**
+     * Obtiene el ID del tipo de notificación
+     * 
+     * @param codigo Código del tipo de notificación
+     * @param conexion Conexión a la base de datos
+     * @return ID del tipo de notificación, o 0 si no existe
+     */
+    private int obtenerTipoNotificacionId(String codigo, Connection conexion) throws SQLException {
+        String sql = "SELECT id FROM notification_types WHERE code = ? LIMIT 1";
+        try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+            statement.setString(1, codigo);
+            try (ResultSet resultado = statement.executeQuery()) {
+                if (resultado.next()) {
+                    return resultado.getInt("id");
+                }
+            }
+        }
+        return 0;
+    }
+    
+    /**
+     * Crea un nuevo tipo de notificación si no existe
+     * 
+     * @param codigo Código del tipo de notificación
+     * @param etiqueta Etiqueta del tipo de notificación
+     * @param conexion Conexión a la base de datos
+     * @return ID del tipo de notificación creado
+     */
+    private int crearTipoNotificacion(String codigo, String etiqueta, Connection conexion) throws SQLException {
+        String sql = "INSERT INTO notification_types (code, label) VALUES (?, ?)";
+        try (PreparedStatement statement = conexion.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            statement.setString(1, codigo);
+            statement.setString(2, etiqueta);
+            statement.executeUpdate();
+            
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                }
+            }
+        }
+        return 0;
     }
     
     /**

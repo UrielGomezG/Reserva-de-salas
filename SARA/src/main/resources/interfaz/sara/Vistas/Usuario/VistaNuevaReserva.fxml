@@ -42,7 +42,7 @@
                   styleClass="content-area-calendar">
                 
                 <padding>
-                    <Insets top="20.0" right="20.0" bottom="40.0" left="20.0"/>
+                    <Insets top="20.0" right="10.0" bottom="40.0" left="10.0"/>
                 </padding>
 
                 <!-- Título de la página -->
@@ -77,13 +77,13 @@
                         <!-- Grid con nombres de días de la semana -->
                         <GridPane styleClass="day-names-grid">
                             <columnConstraints>
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="ALWAYS" minWidth="40.0" prefWidth="60.0" />
+                                <ColumnConstraints hgrow="ALWAYS" minWidth="40.0" prefWidth="60.0" />
+                                <ColumnConstraints hgrow="ALWAYS" minWidth="40.0" prefWidth="60.0" />
+                                <ColumnConstraints hgrow="ALWAYS" minWidth="40.0" prefWidth="60.0" />
+                                <ColumnConstraints hgrow="ALWAYS" minWidth="40.0" prefWidth="60.0" />
+                                <ColumnConstraints hgrow="ALWAYS" minWidth="40.0" prefWidth="60.0" />
+                                <ColumnConstraints hgrow="ALWAYS" minWidth="40.0" prefWidth="60.0" />
                             </columnConstraints>
                             <Label styleClass="day-name" text="D" GridPane.columnIndex="0" />
                             <Label styleClass="day-name" text="L" GridPane.columnIndex="1" />
@@ -98,31 +98,23 @@
                         <GridPane fx:id="gridCalendario" 
                                   styleClass="calendar-grid">
                             <columnConstraints>
-                                <ColumnConstraints hgrow="NEVER" minWidth="60.0" prefWidth="60.0" maxWidth="60.0" />
-                                <ColumnConstraints hgrow="NEVER" minWidth="60.0" prefWidth="60.0" maxWidth="60.0" />
-                                <ColumnConstraints hgrow="NEVER" minWidth="60.0" prefWidth="60.0" maxWidth="60.0" />
-                                <ColumnConstraints hgrow="NEVER" minWidth="60.0" prefWidth="60.0" maxWidth="60.0" />
-                                <ColumnConstraints hgrow="NEVER" minWidth="60.0" prefWidth="60.0" maxWidth="60.0" />
-                                <ColumnConstraints hgrow="NEVER" minWidth="60.0" prefWidth="60.0" maxWidth="60.0" />
-                                <ColumnConstraints hgrow="NEVER" minWidth="60.0" prefWidth="60.0" maxWidth="60.0" />
+                                <ColumnConstraints hgrow="ALWAYS" minWidth="40.0" prefWidth="60.0" />
+                                <ColumnConstraints hgrow="ALWAYS" minWidth="40.0" prefWidth="60.0" />
+                                <ColumnConstraints hgrow="ALWAYS" minWidth="40.0" prefWidth="60.0" />
+                                <ColumnConstraints hgrow="ALWAYS" minWidth="40.0" prefWidth="60.0" />
+                                <ColumnConstraints hgrow="ALWAYS" minWidth="40.0" prefWidth="60.0" />
+                                <ColumnConstraints hgrow="ALWAYS" minWidth="40.0" prefWidth="60.0" />
+                                <ColumnConstraints hgrow="ALWAYS" minWidth="40.0" prefWidth="60.0" />
                             </columnConstraints>
                             <rowConstraints>
-                                <RowConstraints minHeight="60.0" prefHeight="60.0" vgrow="NEVER" />
-                                <RowConstraints minHeight="60.0" prefHeight="60.0" vgrow="NEVER" />
-                                <RowConstraints minHeight="60.0" prefHeight="60.0" vgrow="NEVER" />
-                                <RowConstraints minHeight="60.0" prefHeight="60.0" vgrow="NEVER" />
-                                <RowConstraints minHeight="60.0" prefHeight="60.0" vgrow="NEVER" />
-                                <RowConstraints minHeight="60.0" prefHeight="60.0" vgrow="NEVER" />
+                                <RowConstraints minHeight="50.0" prefHeight="60.0" vgrow="NEVER" />
+                                <RowConstraints minHeight="50.0" prefHeight="60.0" vgrow="NEVER" />
+                                <RowConstraints minHeight="50.0" prefHeight="60.0" vgrow="NEVER" />
+                                <RowConstraints minHeight="50.0" prefHeight="60.0" vgrow="NEVER" />
+                                <RowConstraints minHeight="50.0" prefHeight="60.0" vgrow="NEVER" />
+                                <RowConstraints minHeight="50.0" prefHeight="60.0" vgrow="NEVER" />
                             </rowConstraints>
                         </GridPane>
-                    </VBox>
-
-                    <!-- Botón para crear nueva reserva -->
-                    <VBox alignment="BOTTOM_RIGHT" 
-                          HBox.hgrow="ALWAYS">
-                        <Button styleClass="btn-primary-calendar" 
-                                text="+ Nueva Reserva" 
-                                onAction="#manejarNuevaReserva"/>
                     </VBox>
                 </HBox>
 
@@ -136,7 +128,13 @@
                            text="Disponibilidad de Salas" />
                     <Label fx:id="labelFechaSeleccionada" 
                            styleClass="subtitle-fecha" 
-                           text="Seleccione una fecha" />
+                           text="Seleccione una sala y hora" />
+                    <Button fx:id="botonVolver" 
+                            text="← Volver a Salas" 
+                            onAction="#manejarVolverASalas"
+                            styleClass="btn-secondary"
+                            visible="false"
+                            managed="false" />
                 </HBox>
 
                 <!-- Contenedor para mostrar la disponibilidad de salas -->

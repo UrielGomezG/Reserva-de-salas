@@ -6,6 +6,7 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -58,14 +59,17 @@
             <VBox alignment="TOP_CENTER" 
                   spacing="0.0">
                 
-                <VBox prefWidth="650.0" 
+                <VBox maxWidth="800.0" 
+                      minWidth="400.0"
+                      prefWidth="650.0" 
                       alignment="TOP_LEFT" 
                       spacing="0.0" 
-                      styleClass="new-reservation-form-container">
+                      styleClass="new-reservation-form-container"
+                      HBox.hgrow="ALWAYS">
                     
-                    <padding>
-                        <Insets top="40.0" bottom="40.0"/>
-                    </padding>
+                <padding>
+                    <Insets top="40.0" right="20.0" bottom="40.0" left="20.0"/>
+                </padding>
 
                     <!-- Tarjeta del formulario -->
                     <VBox styleClass="new-reservation-form-card" 
@@ -79,16 +83,38 @@
                                 <Label styleClass="form-section-title" 
                                        text="Información de la Sala" />
                                 
-                                <VBox spacing="8.0">
-                                    <Label text="Sala" 
-                                           styleClass="form-label-new" />
-                                    <HBox styleClass="form-input-container-new">
-                                        <ComboBox fx:id="comboSala" 
-                                                  promptText="Selecciona una sala" 
-                                                  styleClass="form-input-new" 
-                                                  HBox.hgrow="ALWAYS"
-                                                  onAction="#manejarCambioSala"/>
-                                    </HBox>
+                                <VBox spacing="12.0" styleClass="form-input-container-new">
+                                    <VBox spacing="4.0">
+                                        <Label text="Nombre de la Sala:" 
+                                               styleClass="form-label-new" />
+                                        <Label fx:id="labelNombreSala" 
+                                               styleClass="form-detail-text" 
+                                               text="-" />
+                                    </VBox>
+                                    
+                                    <VBox spacing="4.0">
+                                        <Label text="Tipo de Sala:" 
+                                               styleClass="form-label-new" />
+                                        <Label fx:id="labelTipoSala" 
+                                               styleClass="form-detail-text" 
+                                               text="-" />
+                                    </VBox>
+                                    
+                                    <VBox spacing="4.0">
+                                        <Label text="Capacidad:" 
+                                               styleClass="form-label-new" />
+                                        <Label fx:id="labelCapacidadSala" 
+                                               styleClass="form-detail-text" 
+                                               text="-" />
+                                    </VBox>
+                                    
+                                    <VBox spacing="4.0">
+                                        <Label text="Ubicación:" 
+                                               styleClass="form-label-new" />
+                                        <Label fx:id="labelUbicacionSala" 
+                                               styleClass="form-detail-text" 
+                                               text="-" />
+                                    </VBox>
                                 </VBox>
                             </VBox>
 
@@ -98,41 +124,42 @@
                                        text="Fecha y Hora" />
                                 
                                 <HBox spacing="20.0">
-                                    <!-- Campo de Fecha -->
+                                    <!-- Campo de Fecha (solo lectura) -->
                                     <VBox spacing="8.0" 
                                           HBox.hgrow="ALWAYS">
                                         <Label text="Fecha" 
                                                styleClass="form-label-new" />
-                                        <DatePicker fx:id="datePickerFecha" 
-                                                    styleClass="form-date-picker" 
-                                                    HBox.hgrow="ALWAYS"
-                                                    onAction="#manejarCambioFecha"/>
+                                        <HBox styleClass="form-input-container-new">
+                                            <Label fx:id="labelFecha" 
+                                                   styleClass="form-detail-text" 
+                                                   text="-" 
+                                                   HBox.hgrow="ALWAYS" />
+                                        </HBox>
                                     </VBox>
                                     
-                                    <!-- Campo de Hora Inicio -->
+                                    <!-- Campo de Hora Inicio (solo lectura) -->
                                     <VBox spacing="8.0" 
                                           HBox.hgrow="ALWAYS" 
                                           fx:id="contenedorHoraInicio">
                                         <Label text="Hora Inicio" 
                                                styleClass="form-label-new" />
                                         <HBox styleClass="form-input-container-new">
-                                            <ComboBox fx:id="comboHoraInicio" 
-                                                      promptText="Selecciona hora" 
-                                                      styleClass="form-input-new" 
-                                                      HBox.hgrow="ALWAYS"
-                                                      onAction="#manejarCambioHoraInicio"/>
+                                            <Label fx:id="labelHoraInicio" 
+                                                   styleClass="form-detail-text" 
+                                                   text="-" 
+                                                   HBox.hgrow="ALWAYS" />
                                         </HBox>
                                     </VBox>
                                     
-                                    <!-- Campo de Hora Fin -->
+                                    <!-- Campo de Hora Fin (editable) -->
                                     <VBox spacing="8.0" 
                                           HBox.hgrow="ALWAYS" 
                                           fx:id="contenedorHoraFin">
-                                        <Label text="Hora Fin" 
+                                        <Label text="Hora Fin *" 
                                                styleClass="form-label-new" />
                                         <HBox styleClass="form-input-container-new">
                                             <ComboBox fx:id="comboHoraFin" 
-                                                      promptText="Selecciona hora" 
+                                                      promptText="Selecciona hora fin" 
                                                       styleClass="form-input-new" 
                                                       HBox.hgrow="ALWAYS"
                                                       onAction="#manejarCambioHoraFin"/>
@@ -171,10 +198,9 @@
                                     <Label text="Cantidad de Personas" 
                                            styleClass="form-label-new" />
                                     <HBox styleClass="form-input-container-new">
-                                        <TextField fx:id="campoCantidadPersonas" 
-                                                   promptText="Número de personas" 
-                                                   styleClass="form-input-new" 
-                                                   HBox.hgrow="ALWAYS" />
+                                        <Spinner fx:id="spinnerCantidadPersonas" 
+                                                 styleClass="form-input-new" 
+                                                 HBox.hgrow="ALWAYS" />
                                     </HBox>
                                 </VBox>
                             </VBox>

@@ -12,36 +12,31 @@ import java.io.IOException;
  */
 public class SARAApplication extends Application {
 
-    /**
-     * Método principal de inicio de la aplicación JavaFX
-     * Carga la vista de login y configura la ventana principal
-     * 
-     * @param stage El escenario (ventana) principal de la aplicación
-     * @throws IOException Si ocurre un error al cargar el archivo FXML
-     */
     @Override
     public void start(Stage stage) throws IOException {
-        // Configurar el escenario (ventana)
         stage.setTitle("SARA - Sistema de Reservas de Salas");
-        stage.setMaximized(true); // Maximizar ventana a pantalla completa
-        stage.setFullScreen(false); // No modo pantalla completa (solo maximizado)
         
-        // Establecer el escenario principal en el gestor de navegación
+        // Establecer tamaños mínimos para la ventana
+        stage.setMinWidth(1024);
+        stage.setMinHeight(768);
+        
+        // Establecer tamaño inicial (se puede redimensionar)
+        stage.setWidth(1280);
+        stage.setHeight(800);
+        
+        // Permitir redimensionamiento
+        stage.setResizable(true);
+        
+        // Centrar la ventana en la pantalla
+        stage.centerOnScreen();
+        
         GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
         gestorNavegacion.establecerEscenarioPrincipal(stage);
-        
-        // Navegar a la vista de login
         gestorNavegacion.navegarALogin();
         
-        // Mostrar la ventana
         stage.show();
     }
 
-    /**
-     * Método principal para ejecutar la aplicación
-     * 
-     * @param args Argumentos de línea de comandos
-     */
     public static void main(String[] args) {
         launch(args);
     }

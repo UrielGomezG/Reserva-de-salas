@@ -1,0 +1,449 @@
+/* ============================================
+   Animaciones para Elementos Interactivos
+   Botones, campos, tarjetas, etc.
+   ============================================ */
+
+/* ========== ANIMACIONES DE BOTONES ========== */
+
+/* Botón con animación de elevación al hover */
+.button-hover-lift {
+    -fx-cursor: hand;
+    -fx-transition: all 0.3s ease;
+}
+
+.button-hover-lift:hover {
+    -fx-translate-y: -3px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 8, 0, 0, 3);
+}
+
+.button-hover-lift:pressed {
+    -fx-translate-y: 0px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 4, 0, 0, 2);
+}
+
+/* Botón con animación de escala */
+.button-hover-scale {
+    -fx-cursor: hand;
+    -fx-transition: transform 0.2s ease;
+}
+
+.button-hover-scale:hover {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.button-hover-scale:pressed {
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+/* Botón con efecto de brillo al hover */
+.button-hover-glow {
+    -fx-cursor: hand;
+    -fx-transition: all 0.3s ease;
+}
+
+.button-hover-glow:hover {
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.6), 15, 0, 0, 5);
+}
+
+/* Botón con animación de pulso */
+.button-pulse {
+    -fx-cursor: hand;
+    -fx-animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        -fx-opacity: 1;
+    }
+    50% {
+        -fx-opacity: 0.8;
+    }
+}
+
+/* ========== ANIMACIONES DE CAMPOS DE TEXTO ========== */
+
+/* Campo de texto con animación de borde al focus */
+.text-field-animated {
+    -fx-transition: border-color 0.3s ease, border-width 0.3s ease;
+}
+
+.text-field-animated:focused {
+    -fx-border-width: 2px;
+    -fx-transition: border-color 0.3s ease, border-width 0.3s ease;
+}
+
+/* Campo con efecto de elevación al focus */
+.text-field-lift {
+    -fx-transition: all 0.3s ease;
+}
+
+.text-field-lift:focused {
+    -fx-translate-y: -2px;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.2), 8, 0, 0, 2);
+}
+
+/* Campo con animación de shake (para errores) */
+.text-field-shake {
+    -fx-animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0%, 100% { -fx-translate-x: 0; }
+    10%, 30%, 50%, 70%, 90% { -fx-translate-x: -5px; }
+    20%, 40%, 60%, 80% { -fx-translate-x: 5px; }
+}
+
+/* ========== ANIMACIONES DE TARJETAS ========== */
+
+/* Tarjeta con efecto hover */
+.card-hover {
+    -fx-transition: all 0.3s ease;
+    -fx-cursor: hand;
+}
+
+.card-hover:hover {
+    -fx-translate-y: -5px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 12, 0, 0, 4);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+/* Tarjeta con animación de entrada */
+.card-fade-in {
+    -fx-opacity: 0;
+    -fx-translate-y: 20px;
+    -fx-animation: cardFadeIn 0.5s ease forwards;
+}
+
+@keyframes cardFadeIn {
+    to {
+        -fx-opacity: 1;
+        -fx-translate-y: 0;
+    }
+}
+
+/* Tarjeta con efecto de brillo al hover */
+.card-glow {
+    -fx-transition: all 0.3s ease;
+    -fx-cursor: hand;
+}
+
+.card-glow:hover {
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.4), 20, 0, 0, 8);
+}
+
+/* ========== ANIMACIONES DE IMÁGENES ========== */
+
+/* Imagen con zoom al hover */
+.image-zoom {
+    -fx-transition: transform 0.3s ease;
+    -fx-cursor: hand;
+}
+
+.image-zoom:hover {
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+
+/* Imagen con efecto de brillo */
+.image-glow {
+    -fx-transition: all 0.3s ease;
+}
+
+.image-glow:hover {
+    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.5), 15, 0, 0, 5);
+}
+
+/* ========== ANIMACIONES DE ENLACES ========== */
+
+/* Enlace con animación de subrayado */
+.link-underline {
+    -fx-transition: all 0.3s ease;
+    -fx-cursor: hand;
+}
+
+.link-underline:hover {
+    -fx-underline: true;
+    -fx-text-fill: #2563eb;
+    -fx-translate-x: 2px;
+}
+
+/* Enlace con efecto de escala */
+.link-scale {
+    -fx-transition: transform 0.2s ease;
+    -fx-cursor: hand;
+}
+
+.link-scale:hover {
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+
+/* ========== ANIMACIONES DE MENÚS Y NAVEGACIÓN ========== */
+
+/* Item de menú con animación */
+.menu-item-animated {
+    -fx-transition: all 0.2s ease;
+    -fx-cursor: hand;
+}
+
+.menu-item-animated:hover {
+    -fx-background-color: rgba(59, 130, 246, 0.1);
+    -fx-translate-x: 5px;
+}
+
+/* Item de menú con efecto de deslizamiento */
+.menu-item-slide {
+    -fx-transition: all 0.3s ease;
+    -fx-cursor: hand;
+}
+
+.menu-item-slide:hover {
+    -fx-background-color: rgba(59, 130, 246, 0.15);
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 0 0 0 3px;
+}
+
+/* ========== ANIMACIONES DE NOTIFICACIONES ========== */
+
+/* Notificación con animación de entrada */
+.notification-enter {
+    -fx-opacity: 0;
+    -fx-translate-x: 100%;
+    -fx-animation: notificationSlideIn 0.4s ease forwards;
+}
+
+@keyframes notificationSlideIn {
+    to {
+        -fx-opacity: 1;
+        -fx-translate-x: 0;
+    }
+}
+
+/* Notificación con efecto de pulso */
+.notification-pulse {
+    -fx-animation: notificationPulse 2s infinite;
+}
+
+@keyframes notificationPulse {
+    0%, 100% {
+        -fx-opacity: 1;
+    }
+    50% {
+        -fx-opacity: 0.7;
+    }
+}
+
+/* ========== ANIMACIONES DE BADGES Y ETIQUETAS ========== */
+
+/* Badge con animación de bounce */
+.badge-bounce {
+    -fx-animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        -fx-translate-y: 0;
+    }
+    50% {
+        -fx-translate-y: -5px;
+    }
+}
+
+/* Badge con efecto de pulso */
+.badge-pulse {
+    -fx-animation: badgePulse 2s infinite;
+}
+
+@keyframes badgePulse {
+    0%, 100% {
+        -fx-scale-x: 1;
+        -fx-scale-y: 1;
+    }
+    50% {
+        -fx-scale-x: 1.1;
+        -fx-scale-y: 1.1;
+    }
+}
+
+/* ========== ANIMACIONES DE LOADING ========== */
+
+/* Spinner de carga con rotación */
+.loading-spinner {
+    -fx-animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        -fx-rotate: 0deg;
+    }
+    to {
+        -fx-rotate: 360deg;
+    }
+}
+
+/* ========== ANIMACIONES DE MODALES Y DIALOGOS ========== */
+
+/* Modal con animación de entrada */
+.modal-enter {
+    -fx-opacity: 0;
+    -fx-scale-x: 0.8;
+    -fx-scale-y: 0.8;
+    -fx-animation: modalEnter 0.3s ease forwards;
+}
+
+@keyframes modalEnter {
+    to {
+        -fx-opacity: 1;
+        -fx-scale-x: 1;
+        -fx-scale-y: 1;
+    }
+}
+
+/* Overlay con fade in */
+.overlay-fade {
+    -fx-opacity: 0;
+    -fx-animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        -fx-opacity: 1;
+    }
+}
+
+/* ========== ANIMACIONES DE TABLAS ========== */
+
+/* Fila de tabla con hover */
+.table-row-hover {
+    -fx-transition: background-color 0.2s ease;
+}
+
+.table-row-hover:hover {
+    -fx-background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* Fila de tabla con animación de entrada */
+.table-row-enter {
+    -fx-opacity: 0;
+    -fx-translate-x: -20px;
+    -fx-animation: tableRowEnter 0.4s ease forwards;
+}
+
+@keyframes tableRowEnter {
+    to {
+        -fx-opacity: 1;
+        -fx-translate-x: 0;
+    }
+}
+
+/* ========== ANIMACIONES DE BOTONES ESPECÍFICOS ========== */
+
+/* Botón primario con animación completa */
+.btn-primary-animated {
+    -fx-cursor: hand;
+    -fx-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary-animated:hover {
+    -fx-translate-y: -2px;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.5), 12, 0, 0, 5);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.btn-primary-animated:pressed {
+    -fx-translate-y: 0px;
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.3), 6, 0, 0, 2);
+}
+
+/* Botón secundario con animación */
+.btn-secondary-animated {
+    -fx-cursor: hand;
+    -fx-transition: all 0.3s ease;
+}
+
+.btn-secondary-animated:hover {
+    -fx-background-color: rgba(100, 116, 139, 0.1);
+    -fx-translate-x: 2px;
+}
+
+/* Botón de éxito con animación */
+.btn-success-animated {
+    -fx-cursor: hand;
+    -fx-transition: all 0.3s ease;
+}
+
+.btn-success-animated:hover {
+    -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.4), 10, 0, 0, 4);
+    -fx-translate-y: -2px;
+}
+
+/* Botón de peligro con animación */
+.btn-danger-animated {
+    -fx-cursor: hand;
+    -fx-transition: all 0.3s ease;
+}
+
+.btn-danger-animated:hover {
+    -fx-effect: dropshadow(gaussian, rgba(239, 68, 68, 0.4), 10, 0, 0, 4);
+    -fx-translate-y: -2px;
+}
+
+/* ========== ANIMACIONES DE ICONOS ========== */
+
+/* Icono con rotación al hover */
+.icon-rotate {
+    -fx-transition: transform 0.3s ease;
+    -fx-cursor: hand;
+}
+
+.icon-rotate:hover {
+    -fx-rotate: 15deg;
+}
+
+/* Icono con efecto de pulso */
+.icon-pulse {
+    -fx-animation: iconPulse 2s infinite;
+}
+
+@keyframes iconPulse {
+    0%, 100% {
+        -fx-opacity: 1;
+        -fx-scale-x: 1;
+        -fx-scale-y: 1;
+    }
+    50% {
+        -fx-opacity: 0.7;
+        -fx-scale-x: 1.1;
+        -fx-scale-y: 1.1;
+    }
+}
+
+/* ========== UTILIDADES DE TRANSICIÓN ========== */
+
+/* Clase base para transiciones suaves */
+.smooth-transition {
+    -fx-transition: all 0.3s ease;
+}
+
+/* Transición rápida */
+.fast-transition {
+    -fx-transition: all 0.15s ease;
+}
+
+/* Transición lenta */
+.slow-transition {
+    -fx-transition: all 0.5s ease;
+}
+
+/* Deshabilitar animaciones (para accesibilidad) */
+.no-animation {
+    -fx-transition: none !important;
+    -fx-animation: none !important;
+}
+

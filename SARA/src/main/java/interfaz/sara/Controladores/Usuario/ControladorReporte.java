@@ -10,11 +10,10 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
 import java.sql.Connection;
@@ -41,13 +40,25 @@ public class ControladorReporte {
     private ComboBox<Sala> comboSala;
     
     @FXML
-    private DatePicker datePickerFecha;
-    
-    @FXML
     private ComboBox<Reserva> comboReservacion;
     
     @FXML
     private TextArea textAreaDescripcion;
+    
+    @FXML
+    private VBox cardMuebleRoto;
+    
+    @FXML
+    private VBox cardElectronicoRoto;
+    
+    @FXML
+    private VBox cardSucio;
+    
+    @FXML
+    private VBox cardOtro;
+    
+    /** Tipo de incidente seleccionado */
+    private String tipoIncidenteSeleccionado;
 
     // ========== Variables de estado ==========
     
@@ -57,17 +68,8 @@ public class ControladorReporte {
     /** Fecha seleccionada */
     private LocalDate fechaSeleccionada;
     
-    /** Reservación seleccionada (opcional) */
+    /** Reservación seleccionada (obligatoria) */
     private Reserva reservacionSeleccionada;
-    
-    /** Tipo de incidente seleccionado (nombre mostrado) */
-    private String tipoIncidenteSeleccionado;
-    
-    /** ID del tipo de incidente seleccionado */
-    private Integer tipoIncidenteIdSeleccionado;
-    
-    /** Tarjeta de incidente actualmente seleccionada */
-    private VBox tarjetaIncidenteSeleccionada;
     
     /** Lista de salas disponibles */
     private ObservableList<Sala> listaSalas;
@@ -106,9 +108,8 @@ public class ControladorReporte {
         cargarSalas();
         cargarReservaciones();
         
-        // Establecer fecha por defecto (hoy) en el DatePicker
+        // Establecer fecha por defecto (hoy)
         fechaSeleccionada = LocalDate.now();
-        datePickerFecha.setValue(fechaSeleccionada);
         
         // Actualizar el navbar para marcar "Reporte" como activo
         actualizarNavbarActivo();
@@ -338,50 +339,113 @@ public class ControladorReporte {
     }
     
     /**
-     * Maneja el cambio de fecha seleccionada en el DatePicker
-     */
-    @FXML
-    private void manejarCambioFecha() {
-        fechaSeleccionada = datePickerFecha.getValue();
-    }
-    
-    /**
      * Maneja el cambio de reservación seleccionada en el ComboBox
+     * Actualiza la fecha seleccionada con la fecha de la reservación
      */
     @FXML
     private void manejarCambioReservacion() {
         reservacionSeleccionada = comboReservacion.getSelectionModel().getSelectedItem();
+        
+        // Actualizar la fecha con la fecha de inicio de la reservación seleccionada
+        if (reservacionSeleccionada != null && reservacionSeleccionada.getFechaInicio() != null) {
+            fechaSeleccionada = reservacionSeleccionada.getFechaInicio().toLocalDate();
+        } else {
+            // Si no hay reservación seleccionada, usar la fecha actual
+            fechaSeleccionada = LocalDate.now();
+        }
     }
     
     /**
-     * Maneja la selección de tipo de incidente
-     * Permite seleccionar y deseleccionar el tipo de incidente
+     * Maneja la selección del tipo de incidente "Mueble Roto"
      */
     @FXML
-    private void manejarSeleccionarIncidente(MouseEvent event) {
-        VBox card = (VBox) event.getSource();
-        Label label = (Label) card.getChildren().get(0);
-        String tipo = label.getText();
-        
-        // Si la tarjeta ya está seleccionada, deseleccionarla
-        if (card == tarjetaIncidenteSeleccionada && tipoIncidenteSeleccionado != null) {
-            card.getStyleClass().remove("incident-card-selected");
-            tipoIncidenteSeleccionado = null;
-            tipoIncidenteIdSeleccionado = null;
-            tarjetaIncidenteSeleccionada = null;
-            return;
-        }
-        
-        // Deseleccionar la tarjeta anterior si existe
-        if (tarjetaIncidenteSeleccionada != null) {
-            tarjetaIncidenteSeleccionada.getStyleClass().remove("incident-card-selected");
-        }
-        
-        // Seleccionar la nueva tarjeta y obtener el ID correspondiente
+    private void manejarSeleccionarTipoMuebleRoto(MouseEvent event) {
+        seleccionarTipoIncidente("Mueble Roto", cardMuebleRoto);
+    }
+    
+    /**
+     * Maneja la selección del tipo de incidente "Electrónico Roto"
+     */
+    @FXML
+    private void manejarSeleccionarTipoElectronicoRoto(MouseEvent event) {
+        seleccionarTipoIncidente("Electrónico Roto", cardElectronicoRoto);
+    }
+    
+    /**
+     * Maneja la selección del tipo de incidente "Sucio"
+     */
+    @FXML
+    private void manejarSeleccionarTipoSucio(MouseEvent event) {
+        seleccionarTipoIncidente("Sucio", cardSucio);
+    }
+    
+    /**
+     * Maneja la selección del tipo de incidente "Otro"
+     */
+    @FXML
+    private void manejarSeleccionarTipoOtro(MouseEvent event) {
+        seleccionarTipoIncidente("Otro", cardOtro);
+    }
+    
+    /**
+     * Selecciona un tipo de incidente y actualiza la visualización
+     * 
+     * @param tipo Nombre del tipo de incidente
+     * @param tarjeta Tarjeta seleccionada
+     */
+    private void seleccionarTipoIncidente(String tipo, VBox tarjeta) {
         tipoIncidenteSeleccionado = tipo;
-        tipoIncidenteIdSeleccionado = MAPEO_TIPOS_INCIDENTE.get(tipo);
-        tarjetaIncidenteSeleccionada = card;
-        card.getStyleClass().add("incident-card-selected");
+        
+        // Deseleccionar todas las tarjetas
+        deseleccionarTodasLasTarjetas();
+        
+        // Seleccionar la tarjeta actual
+        tarjeta.getStyleClass().remove("incident-card");
+        tarjeta.getStyleClass().add("incident-card-selected");
+    }
+    
+    /**
+     * Deselecciona todas las tarjetas de tipos de incidente
+     */
+    private void deseleccionarTodasLasTarjetas() {
+        cardMuebleRoto.getStyleClass().remove("incident-card-selected");
+        cardElectronicoRoto.getStyleClass().remove("incident-card-selected");
+        cardSucio.getStyleClass().remove("incident-card-selected");
+        cardOtro.getStyleClass().remove("incident-card-selected");
+        
+        if (!cardMuebleRoto.getStyleClass().contains("incident-card")) {
+            cardMuebleRoto.getStyleClass().add("incident-card");
+        }
+        if (!cardElectronicoRoto.getStyleClass().contains("incident-card")) {
+            cardElectronicoRoto.getStyleClass().add("incident-card");
+        }
+        if (!cardSucio.getStyleClass().contains("incident-card")) {
+            cardSucio.getStyleClass().add("incident-card");
+        }
+        if (!cardOtro.getStyleClass().contains("incident-card")) {
+            cardOtro.getStyleClass().add("incident-card");
+        }
+    }
+    
+    /**
+     * Obtiene el tipo de incidente seleccionado
+     * 
+     * @return ID del tipo de incidente seleccionado, o null si no hay selección
+     */
+    private Integer obtenerTipoIncidenteSeleccionado() {
+        if (tipoIncidenteSeleccionado == null) {
+            return null;
+        }
+        return MAPEO_TIPOS_INCIDENTE.get(tipoIncidenteSeleccionado);
+    }
+    
+    /**
+     * Obtiene el nombre del tipo de incidente seleccionado
+     * 
+     * @return Nombre del tipo de incidente seleccionado, o null si no hay selección
+     */
+    private String obtenerNombreTipoIncidenteSeleccionado() {
+        return tipoIncidenteSeleccionado;
     }
     
     /**
@@ -430,7 +494,16 @@ public class ControladorReporte {
             return false;
         }
         
-        if (tipoIncidenteSeleccionado == null || tipoIncidenteSeleccionado.isEmpty()) {
+        if (reservacionSeleccionada == null) {
+            mostrarAlerta("Validación", "Campo incompleto", 
+                         "Por favor, selecciona una reservación relacionada.", 
+                         Alert.AlertType.WARNING);
+            comboReservacion.requestFocus();
+            return false;
+        }
+        
+        Integer tipoSeleccionado = obtenerTipoIncidenteSeleccionado();
+        if (tipoSeleccionado == null) {
             mostrarAlerta("Validación", "Campo incompleto", 
                          "Por favor, selecciona un tipo de incidente.", 
                          Alert.AlertType.WARNING);
@@ -459,47 +532,39 @@ public class ControladorReporte {
             throw new SQLException("Usuario no autenticado");
         }
         
-        if (tipoIncidenteIdSeleccionado == null) {
-            throw new SQLException("Tipo de incidente no seleccionado");
+        Integer tipoSeleccionado = obtenerTipoIncidenteSeleccionado();
+        String nombreTipo = obtenerNombreTipoIncidenteSeleccionado();
+        
+        if (tipoSeleccionado == null) {
+            throw new SQLException("No se seleccionó ningún tipo de incidente");
         }
         
         Long usuarioId = sesion.getUsuarioId();
-        LocalDateTime fechaReporte = fechaSeleccionada.atStartOfDay();
+        // Usar la fecha y hora actual del momento en que se reporta el incidente
+        LocalDateTime fechaReporte = LocalDateTime.now();
         String descripcion = textAreaDescripcion.getText().trim();
-        
-        // Crear título basado en el tipo de incidente
-        String titulo = tipoIncidenteSeleccionado + " - " + salaSeleccionada.getNombre();
-        if (titulo.length() > 150) {
-            titulo = titulo.substring(0, 147) + "...";
-        }
         
         ConexionBD conexionBD = ConexionBD.obtenerInstancia();
         Connection conexion = conexionBD.obtenerConexion();
         
-        // Si hay una reservación seleccionada, incluirla en la inserción
-        // Nota: created_at tiene DEFAULT current_timestamp() en la BD, no es necesario establecerlo
-        String sql;
-        if (reservacionSeleccionada != null) {
-            sql = "INSERT INTO incidents (room_id, reservation_id, reported_by_user_id, incident_type_id, title, description, incident_at) " +
-                  "VALUES (?, ?, ?, ?, ?, ?, ?)";
-        } else {
-            sql = "INSERT INTO incidents (room_id, reported_by_user_id, incident_type_id, title, description, incident_at) " +
-                  "VALUES (?, ?, ?, ?, ?, ?)";
-        }
+        // Crear un incidente con el tipo seleccionado
+        String sql = "INSERT INTO incidents (room_id, reservation_id, reported_by_user_id, incident_type_id, title, description, incident_at) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
         
         try (PreparedStatement statement = conexion.prepareStatement(sql)) {
-            int paramIndex = 1;
-            statement.setLong(paramIndex++, salaSeleccionada.getId());
-            
-            if (reservacionSeleccionada != null) {
-                statement.setLong(paramIndex++, reservacionSeleccionada.getId());
+            // Crear título basado en el tipo de incidente
+            String titulo = nombreTipo + " - " + salaSeleccionada.getNombre();
+            if (titulo.length() > 150) {
+                titulo = titulo.substring(0, 147) + "...";
             }
             
-            statement.setLong(paramIndex++, usuarioId);
-            statement.setInt(paramIndex++, tipoIncidenteIdSeleccionado);
-            statement.setString(paramIndex++, titulo);
-            statement.setString(paramIndex++, descripcion.isEmpty() ? null : descripcion);
-            statement.setTimestamp(paramIndex++, java.sql.Timestamp.valueOf(fechaReporte));
+            statement.setLong(1, salaSeleccionada.getId());
+            statement.setLong(2, reservacionSeleccionada.getId());
+            statement.setLong(3, usuarioId);
+            statement.setInt(4, tipoSeleccionado);
+            statement.setString(5, titulo);
+            statement.setString(6, descripcion.isEmpty() ? null : descripcion);
+            statement.setTimestamp(7, java.sql.Timestamp.valueOf(fechaReporte));
             
             int filasAfectadas = statement.executeUpdate();
             
@@ -557,17 +622,13 @@ public class ControladorReporte {
         comboSala.getSelectionModel().clearSelection();
         
         fechaSeleccionada = LocalDate.now();
-        datePickerFecha.setValue(fechaSeleccionada);
         
         reservacionSeleccionada = null;
         comboReservacion.getSelectionModel().clearSelection();
         
+        // Limpiar selección de tipos de incidente
         tipoIncidenteSeleccionado = null;
-        tipoIncidenteIdSeleccionado = null;
-        if (tarjetaIncidenteSeleccionada != null) {
-            tarjetaIncidenteSeleccionada.getStyleClass().remove("incident-card-selected");
-            tarjetaIncidenteSeleccionada = null;
-        }
+        deseleccionarTodasLasTarjetas();
         
         textAreaDescripcion.clear();
     }

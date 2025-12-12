@@ -60,8 +60,8 @@ public class ControladorReportesAdmin {
     /** Mapa de nombres de usuarios (userId -> nombreUsuario) */
     private Map<Long, String> mapaNombresUsuarios;
     
-    /** Formateador de fecha y hora */
-    private DateTimeFormatter formateadorFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    /** Formateador de fecha (solo fecha, sin hora) */
+    private DateTimeFormatter formateadorFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     // ========== Métodos de inicialización ==========
     
@@ -75,12 +75,13 @@ public class ControladorReportesAdmin {
         if (!sesion.estaAutenticado() || !sesion.esAdmin()) {
             // Redirigir inmediatamente sin mostrar alerta para evitar cruce de pantallas
             Platform.runLater(() -> {
-                GestorNavegacion gestor = GestorNavegacion.obtenerInstancia();
                 if (!sesion.estaAutenticado()) {
+                    GestorNavegacion gestor = GestorNavegacion.obtenerInstancia();
                     gestor.navegarALogin();
                 } else {
                     // Si está autenticado pero no es admin, redirigir a vista de usuario
-                    gestor.navegarAVistaPrincipalUsuario();
+                    interfaz.sara.Utilidades.GestorNavegacionUsuario gestorUsuario = interfaz.sara.Utilidades.GestorNavegacionUsuario.obtenerInstancia();
+                    gestorUsuario.navegarAVistaPrincipalUsuario();
                 }
             });
             return;
@@ -318,8 +319,8 @@ public class ControladorReportesAdmin {
         tarjeta.setSpacing(0);
         tarjeta.setPadding(new Insets(0));
         tarjeta.setPrefWidth(320);
-        tarjeta.setMaxWidth(320);
-        tarjeta.setMinWidth(320);
+        tarjeta.setMaxWidth(400);
+        tarjeta.setMinWidth(280);
         tarjeta.setPrefHeight(280);
         tarjeta.setMaxHeight(280);
         tarjeta.setMinHeight(280);
@@ -328,7 +329,8 @@ public class ControladorReportesAdmin {
         VBox infoContainer = new VBox(12);
         infoContainer.setPadding(new Insets(20));
         infoContainer.setSpacing(12);
-        infoContainer.setPrefWidth(320);
+        infoContainer.setPrefWidth(Region.USE_COMPUTED_SIZE);
+        infoContainer.setMaxWidth(Double.MAX_VALUE);
         infoContainer.setStyle("-fx-background-color: #ffffff;");
         
         // Encabezado con nombre de sala y tipo de incidente

@@ -75,7 +75,9 @@
                              promptText="Todos los roles" 
                              styleClass="combo-filtro-rol-admin" 
                              onAction="#filtrarUsuarios" 
-                             prefWidth="150.0"/>
+                             minWidth="120.0"
+                             prefWidth="150.0"
+                             maxWidth="200.0"/>
                 </HBox>
 
                 <!-- Contenedor de tarjetas de usuarios -->

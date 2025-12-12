@@ -2,15 +2,18 @@ package interfaz.sara.Controladores.Usuario;
 
 import interfaz.sara.ConexionBD.ConexionBD;
 import interfaz.sara.Modelo.Sala;
-import interfaz.sara.Utilidades.GestorNavegacion;
+import interfaz.sara.Utilidades.GestorNavegacionUsuario;
 import interfaz.sara.Utilidades.SesionUsuario;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.layout.VBox;
 
 import java.sql.Connection;
@@ -33,13 +36,22 @@ public class ControladorCrearReserva {
     // ========== Componentes FXML ==========
     
     @FXML
-    private ComboBox<Sala> comboSala;
+    private Label labelNombreSala;
     
     @FXML
-    private DatePicker datePickerFecha;
+    private Label labelTipoSala;
     
     @FXML
-    private ComboBox<String> comboHoraInicio;
+    private Label labelCapacidadSala;
+    
+    @FXML
+    private Label labelUbicacionSala;
+    
+    @FXML
+    private Label labelFecha;
+    
+    @FXML
+    private Label labelHoraInicio;
     
     @FXML
     private ComboBox<String> comboHoraFin;
@@ -48,7 +60,7 @@ public class ControladorCrearReserva {
     private TextField campoMotivo;
     
     @FXML
-    private TextField campoCantidadPersonas;
+    private Spinner<Integer> spinnerCantidadPersonas;
     
     @FXML
     private VBox mensajeSinDisponibilidad;
@@ -64,9 +76,12 @@ public class ControladorCrearReserva {
     /** Lista de horarios disponibles (8:00 a 20:00) */
     private ObservableList<String> listaHorarios;
     
-    /** Fecha y sala seleccionadas para cargar disponibilidad */
+    /** Sala seleccionada */
+    private Sala salaSeleccionada;
+    
+    /** Fecha y hora de inicio seleccionadas */
     private LocalDate fechaSeleccionada;
-    private Long salaIdSeleccionada;
+    private String horaInicioSeleccionada;
     
     /** Horarios ocupados para la sala y fecha seleccionadas */
     private List<String> horariosOcupados;
@@ -97,48 +112,31 @@ public class ControladorCrearReserva {
         // Generar lista de horarios (8:00 a 20:00)
         generarListaHorarios();
         
-        // Configurar combo boxes
-        comboSala.setItems(listaSalas);
-        
-        // Configurar el ComboBox de salas para mostrar el nombre
-        comboSala.setCellFactory(param -> new javafx.scene.control.ListCell<Sala>() {
-            @Override
-            protected void updateItem(Sala sala, boolean empty) {
-                super.updateItem(sala, empty);
-                if (empty || sala == null) {
-                    setText(null);
-                } else {
-                    setText(sala.getNombre() + " - " + sala.getTipoSala() + " (Cap: " + sala.getCapacidad() + ")");
-                }
-            }
-        });
-        
-        comboSala.setButtonCell(new javafx.scene.control.ListCell<Sala>() {
-            @Override
-            protected void updateItem(Sala sala, boolean empty) {
-                super.updateItem(sala, empty);
-                if (empty || sala == null) {
-                    setText(null);
-                } else {
-                    setText(sala.getNombre() + " - " + sala.getTipoSala() + " (Cap: " + sala.getCapacidad() + ")");
-                }
-            }
-        });
-        
-        comboHoraInicio.setItems(listaHorarios);
+        // Configurar combo box de hora fin
         comboHoraFin.setItems(listaHorarios);
         
-        // Configurar DatePicker para no permitir fechas pasadas
-        datePickerFecha.setDayCellFactory(picker -> new javafx.scene.control.DateCell() {
-            @Override
-            public void updateItem(LocalDate date, boolean empty) {
-                super.updateItem(date, empty);
-                setDisable(empty || date.isBefore(LocalDate.now()));
-            }
-        });
+        // Configurar Spinner de cantidad de personas (mínimo 1, máximo temporal 1000 hasta seleccionar sala)
+        // El Spinner no es editable, solo se puede cambiar con los botones
+        SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = 
+            new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000, 1);
+        spinnerCantidadPersonas.setValueFactory(valueFactory);
+        spinnerCantidadPersonas.setEditable(false);
         
         // Cargar salas desde la base de datos
         cargarSalas();
+        
+        // Verificar si hay datos prellenados del gestor de navegación
+        GestorNavegacionUsuario gestor = GestorNavegacionUsuario.obtenerInstancia();
+        Long salaId = gestor.obtenerSalaIdSeleccionada();
+        String hora = gestor.obtenerHoraSeleccionada();
+        LocalDate fecha = gestor.obtenerFechaSeleccionada();
+        
+        if (salaId != null && hora != null && fecha != null) {
+            // Prellenar los campos con los datos recibidos
+            prellenarDatos(salaId, hora, fecha);
+            // Limpiar los datos temporales
+            gestor.limpiarDatosReserva();
+        }
         
         // Ocultar mensajes inicialmente
         mensajeSinDisponibilidad.setVisible(false);
@@ -146,50 +144,100 @@ public class ControladorCrearReserva {
         mensajeError.setVisible(false);
         mensajeError.setManaged(false);
     }
+    
+    /**
+     * Prellena los campos del formulario con los datos recibidos
+     * 
+     * @param salaId ID de la sala seleccionada
+     * @param hora Hora seleccionada (formato HH:mm)
+     * @param fecha Fecha seleccionada
+     */
+    private void prellenarDatos(Long salaId, String hora, LocalDate fecha) {
+        // Buscar y seleccionar la sala
+        for (Sala sala : listaSalas) {
+            if (sala.getId().equals(salaId)) {
+                salaSeleccionada = sala;
+                fechaSeleccionada = fecha;
+                horaInicioSeleccionada = hora;
+                
+                // Actualizar la información en los Labels
+                actualizarInformacionSala();
+                actualizarInformacionFechaHora();
+                
+                // Actualizar el límite del Spinner
+                actualizarLimiteSpinner();
+                
+                // Establecer la hora de fin (1 hora después)
+                try {
+                    LocalTime horaInicio = LocalTime.parse(hora, formateadorHora);
+                    LocalTime horaFin = horaInicio.plusHours(1);
+                    String horaFinStr = horaFin.format(formateadorHora);
+                    comboHoraFin.getSelectionModel().select(horaFinStr);
+                } catch (Exception e) {
+                    System.err.println("Error al calcular hora de fin: " + e.getMessage());
+                }
+                
+                // Actualizar disponibilidad de horarios
+                actualizarDisponibilidadHorarios();
+                break;
+            }
+        }
+    }
+    
+    /**
+     * Actualiza los Labels con la información de la sala seleccionada
+     */
+    private void actualizarInformacionSala() {
+        if (salaSeleccionada != null) {
+            labelNombreSala.setText(salaSeleccionada.getNombre());
+            labelTipoSala.setText(salaSeleccionada.getTipoSala());
+            labelCapacidadSala.setText(String.valueOf(salaSeleccionada.getCapacidad()));
+            labelUbicacionSala.setText(salaSeleccionada.getUbicacion() != null ? salaSeleccionada.getUbicacion() : "Sin ubicación");
+        } else {
+            labelNombreSala.setText("-");
+            labelTipoSala.setText("-");
+            labelCapacidadSala.setText("-");
+            labelUbicacionSala.setText("-");
+        }
+    }
+    
+    /**
+     * Actualiza los Labels con la fecha y hora de inicio
+     */
+    private void actualizarInformacionFechaHora() {
+        if (fechaSeleccionada != null) {
+            labelFecha.setText(fechaSeleccionada.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        } else {
+            labelFecha.setText("-");
+        }
+        
+        if (horaInicioSeleccionada != null) {
+            labelHoraInicio.setText(horaInicioSeleccionada);
+        } else {
+            labelHoraInicio.setText("-");
+        }
+    }
+    
+    /**
+     * Actualiza el límite del Spinner según la capacidad de la sala
+     */
+    private void actualizarLimiteSpinner() {
+        if (salaSeleccionada != null) {
+            SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = 
+                (SpinnerValueFactory.IntegerSpinnerValueFactory) spinnerCantidadPersonas.getValueFactory();
+            int capacidad = salaSeleccionada.getCapacidad();
+            int valorActual = valueFactory.getValue();
+            
+            valueFactory.setMax(capacidad);
+            
+            if (valorActual > capacidad) {
+                valueFactory.setValue(capacidad);
+            }
+        }
+    }
 
     // ========== Métodos de manejo de eventos ==========
     
-    /**
-     * Maneja el cambio de sala seleccionada
-     * Actualiza los horarios disponibles según la sala
-     */
-    @FXML
-    private void manejarCambioSala() {
-        Sala salaSeleccionada = comboSala.getSelectionModel().getSelectedItem();
-        if (salaSeleccionada != null) {
-            salaIdSeleccionada = salaSeleccionada.getId();
-            actualizarDisponibilidadHorarios();
-        } else {
-            salaIdSeleccionada = null;
-            limpiarHorarios();
-        }
-    }
-    
-    /**
-     * Maneja el cambio de fecha seleccionada
-     * Actualiza los horarios disponibles según la fecha
-     */
-    @FXML
-    private void manejarCambioFecha() {
-        fechaSeleccionada = datePickerFecha.getValue();
-        if (fechaSeleccionada != null) {
-            actualizarDisponibilidadHorarios();
-        } else {
-            limpiarHorarios();
-        }
-    }
-    
-    /**
-     * Maneja el cambio de hora de inicio
-     * Actualiza las horas de fin disponibles (solo posteriores a la hora de inicio)
-     */
-    @FXML
-    private void manejarCambioHoraInicio() {
-        String horaInicio = comboHoraInicio.getSelectionModel().getSelectedItem();
-        if (horaInicio != null) {
-            actualizarHorasFinDisponibles(horaInicio);
-        }
-    }
     
     /**
      * Maneja el cambio de hora de fin
@@ -197,11 +245,10 @@ public class ControladorCrearReserva {
      */
     @FXML
     private void manejarCambioHoraFin() {
-        String horaInicio = comboHoraInicio.getSelectionModel().getSelectedItem();
         String horaFin = comboHoraFin.getSelectionModel().getSelectedItem();
         
-        if (horaInicio != null && horaFin != null) {
-            if (!validarHoras(horaInicio, horaFin)) {
+        if (horaInicioSeleccionada != null && horaFin != null) {
+            if (!validarHoras(horaInicioSeleccionada, horaFin)) {
                 mostrarError("La hora de fin debe ser posterior a la hora de inicio.");
                 comboHoraFin.getSelectionModel().clearSelection();
             } else {
@@ -216,7 +263,7 @@ public class ControladorCrearReserva {
      */
     @FXML
     private void manejarCancelar() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionUsuario gestorNavegacion = GestorNavegacionUsuario.obtenerInstancia();
         gestorNavegacion.navegarAVistaNuevaReserva();
     }
     
@@ -235,9 +282,7 @@ public class ControladorCrearReserva {
         
         // Crear la reserva
         if (crearReserva()) {
-            // Reserva creada exitosamente - volver al calendario
-            GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
-            gestorNavegacion.navegarAVistaNuevaReserva();
+            // La navegación se maneja dentro de crearReserva() después de mostrar la alerta
         }
     }
 
@@ -249,63 +294,80 @@ public class ControladorCrearReserva {
      * @return true si el formulario es válido, false en caso contrario
      */
     private boolean validarFormulario() {
-        if (comboSala.getSelectionModel().getSelectedItem() == null) {
-            mostrarError("Por favor, seleccione una sala.");
+        // Validar que haya una sala seleccionada
+        if (salaSeleccionada == null) {
+            mostrarError("Error: No hay sala seleccionada.");
             return false;
         }
         
-        if (datePickerFecha.getValue() == null) {
-            mostrarError("Por favor, seleccione una fecha.");
+        // Validar fecha
+        if (fechaSeleccionada == null) {
+            mostrarError("Error: No hay fecha seleccionada.");
             return false;
         }
         
         // Validar que la fecha no sea pasada
-        if (datePickerFecha.getValue().isBefore(LocalDate.now())) {
+        if (fechaSeleccionada.isBefore(LocalDate.now())) {
             mostrarError("No se pueden crear reservas para fechas pasadas.");
             return false;
         }
         
-        String horaInicio = comboHoraInicio.getSelectionModel().getSelectedItem();
-        if (horaInicio == null || horaInicio.isEmpty()) {
-            mostrarError("Por favor, seleccione una hora de inicio.");
+        // Validar hora de inicio
+        if (horaInicioSeleccionada == null || horaInicioSeleccionada.isEmpty()) {
+            mostrarError("Error: No hay hora de inicio seleccionada.");
             return false;
         }
         
         String horaFin = comboHoraFin.getSelectionModel().getSelectedItem();
         if (horaFin == null || horaFin.isEmpty()) {
             mostrarError("Por favor, seleccione una hora de fin.");
+            comboHoraFin.requestFocus();
             return false;
         }
         
         // Validar que la hora de fin sea posterior a la de inicio
-        if (!validarHoras(horaInicio, horaFin)) {
+        if (!validarHoras(horaInicioSeleccionada, horaFin)) {
             mostrarError("La hora de fin debe ser posterior a la hora de inicio.");
+            comboHoraFin.requestFocus();
             return false;
         }
         
-        // Validar cantidad de personas
-        String cantidadPersonasStr = campoCantidadPersonas.getText().trim();
-        if (cantidadPersonasStr.isEmpty()) {
-            mostrarError("Por favor, ingrese la cantidad de personas.");
-            return false;
-        }
-        
+        // Validar duración mínima de 1 hora
         try {
-            int cantidadPersonas = Integer.parseInt(cantidadPersonasStr);
-            if (cantidadPersonas <= 0) {
-                mostrarError("La cantidad de personas debe ser mayor a cero.");
+            LocalTime inicio = LocalTime.parse(horaInicioSeleccionada, formateadorHora);
+            LocalTime fin = LocalTime.parse(horaFin, formateadorHora);
+            long horas = java.time.Duration.between(inicio, fin).toHours();
+            if (horas < 1) {
+                mostrarError("La duración mínima de la reserva debe ser de 1 hora.");
+                comboHoraFin.requestFocus();
                 return false;
             }
-            
-            // Validar que no exceda la capacidad de la sala
-            Sala salaSeleccionada = comboSala.getSelectionModel().getSelectedItem();
-            if (cantidadPersonas > salaSeleccionada.getCapacidad()) {
-                mostrarError("La cantidad de personas (" + cantidadPersonas + 
-                           ") excede la capacidad de la sala (" + salaSeleccionada.getCapacidad() + ").");
-                return false;
-            }
-        } catch (NumberFormatException e) {
-            mostrarError("Por favor, ingrese un número válido para la cantidad de personas.");
+        } catch (Exception e) {
+            mostrarError("Error al validar la duración de la reserva.");
+            return false;
+        }
+        
+        // Validar cantidad de personas (el Spinner ya valida el rango, solo verificamos que haya sala seleccionada)
+        int cantidadPersonas = spinnerCantidadPersonas.getValue();
+        if (cantidadPersonas <= 0) {
+            mostrarError("La cantidad de personas debe ser mayor a cero.");
+            spinnerCantidadPersonas.requestFocus();
+            return false;
+        }
+        
+        // El Spinner ya limita el máximo a la capacidad de la sala, pero verificamos por seguridad
+        if (cantidadPersonas > salaSeleccionada.getCapacidad()) {
+            mostrarError("La cantidad de personas (" + cantidadPersonas + 
+                       ") excede la capacidad de la sala (" + salaSeleccionada.getCapacidad() + ").");
+            spinnerCantidadPersonas.requestFocus();
+            return false;
+        }
+        
+        // Validar motivo (opcional pero con límite de longitud si se proporciona)
+        String motivo = campoMotivo.getText().trim();
+        if (!motivo.isEmpty() && motivo.length() > 500) {
+            mostrarError("El motivo no puede exceder 500 caracteres.");
+            campoMotivo.requestFocus();
             return false;
         }
         
@@ -398,39 +460,51 @@ public class ControladorCrearReserva {
      * Actualiza la disponibilidad de horarios según la sala y fecha seleccionadas
      */
     private void actualizarDisponibilidadHorarios() {
-        if (salaIdSeleccionada == null || fechaSeleccionada == null) {
+        if (salaSeleccionada == null || fechaSeleccionada == null) {
             limpiarHorarios();
             return;
         }
         
         try {
             // Obtener horarios ocupados
-            horariosOcupados = obtenerHorariosOcupados(salaIdSeleccionada, fechaSeleccionada);
+            horariosOcupados = obtenerHorariosOcupados(salaSeleccionada.getId(), fechaSeleccionada);
             
-            // Filtrar horarios disponibles
-            ObservableList<String> horariosDisponibles = FXCollections.observableArrayList();
-            for (String horario : listaHorarios) {
-                if (!horariosOcupados.contains(horario)) {
-                    horariosDisponibles.add(horario);
+            // Filtrar horarios disponibles (solo posteriores a la hora de inicio)
+            ObservableList<String> horariosFinDisponibles = FXCollections.observableArrayList();
+            if (horaInicioSeleccionada != null) {
+                try {
+                    LocalTime inicio = LocalTime.parse(horaInicioSeleccionada, formateadorHora);
+                    for (String horario : listaHorarios) {
+                        LocalTime hora = LocalTime.parse(horario, formateadorHora);
+                        if (hora.isAfter(inicio) && !horariosOcupados.contains(horario)) {
+                            horariosFinDisponibles.add(horario);
+                        }
+                    }
+                } catch (Exception e) {
+                    System.err.println("Error al parsear hora de inicio: " + e.getMessage());
                 }
             }
             
-            // Actualizar combo boxes
-            comboHoraInicio.setItems(horariosDisponibles);
-            comboHoraFin.setItems(horariosDisponibles);
+            // Actualizar combo box de hora fin
+            comboHoraFin.setItems(horariosFinDisponibles);
             
-            // Limpiar selecciones
-            comboHoraInicio.getSelectionModel().clearSelection();
-            comboHoraFin.getSelectionModel().clearSelection();
+            // Limpiar selección si la hora fin actual no es válida
+            String horaFinSeleccionada = comboHoraFin.getSelectionModel().getSelectedItem();
+            if (horaFinSeleccionada != null && !horariosFinDisponibles.contains(horaFinSeleccionada)) {
+                comboHoraFin.getSelectionModel().clearSelection();
+            }
             
             // Mostrar mensaje si no hay disponibilidad
-            if (horariosDisponibles.isEmpty()) {
+            if (horariosFinDisponibles.isEmpty()) {
                 mensajeSinDisponibilidad.setVisible(true);
                 mensajeSinDisponibilidad.setManaged(true);
             } else {
                 mensajeSinDisponibilidad.setVisible(false);
                 mensajeSinDisponibilidad.setManaged(false);
             }
+            
+            // Actualizar horas de fin disponibles
+            actualizarHorasFinDisponibles();
             
         } catch (SQLException e) {
             System.err.println("Error al actualizar disponibilidad: " + e.getMessage());
@@ -444,12 +518,19 @@ public class ControladorCrearReserva {
      * 
      * @param horaInicio La hora de inicio seleccionada
      */
-    private void actualizarHorasFinDisponibles(String horaInicio) {
+    /**
+     * Actualiza las horas de fin disponibles (solo posteriores a la hora de inicio)
+     */
+    private void actualizarHorasFinDisponibles() {
+        if (horaInicioSeleccionada == null) {
+            return;
+        }
+        
         try {
-            LocalTime inicio = LocalTime.parse(horaInicio, formateadorHora);
+            LocalTime inicio = LocalTime.parse(horaInicioSeleccionada, formateadorHora);
             
             ObservableList<String> horasFinDisponibles = FXCollections.observableArrayList();
-            for (String horario : comboHoraInicio.getItems()) {
+            for (String horario : listaHorarios) {
                 LocalTime hora = LocalTime.parse(horario, formateadorHora);
                 if (hora.isAfter(inicio)) {
                     horasFinDisponibles.add(horario);
@@ -475,9 +556,7 @@ public class ControladorCrearReserva {
      * Limpia las selecciones de horarios
      */
     private void limpiarHorarios() {
-        comboHoraInicio.getSelectionModel().clearSelection();
         comboHoraFin.getSelectionModel().clearSelection();
-        comboHoraInicio.setItems(listaHorarios);
         comboHoraFin.setItems(listaHorarios);
         mensajeSinDisponibilidad.setVisible(false);
         mensajeSinDisponibilidad.setManaged(false);
@@ -548,22 +627,19 @@ public class ControladorCrearReserva {
         
         try {
             // Obtener datos del formulario
-            Sala sala = comboSala.getSelectionModel().getSelectedItem();
-            LocalDate fecha = datePickerFecha.getValue();
-            String horaInicioStr = comboHoraInicio.getSelectionModel().getSelectedItem();
             String horaFinStr = comboHoraFin.getSelectionModel().getSelectedItem();
             String motivo = campoMotivo.getText().trim();
-            int cantidadPersonas = Integer.parseInt(campoCantidadPersonas.getText().trim());
+            int cantidadPersonas = spinnerCantidadPersonas.getValue();
             
             // Construir fechas completas
-            LocalTime horaInicio = LocalTime.parse(horaInicioStr, formateadorHora);
+            LocalTime horaInicio = LocalTime.parse(horaInicioSeleccionada, formateadorHora);
             LocalTime horaFin = LocalTime.parse(horaFinStr, formateadorHora);
             
-            LocalDateTime fechaHoraInicio = LocalDateTime.of(fecha, horaInicio);
-            LocalDateTime fechaHoraFin = LocalDateTime.of(fecha, horaFin);
+            LocalDateTime fechaHoraInicio = LocalDateTime.of(fechaSeleccionada, horaInicio);
+            LocalDateTime fechaHoraFin = LocalDateTime.of(fechaSeleccionada, horaFin);
             
             // Verificar que no haya conflictos
-            if (existeConflicto(sala.getId(), fechaHoraInicio, fechaHoraFin)) {
+            if (existeConflicto(salaSeleccionada.getId(), fechaHoraInicio, fechaHoraFin)) {
                 mostrarError("Ya existe una reserva para este horario en la sala seleccionada.");
                 return false;
             }
@@ -576,7 +652,7 @@ public class ControladorCrearReserva {
                         "VALUES (?, ?, ?, ?, ?, ?, 1)"; // status_id = 1 (PENDING)
             
             try (PreparedStatement statement = conexion.prepareStatement(sql)) {
-                statement.setLong(1, sala.getId());
+                statement.setLong(1, salaSeleccionada.getId());
                 statement.setLong(2, sesion.getUsuarioId());
                 statement.setTimestamp(3, java.sql.Timestamp.valueOf(fechaHoraInicio));
                 statement.setTimestamp(4, java.sql.Timestamp.valueOf(fechaHoraFin));
@@ -586,7 +662,18 @@ public class ControladorCrearReserva {
                 int filasAfectadas = statement.executeUpdate();
                 
                 if (filasAfectadas > 0) {
-                    System.out.println("Reserva creada exitosamente");
+                    mostrarAlertaConfirmacion("Éxito", "Reserva confirmada", 
+                                             "Su reserva ha sido creada exitosamente.\n\n" +
+                                             "Sala: " + salaSeleccionada.getNombre() + "\n" +
+                                             "Fecha: " + fechaSeleccionada.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n" +
+                                             "Horario: " + horaInicioSeleccionada + " - " + horaFinStr);
+                    
+                    // Navegar de vuelta al calendario después de que el usuario cierre la alerta
+                    Platform.runLater(() -> {
+                        GestorNavegacionUsuario gestorNavegacion = GestorNavegacionUsuario.obtenerInstancia();
+                        gestorNavegacion.navegarAVistaNuevaReserva();
+                    });
+                    
                     return true;
                 } else {
                     mostrarError("Error al crear la reserva. Por favor, intente nuevamente.");
@@ -671,6 +758,17 @@ public class ControladorCrearReserva {
         mensajeError.setVisible(false);
         mensajeError.setManaged(false);
         mensajeError.setText("");
+    }
+    
+    /**
+     * Muestra una alerta de confirmación al usuario
+     */
+    private void mostrarAlertaConfirmacion(String titulo, String encabezado, String mensaje) {
+        Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(encabezado);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
     }
 }
 

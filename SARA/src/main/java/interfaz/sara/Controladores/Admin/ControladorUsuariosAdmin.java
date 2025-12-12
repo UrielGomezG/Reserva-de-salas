@@ -2,6 +2,7 @@ package interfaz.sara.Controladores.Admin;
 
 import interfaz.sara.ConexionBD.ConexionBD;
 import interfaz.sara.Utilidades.GestorNavegacion;
+import interfaz.sara.Utilidades.GestorNavegacionAdmin;
 import interfaz.sara.Utilidades.SesionUsuario;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -19,13 +20,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -66,7 +68,6 @@ public class ControladorUsuariosAdmin {
     /** Mapa para guardar las rutas de las imágenes de perfil de usuarios (userId -> imagePath) */
     private Map<Long, String> mapaRutasImagenes = new HashMap<>();
     
-    /** Carpeta donde se almacenan las fotos de perfil */
     private static final String CARPETA_FOTOS_PERFIL = "profile_pictures";
 
     // ========== Clase interna para información de usuario ==========
@@ -112,12 +113,13 @@ public class ControladorUsuariosAdmin {
         if (!sesion.estaAutenticado() || !sesion.esAdmin()) {
             // Redirigir inmediatamente sin mostrar alerta para evitar cruce de pantallas
             Platform.runLater(() -> {
-                GestorNavegacion gestor = GestorNavegacion.obtenerInstancia();
                 if (!sesion.estaAutenticado()) {
+                    GestorNavegacion gestor = GestorNavegacion.obtenerInstancia();
                     gestor.navegarALogin();
                 } else {
                     // Si está autenticado pero no es admin, redirigir a vista de usuario
-                    gestor.navegarAVistaPrincipalUsuario();
+                    interfaz.sara.Utilidades.GestorNavegacionUsuario gestorUsuario = interfaz.sara.Utilidades.GestorNavegacionUsuario.obtenerInstancia();
+                    gestorUsuario.navegarAVistaPrincipalUsuario();
                 }
             });
             return;
@@ -326,11 +328,11 @@ public class ControladorUsuariosAdmin {
         tarjeta.setSpacing(0);
         tarjeta.setPadding(new Insets(0));
         tarjeta.setPrefWidth(260);
-        tarjeta.setMaxWidth(260);
-        tarjeta.setMinWidth(260);
+        tarjeta.setMaxWidth(320);
+        tarjeta.setMinWidth(240);
         tarjeta.setPrefHeight(380);
-        tarjeta.setMaxHeight(380);
-        tarjeta.setMinHeight(380);
+        tarjeta.setMaxHeight(Region.USE_COMPUTED_SIZE);
+        tarjeta.setMinHeight(350);
         tarjeta.setCursor(javafx.scene.Cursor.HAND);
         
         // Hacer toda la tarjeta clicable para ver detalles
@@ -341,7 +343,9 @@ public class ControladorUsuariosAdmin {
         imagenContainer.setPrefHeight(180);
         imagenContainer.setMaxHeight(180);
         imagenContainer.setMinHeight(180);
-        imagenContainer.setPrefWidth(260);
+        imagenContainer.setPrefWidth(Region.USE_COMPUTED_SIZE);
+        imagenContainer.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(imagenContainer, Priority.ALWAYS);
         imagenContainer.getStyleClass().add("imagen-usuario-container");
         imagenContainer.setAlignment(Pos.CENTER);
         
@@ -408,7 +412,9 @@ public class ControladorUsuariosAdmin {
         VBox infoContainer = new VBox(10);
         infoContainer.setPadding(new Insets(16));
         infoContainer.setSpacing(10);
-        infoContainer.setPrefWidth(260);
+        infoContainer.setPrefWidth(Region.USE_COMPUTED_SIZE);
+        infoContainer.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(infoContainer, Priority.ALWAYS);
         infoContainer.setStyle("-fx-background-color: #ffffff;");
         
         // Encabezado con nombre del usuario
@@ -482,23 +488,13 @@ public class ControladorUsuariosAdmin {
      */
     private void cargarImagenPorDefectoUsuario(ImageView imageView) {
         try {
-            // Primero intentar desde la carpeta profile_pictures
+            // Cargar desde la carpeta profile_pictures
             File archivoDefault = new File(CARPETA_FOTOS_PERFIL, "usuario.png");
             if (archivoDefault.exists()) {
                 Image imagen = new Image(new FileInputStream(archivoDefault));
                 imageView.setImage(imagen);
-                return;
-            }
-            
-            // Si no existe en la carpeta, intentar desde recursos
-            InputStream imagenStream = getClass().getResourceAsStream(
-                "/interfaz/sara/imagenes/usuario.png"
-            );
-            if (imagenStream != null) {
-                Image imagen = new Image(imagenStream);
-                imageView.setImage(imagen);
             } else {
-                System.err.println("No se encontró la imagen de perfil por defecto (usuario.png).");
+                System.err.println("No se encontró la imagen de perfil por defecto: " + archivoDefault.getAbsolutePath());
                 imageView.setImage(null);
             }
         } catch (Exception e) {
@@ -516,7 +512,7 @@ public class ControladorUsuariosAdmin {
      * @param usuario Usuario a editar
      */
     private void manejarEditarUsuario(UsuarioInfo usuario) {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         gestorNavegacion.navegarAVistaDetalleUsuarioAdmin(usuario.getId());
     }
     

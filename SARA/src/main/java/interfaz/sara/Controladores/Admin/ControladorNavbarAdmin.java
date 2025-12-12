@@ -1,7 +1,7 @@
 package interfaz.sara.Controladores.Admin;
 
 import interfaz.sara.ConexionBD.ConexionBD;
-import interfaz.sara.Utilidades.GestorNavegacion;
+import interfaz.sara.Utilidades.GestorNavegacionAdmin;
 import interfaz.sara.Utilidades.SesionUsuario;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -50,7 +50,6 @@ public class ControladorNavbarAdmin {
     @FXML
     private ImageView perfilImageView;
     
-    /** Carpeta donde se guardan las fotos de perfil */
     private static final String CARPETA_FOTOS_PERFIL = "profile_pictures";
 
     // ========== Métodos de inicialización ==========
@@ -266,7 +265,7 @@ public class ControladorNavbarAdmin {
      */
     @FXML
     private void manejarUsuarios() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         gestorNavegacion.navegarAVistaUsuariosAdmin();
     }
     
@@ -275,7 +274,7 @@ public class ControladorNavbarAdmin {
      */
     @FXML
     private void manejarSalas() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         gestorNavegacion.navegarAVistaSalasAdmin();
     }
     
@@ -284,7 +283,7 @@ public class ControladorNavbarAdmin {
      */
     @FXML
     private void manejarReservas() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         gestorNavegacion.navegarAVistaReservasAdmin();
     }
     
@@ -293,7 +292,7 @@ public class ControladorNavbarAdmin {
      */
     @FXML
     private void manejarReportes() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         gestorNavegacion.navegarAVistaReportesAdmin();
     }
     
@@ -302,7 +301,7 @@ public class ControladorNavbarAdmin {
      */
     @FXML
     private void manejarNotificaciones() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         gestorNavegacion.navegarAVistaNotificacionesAdmin();
     }
     
@@ -311,7 +310,7 @@ public class ControladorNavbarAdmin {
      */
     @FXML
     private void manejarPerfil() {
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         gestorNavegacion.navegarAVistaPerfilAdmin();
     }
     
@@ -323,7 +322,7 @@ public class ControladorNavbarAdmin {
         SesionUsuario sesion = SesionUsuario.obtenerInstancia();
         sesion.cerrarSesion();
         
-        GestorNavegacion gestorNavegacion = GestorNavegacion.obtenerInstancia();
+        GestorNavegacionAdmin gestorNavegacion = GestorNavegacionAdmin.obtenerInstancia();
         gestorNavegacion.navegarALogin();
     }
 }
